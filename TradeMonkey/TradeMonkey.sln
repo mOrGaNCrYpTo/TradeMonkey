@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradingViewHook", "TradingViewHook\TradingViewHook.csproj", "{89781154-94DF-4AD7-AAA0-F5FD07132B00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeMonkey.Function", "TradeMonkey.Function\TradeMonkey.Function.csproj", "{1D5ADE11-CA36-4D33-A0F9-2EC05DC35655}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{89781154-94DF-4AD7-AAA0-F5FD07132B00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89781154-94DF-4AD7-AAA0-F5FD07132B00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89781154-94DF-4AD7-AAA0-F5FD07132B00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89781154-94DF-4AD7-AAA0-F5FD07132B00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D5ADE11-CA36-4D33-A0F9-2EC05DC35655}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D5ADE11-CA36-4D33-A0F9-2EC05DC35655}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D5ADE11-CA36-4D33-A0F9-2EC05DC35655}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D5ADE11-CA36-4D33-A0F9-2EC05DC35655}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1DB5F9A4-49AC-4C37-8F4F-594FDC4B6F74}
+	EndGlobalSection
+EndGlobal
