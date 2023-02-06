@@ -2,12 +2,12 @@
 /// Get the list of tokens and their associated ID supported by Token Metrics.
 /// </summary>
 
-public class AllTokens : Base
+public class Token : Base
 {
-    public AllTokensData[] Data { get; set; }
+    public TokenData[] Data { get; set; }
 }
 
-public class AllTokensData
+public class TokenData
 {
     public string NAME { get; set; }
     public string SYMBOL { get; set; }

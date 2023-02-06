@@ -1,4 +1,12 @@
-﻿public class Datum
+﻿/// <summary>
+/// Get the AI created model portfolio based on crypto exchange, risk and time horizon.
+/// </summary>
+public class Indicies : Base 
+{
+    IndiciesDatum[] Data { get; set; }
+}
+
+public class IndiciesDatum
 {
     public float BL_WEIGHT { get; set; }
     public string DATE { get; set; }
@@ -10,7 +18,3 @@
     public int TOKEN_ID { get; set; }
 }
 
-/// <summary>
-/// Get the AI created model portfolio based on crypto exchange, risk and time horizon.
-/// </summary>
-public class Indicies : Base

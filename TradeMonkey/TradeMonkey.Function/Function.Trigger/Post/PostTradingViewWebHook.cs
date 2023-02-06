@@ -1,9 +1,3 @@
-using System.Net;
-
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Logging;
-
 namespace TradeMonkey.Function.Trigger.Post
 {
     public class PostTradingViewWebHook
@@ -15,7 +9,7 @@ namespace TradeMonkey.Function.Trigger.Post
             _logger = loggerFactory.CreateLogger<PostTradingViewWebHook>();
         }
 
-        [Function(nameof(PostTradingViewWebHook)]
+        [Function(nameof(PostTradingViewWebHook))]
         public HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
         {
             _logger.LogInformation("TradingView WebHook triggered");
