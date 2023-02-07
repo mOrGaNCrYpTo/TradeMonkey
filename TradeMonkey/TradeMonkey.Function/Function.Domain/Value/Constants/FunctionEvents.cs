@@ -2,7 +2,8 @@
 {
     public static class FunctionEvents
     {
-        public static string RequestCompleted { get; set; } = "REQUEST_COMPLETED";
-        public static string RequestStarted { get; set; } = "REQUEST_STARTED";
+        public static string TokenMetricsInvalidRequest { get; set; } = "TOKEN_METRICS_INAVALID_REQUEST";
+        public static string TokenMetricsRequestCompleted { get; set; } = "TOKEN_METRICS_REQUEST_COMPLETED";
+        public static string TokenMetricsRequestStarted { get; set; } = "TOKEN_METRICS_REQUEST_STARTED";
     }
 }

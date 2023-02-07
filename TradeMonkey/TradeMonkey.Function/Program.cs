@@ -19,7 +19,6 @@ var host = new HostBuilder()
         //services.AddDbContextPool<FactorhawkContext>(options =>
         //  options.UseSqlServer(connectionString: Settings.FHConnectionString));
 
-
         services.AddHttpClient<TokenMetricsRepository>("ClientsMs", httpClient =>
         {
             httpClient.BaseAddress = new Uri(uriString: Settings.TokenMetricsBaseUrl);
