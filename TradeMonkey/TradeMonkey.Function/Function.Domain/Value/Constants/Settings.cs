@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.Function.Domain.Value.Constants
+﻿namespace TradeMonkey.TokenMetrics.Domain.Value.Constants
 {
     /// <summary>
     /// Provides easy access to Environment Variables. Local instances are in local.settings.json

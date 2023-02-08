@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradingViewHook", "TradingViewHook\TradingViewHook.csproj", "{89781154-94DF-4AD7-AAA0-F5FD07132B00}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeMonkey.Function", "TradeMonkey.Function\TradeMonkey.Function.csproj", "{1D5ADE11-CA36-4D33-A0F9-2EC05DC35655}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeMonkey.TokenMetrics", "TradeMonkey.Function\TradeMonkey.TokenMetrics.csproj", "{1D5ADE11-CA36-4D33-A0F9-2EC05DC35655}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

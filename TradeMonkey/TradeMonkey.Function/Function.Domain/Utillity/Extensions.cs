@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.Function.Domain.Utillity
+﻿namespace TradeMonkey.TokenMetrics.Domain.Utillity
 {
     public static class Extensions
     {

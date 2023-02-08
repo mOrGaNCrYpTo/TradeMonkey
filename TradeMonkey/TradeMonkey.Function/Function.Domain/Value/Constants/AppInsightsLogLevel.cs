@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.Function.Domain.Value.Constants
+﻿namespace TradeMonkey.TokenMetrics.Domain.Value.Constants
 {
     public enum AppInsightsLogLevel
     {

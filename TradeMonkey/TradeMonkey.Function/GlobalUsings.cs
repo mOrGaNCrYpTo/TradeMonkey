@@ -8,7 +8,7 @@ global using Microsoft.Extensions.Logging;
 global using Quickwire.Attributes;
 global using Quickwire;
 
-global using TradeMonkey.Function.Domain.Value.Constants;
-global using TradeMonkey.Function.Domain.Repository;
-global using TradeMonkey.Function.Domain.Value.Response;
-global using TradeMonkey.Function.Domain.Value.Request;
+global using TradeMonkey.TokenMetrics.Domain.Value.Constants;
+global using TradeMonkey.TokenMetrics.Domain.Repository;
+global using TradeMonkey.TokenMetrics.Domain.Value.Response;
+global using TradeMonkey.TokenMetrics.Domain.Value.Request;

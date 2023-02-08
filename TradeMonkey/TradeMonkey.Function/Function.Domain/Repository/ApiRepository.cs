@@ -1,31 +1,34 @@
-﻿namespace TradeMonkey.Function.Domain.Repository
+﻿namespace TradeMonkey.TokenMetrics.Domain.Repository
 {
     [RegisterService]
-    public sealed class TokenMetricsRepository
+    public sealed class ApiRepository
     {
         private readonly HttpClient _httpClient;
         private HttpStatusCode _statusCode = HttpStatusCode.OK;
 
-        public TokenMetriccRequest tokenMetriccRequest;
-        public Uri url { get; set; }
+        public Request Request { get; set; }
+        public Uri Url { get; set; }
 
-        public TokenMetricsRepository(HttpClient httpClient) =>
+        public ApiRepository(HttpClient httpClient)
+        {
             _httpClient = httpClient
                 ?? throw new ArgumentNullException(nameof(httpClient));
+        }
 
         public async Task<List<Correlation>> GetCorrelationDataAsync(CancellationToken token)
         {
             try
             {
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                using var request = new HttpRequestMessage(HttpMethod.Get, Url);
                 using var response = await _httpClient.SendAsync(request, token);
+
                 _statusCode = response.StatusCode;
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<Correlation>>(content);
 
-                return result;
+                return result ?? new List<Correlation>();
             }
             catch (Exception ex)
             {
@@ -38,19 +41,17 @@
         {
             try
             {
-                var tokenIds = string.Join(",", TokenIds);
-                var url = new Uri($"{_httpClient.BaseAddress}tokens?token_ids={tokenIds}");
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-
+                using var request = new HttpRequestMessage(HttpMethod.Get, Url);
                 using var response = await _httpClient.SendAsync(request, token);
+
                 _statusCode = response.StatusCode;
+
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<Indicator>>(content);
 
-                return result;
+                return result ?? new List<Indicator>();
             }
             catch (Exception ex)
             {
@@ -58,23 +59,21 @@
             }
         }
 
+        // Get Indicies Data
         public async Task<List<Indicies>> GetIndiciesDataAsync(CancellationToken token)
         {
             try
             {
-                var tokenIds = string.Join(",", TokenIds);
-                var url = new Uri($"{_httpClient.BaseAddress}tokens?token_ids={tokenIds}");
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-
+                using var request = new HttpRequestMessage(HttpMethod.Get, Url);
                 using var response = await _httpClient.SendAsync(request, token);
+
                 _statusCode = response.StatusCode;
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<Indicies>>(content);
 
-                return result;
+                return result ?? new List<Indicies>();
             }
             catch (Exception ex)
             {
@@ -86,19 +85,16 @@
         {
             try
             {
-                var tokenIds = string.Join(",", TokenIds);
-                var url = new Uri($"{_httpClient.BaseAddress}tokens?token_ids={tokenIds}");
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-
+                using var request = new HttpRequestMessage(HttpMethod.Get, Url);
                 using var response = await _httpClient.SendAsync(request, token);
+
                 _statusCode = response.StatusCode;
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<InvestorGrades>>(content);
 
-                return result;
+                return result ?? new List<InvestorGrades>();
             }
             catch (Exception ex)
             {
@@ -110,19 +106,16 @@
         {
             try
             {
-                var tokenIds = string.Join(",", TokenIds);
-                var url = new Uri($"{_httpClient.BaseAddress}tokens?token_ids={tokenIds}");
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-
+                using var request = new HttpRequestMessage(HttpMethod.Get, Url);
                 using var response = await _httpClient.SendAsync(request, token);
+
                 _statusCode = response.StatusCode;
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<PricePrediction>>(content);
 
-                return result;
+                return result ?? new List<PricePrediction>();
             }
             catch (Exception ex)
             {
@@ -134,19 +127,16 @@
         {
             try
             {
-                var tokenIds = string.Join(",", TokenIds);
-                var url = new Uri($"{_httpClient.BaseAddress}tokens?token_ids={tokenIds}");
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-
+                using var request = new HttpRequestMessage(HttpMethod.Get, Url);
                 using var response = await _httpClient.SendAsync(request, token);
+
                 _statusCode = response.StatusCode;
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<QuantmetricsT1>>(content);
 
-                return result;
+                return result ?? new List<QuantmetricsT1>();
             }
             catch (Exception ex)
             {
@@ -158,19 +148,16 @@
         {
             try
             {
-                var tokenIds = string.Join(",", TokenIds);
-                var url = new Uri($"{_httpClient.BaseAddress}tokens?token_ids={tokenIds}");
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-
+                using var request = new HttpRequestMessage(HttpMethod.Get, Url);
                 using var response = await _httpClient.SendAsync(request, token);
+
                 _statusCode = response.StatusCode;
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<QuantmetricsT2>>(content);
 
-                return result;
+                return result ?? new List<QuantmetricsT2>();
             }
             catch (Exception ex)
             {
@@ -182,19 +169,16 @@
         {
             try
             {
-                var tokenIds = string.Join(",", TokenIds);
-                var url = new Uri($"{_httpClient.BaseAddress}tokens?token_ids={tokenIds}");
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-
+                using var request = new HttpRequestMessage(HttpMethod.Get, Url);
                 using var response = await _httpClient.SendAsync(request, token);
+
                 _statusCode = response.StatusCode;
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<ResistanceSupport>>(content);
 
-                return result;
+                return result ?? new List<ResistanceSupport>();
             }
             catch (Exception ex)
             {
@@ -206,19 +190,16 @@
         {
             try
             {
-                var tokenIds = string.Join(",", TokenIds);
-                var url = new Uri($"{_httpClient.BaseAddress}tokens?token_ids={tokenIds}");
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-
+                using var request = new HttpRequestMessage(HttpMethod.Get, Url);
                 using var response = await _httpClient.SendAsync(request, token);
+
                 _statusCode = response.StatusCode;
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<ScenarioAnalysis>>(content);
 
-                return result;
+                return result ?? new List<ScenarioAnalysis>();
             }
             catch (Exception ex)
             {
@@ -231,19 +212,16 @@
         {
             try
             {
-                var tokenIds = string.Join(",", TokenIds);
-                var url = new Uri($"{_httpClient.BaseAddress}tokens?token_ids={tokenIds}");
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-
+                using var request = new HttpRequestMessage(HttpMethod.Get, Url);
                 using var response = await _httpClient.SendAsync(request, token);
+
                 _statusCode = response.StatusCode;
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<Sentiments>>(content);
 
-                return result;
+                return result ?? new List<Sentiments>();
             }
             catch (Exception ex)
             {
@@ -251,23 +229,41 @@
             }
         }
 
+        public async Task<List<Token>> GetTokensAsync(CancellationToken token)
+        {
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, Url);
+                using var response = await _httpClient.SendAsync(request, token);
+
+                _statusCode = response.StatusCode;
+                response.EnsureSuccessStatusCode();
+
+                var content = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<List<Token>>(content);
+
+                return result ?? new List<Token>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"GetCorrelationDataAsync returned {_statusCode} with error: {ex.Message}");
+            }
+        }
+
         public async Task<List<TraderGrades>> GetTraderGradesAsync(CancellationToken token)
         {
             try
             {
-                var tokenIds = string.Join(",", TokenIds);
-                var url = new Uri($"{_httpClient.BaseAddress}tokens?token_ids={tokenIds}");
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-
+                using var request = new HttpRequestMessage(HttpMethod.Get, Url);
                 using var response = await _httpClient.SendAsync(request, token);
+
                 _statusCode = response.StatusCode;
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<TraderGrades>>(content);
 
-                return result;
+                return result ?? new List<TraderGrades>();
             }
             catch (Exception ex)
             {
@@ -280,19 +276,16 @@
         {
             try
             {
-                var tokenIds = string.Join(",", TokenIds);
-                var url = new Uri($"{_httpClient.BaseAddress}tokens?token_ids={tokenIds}");
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-
+                using var request = new HttpRequestMessage(HttpMethod.Get, Url);
                 using var response = await _httpClient.SendAsync(request, token);
+
                 _statusCode = response.StatusCode;
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<TradingIndicator>>(content);
 
-                return result;
+                return result ?? new List<TradingIndicator>();
             }
             catch (Exception ex)
             {

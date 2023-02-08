@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "TradeMonkey.Function": {
+    "TradeMonkey.TokenMetrics": {
       "commandName": "Project",
       "commandLineArgs": "--port 7200",
       "launchBrowser": false

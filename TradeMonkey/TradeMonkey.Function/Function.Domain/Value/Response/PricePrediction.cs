@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.Function.Domain.Value.Response
+﻿namespace TradeMonkey.TokenMetrics.Domain.Value.Response
 {
     public sealed class PricePrediction : Base
     {

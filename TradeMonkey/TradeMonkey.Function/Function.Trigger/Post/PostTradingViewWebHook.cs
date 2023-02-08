@@ -1,4 +1,4 @@
-namespace TradeMonkey.Function.Trigger.Post
+namespace TradeMonkey.TokenMetrics.Trigger.Post
 {
     public class PostTradingViewWebHook
     {

@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.Function.Domain.Value.Response
+﻿namespace TradeMonkey.TokenMetrics.Domain.Value.Response
 {
     /// <summary>
     /// Get the short term grades
