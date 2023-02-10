@@ -9,27 +9,27 @@
     {
         #region Public Properties
 
-        public float AVG_DAILY_RETURN { get; set; }
-        public float AVG_DOWN_MONTH { get; set; }
-        public float AVG_MONTHLY_RETURN { get; set; }
-        public float AVG_UP_MONTH { get; set; }
-        public float BEST_DAY { get; set; }
-        public float BEST_MONTH { get; set; }
-        public string DATE { get; set; }
-        public int END_PERIOD { get; set; }
-        public int EPOCH { get; set; }
-        public float MAX_DAILY_RETURN { get; set; }
-        public float MAX_MONTHLY_RETURN { get; set; }
-        public float MIN_DAILY_RETURN { get; set; }
-        public float MIN_MONTHLY_RETURN { get; set; }
-        public string NAME { get; set; }
-        public int START_PERIOD { get; set; }
-        public float STD_DAILY_RETURN { get; set; }
-        public float STD_MONTHLY_RETURN { get; set; }
-        public string SYMBOL { get; set; }
-        public int TOKEN_ID { get; set; }
-        public float WORST_DAY { get; set; }
-        public float WORST_MONTH { get; set; }
+        public float AvgDailyReturn { get; set; }
+        public float AvgDownMonth { get; set; }
+        public float AvgMontlyReturn { get; set; }
+        public float AvgUpMonth { get; set; }
+        public float BestDay { get; set; }
+        public float BestMonth { get; set; }
+        public string Date { get; set; }
+        public int EndPeriod { get; set; }
+        public int Epoch { get; set; }
+        public float MaxDailyReturn { get; set; }
+        public float MaxMonthlyReturn { get; set; }
+        public float MinDailyReturn { get; set; }
+        public float MinMonthlyReturn { get; set; }
+        public string Name { get; set; }
+        public int StartPeriod { get; set; }
+        public float StdDailyReturn { get; set; }
+        public float StdMonthlyReturn { get; set; }
+        public string Symbol { get; set; }
+        public int TokenId { get; set; }
+        public float WorstDay { get; set; }
+        public float WorstMonth { get; set; }
 
         #endregion Public Properties
     }

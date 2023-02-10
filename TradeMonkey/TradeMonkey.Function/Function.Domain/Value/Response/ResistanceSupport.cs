@@ -7,8 +7,8 @@
 
     public class ResistanceSupportDatum
     {
-        public int EPOCH { get; set; }
-        public int LEVEL { get; set; }
-        public string TOKEN_ID { get; set; }
+        public int Epoch { get; set; }
+        public int Level { get; set; }
+        public string TokenId { get; set; }
     }
 }

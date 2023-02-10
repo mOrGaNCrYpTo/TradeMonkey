@@ -1,20 +1,19 @@
 ﻿/// <summary>
-/// Get the AI created model portfolio based on crypto exchange, risk and time horizon.
+/// Get the AI created model portfolio based on crypto Exchange, risk and time horizon.
 /// </summary>
-public class Indicies : Base 
+public class Indicies : Base
 {
-    IndiciesDatum[] Data { get; set; }
+    private IndiciesDatum[] Data { get; set; }
 }
 
 public class IndiciesDatum
 {
-    public float BL_WEIGHT { get; set; }
-    public string DATE { get; set; }
-    public int EPOCH { get; set; }
-    public string EXCHANGE { get; set; }
-    public float INITIAL_PRICE { get; set; }
-    public string NAME { get; set; }
-    public string SYMBOL { get; set; }
-    public int TOKEN_ID { get; set; }
+    public float BLWeight { get; set; }
+    public string Date { get; set; }
+    public int Epoch { get; set; }
+    public string Exchange { get; set; }
+    public float InitialPrice { get; set; }
+    public string Name { get; set; }
+    public string Symbol { get; set; }
+    public int TokenId { get; set; }
 }
-

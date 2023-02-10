@@ -10,13 +10,13 @@
 
     public class TraderGradesDatum
     {
-        public string DATE { get; set; }
-        public int EPOCH { get; set; }
-        public string NAME { get; set; }
-        public float QUANT_GRADE { get; set; }
-        public string SYMBOL { get; set; }
-        public float TA_GRADE { get; set; }
-        public string TM_TRADER_GRADE { get; set; }
-        public string TOKEN_ID { get; set; }
+        public string Date { get; set; }
+        public int Epoch { get; set; }
+        public string Name { get; set; }
+        public float QuantGrade { get; set; }
+        public string Symbol { get; set; }
+        public float TaGrade { get; set; }
+        public string TmTraderGrade { get; set; }
+        public string TokenId { get; set; }
     }
 }

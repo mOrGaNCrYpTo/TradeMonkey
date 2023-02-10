@@ -7,14 +7,14 @@
 
     public class InvestorGradesDatum
     {
-        public string DATE { get; set; }
-        public int EPOCH { get; set; }
-        public float FUNDAMENTAL_GRADE { get; set; }
-        public string NAME { get; set; }
-        public string SYMBOL { get; set; }
-        public float TECHNOLOGY_GRADE { get; set; }
-        public float TM_INVESTOR_GRADE { get; set; }
-        public int TOKEN_ID { get; set; }
-        public float? VALUATION_GRADE { get; set; }
+        public string Date { get; set; }
+        public int Epoch { get; set; }
+        public float FundamentalGrade { get; set; }
+        public string Name { get; set; }
+        public string Symbol { get; set; }
+        public float TechnologyGrade { get; set; }
+        public float TmInvestorGrade { get; set; }
+        public int TokenId { get; set; }
+        public float? ValuationGrade { get; set; }
     }
 }

@@ -1,10 +1,5 @@
-﻿namespace TradeMonkey.TokenMetrics.Domain.Value.Response
+﻿namespace TradeMonkey.Data.Entity
 {
-    public class QuantmetricsT1 : Base
-    {
-        public QuantmetricsT1Datum[] Data { get; set; }
-    }
-
     public class QuantmetricsT1Datum
     {
         public float Beta { get; set; }

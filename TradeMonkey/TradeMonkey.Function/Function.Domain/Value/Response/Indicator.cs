@@ -7,10 +7,10 @@
 
     public class IndicatorDatum
     {
-        public int EPOCH { get; set; }
-        public int LAST_TM_GRADE_SIGNAL { get; set; }
-        public float TM_GRADE_PERC_HIGH_COINS { get; set; }
-        public int TM_GRADE_SIGNAL { get; set; }
-        public float TOTAL_CRYPTO_MCAP { get; set; }
+        public int Epoch { get; set; }
+        public int LastTmGradeSignal { get; set; }
+        public float TmGradePercHighCoins { get; set; }
+        public int TmGradeSignal { get; set; }
+        public float TotalCryptoMcap { get; set; }
     }
 }

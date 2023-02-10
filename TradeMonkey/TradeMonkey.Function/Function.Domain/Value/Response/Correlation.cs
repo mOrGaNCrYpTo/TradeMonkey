@@ -8,12 +8,12 @@ public class Correlation
 
 public class CorrelationData
 {
-    public float CORRELATION { get; set; }
-    public string DATE { get; set; }
-    public int EPOCH { get; set; }
-    public string NAME { get; set; }
-    public string SYMBOL { get; set; }
-    public string TOKEN_2_NAME { get; set; }
-    public string TOKEN_2_SYMBOL { get; set; }
-    public int TOKEN_ID { get; set; }
+    public float Correlation { get; set; }
+    public string Date { get; set; }
+    public int Epoch { get; set; }
+    public string Name { get; set; }
+    public string Symbol { get; set; }
+    public string Token2Name { get; set; }
+    public string Token2Symbol { get; set; }
+    public int TokenId { get; set; }
 }

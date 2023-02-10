@@ -9,7 +9,7 @@ public class Token : Base
 
 public class TokenData
 {
-    public string NAME { get; set; }
-    public string SYMBOL { get; set; }
-    public int TOKEN_ID { get; set; }
+    public string Name { get; set; }
+    public string Symbol { get; set; }
+    public int TokenId { get; set; }
 }

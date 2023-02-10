@@ -7,14 +7,14 @@
 
     public class PricePredictionData
     {
-        public float CLOSE { get; set; }
-        public int EPOCH { get; set; }
-        public float HIGH { get; set; }
-        public float LOW { get; set; }
-        public string NAME { get; set; }
-        public float OPEN { get; set; }
-        public string SYMBOL { get; set; }
-        public string TOKEN_ID { get; set; }
-        public float VOLUME { get; set; }
+        public float Close { get; set; }
+        public int Epoch { get; set; }
+        public float High { get; set; }
+        public float Low { get; set; }
+        public string Name { get; set; }
+        public float Open { get; set; }
+        public string Symbol { get; set; }
+        public string TokenId { get; set; }
+        public float Volume { get; set; }
     }
 }
