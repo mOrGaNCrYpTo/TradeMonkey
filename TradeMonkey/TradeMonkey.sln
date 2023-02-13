@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeMonkey.Data", "TradeMo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeMonkey.Installer", "TradeMonkey.Installer\TradeMonkey.Installer.csproj", "{FDE7707E-1AC3-4812-ADE6-1BAF0ABED587}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeMonkey.DataCollector", "TradeMonkey.DataCollector\TradeMonkey.DataCollector.csproj", "{55015F92-7D3E-4BE9-8849-7E310B17C53F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{FDE7707E-1AC3-4812-ADE6-1BAF0ABED587}.Release|arm64.Build.0 = Release|arm64
 		{FDE7707E-1AC3-4812-ADE6-1BAF0ABED587}.Release|x86.ActiveCfg = Release|x86
 		{FDE7707E-1AC3-4812-ADE6-1BAF0ABED587}.Release|x86.Build.0 = Release|x86
+		{55015F92-7D3E-4BE9-8849-7E310B17C53F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55015F92-7D3E-4BE9-8849-7E310B17C53F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55015F92-7D3E-4BE9-8849-7E310B17C53F}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{55015F92-7D3E-4BE9-8849-7E310B17C53F}.Debug|arm64.Build.0 = Debug|Any CPU
+		{55015F92-7D3E-4BE9-8849-7E310B17C53F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{55015F92-7D3E-4BE9-8849-7E310B17C53F}.Debug|x86.Build.0 = Debug|Any CPU
+		{55015F92-7D3E-4BE9-8849-7E310B17C53F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55015F92-7D3E-4BE9-8849-7E310B17C53F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55015F92-7D3E-4BE9-8849-7E310B17C53F}.Release|arm64.ActiveCfg = Release|Any CPU
+		{55015F92-7D3E-4BE9-8849-7E310B17C53F}.Release|arm64.Build.0 = Release|Any CPU
+		{55015F92-7D3E-4BE9-8849-7E310B17C53F}.Release|x86.ActiveCfg = Release|Any CPU
+		{55015F92-7D3E-4BE9-8849-7E310B17C53F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

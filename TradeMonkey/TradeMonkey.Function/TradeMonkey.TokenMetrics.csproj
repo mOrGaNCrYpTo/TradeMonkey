@@ -9,11 +9,6 @@
     <RootNamespace>TradeMonkey</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Function.Trigger\Timer\**" />
-    <EmbeddedResource Remove="Function.Trigger\Timer\**" />
-    <None Remove="Function.Trigger\Timer\**" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Kucoin.Net" Version="4.3.0" />
     <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
@@ -52,5 +47,8 @@
     </Using>
     <Using Include="System.Text.Json.Serialization" />
     <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Function.Trigger\NewFolder\" />
   </ItemGroup>
 </Project>

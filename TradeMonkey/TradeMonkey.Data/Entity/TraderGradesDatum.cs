@@ -5,31 +5,23 @@ using System.Collections.Generic;
 
 namespace TradeMonkey.Data.Entity;
 
-public partial class TradingIndicatorDatum
+public partial class TraderGradesDatum
 {
     public int Id { get; set; }
-
-    public double Close { get; set; }
 
     public string Date { get; set; }
 
     public int Epoch { get; set; }
 
-    public double? HoldingCumulativeRoi { get; set; }
-
-    public int LastSignal { get; set; }
-
     public string Name { get; set; }
 
-    public int Signal { get; set; }
-
-    public double? StrategyCummulativeRoi { get; set; }
+    public double QuantGrade { get; set; }
 
     public string Symbol { get; set; }
 
-    public int TokenId { get; set; }
+    public double TaGrade { get; set; }
 
-    public double Volume { get; set; }
+    public string TmTraderGrade { get; set; }
 
-    public virtual Tokens Token { get; set; }
+    public string TokenId { get; set; }
 }
