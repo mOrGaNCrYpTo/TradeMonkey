@@ -21,7 +21,7 @@ namespace TradeMonkey.DataCollector
         private readonly Uri BaseUri = new Uri("https://api.tokenmetrics.com/v1");
         private HttpStatusCode _statusCode = HttpStatusCode.OK;
 
-        public async Task UpsertTokensAsync()
+        public async Task UpsertTokensAsync(CancellationToken token = default)
         {
             try
             {
@@ -42,22 +42,32 @@ namespace TradeMonkey.DataCollector
                             var content = await response.Content.ReadAsStringAsync();
                             if (content != null)
                             {
-                                var result = JsonSerializer.Deserialize<TokenResponse>(content);
+                                JsonSerializerOptions jsonOptions = new JsonSerializerOptions
+                                {
+                                    PropertyNameCaseInsensitive = true
+                                };
+
+                                var result = JsonSerializer.Deserialize<TokenResponse>(content, jsonOptions);
 
                                 var options = new DbContextOptionsBuilder<TmDBContext>()
                                     .UseSqlServer(_connectionString)
                                     .Options;
-
-                                if (result.Data.Any())
-                                    using (var dbContext = new TmDBContext(options))
-                                    {
-                                        foreach (var token in result.Data)
+                                try
+                                {
+                                    if (result.Data.Any())
+                                        using (var dbContext = new TmDBContext(options))
                                         {
-                                            var t = token.Adapt<Tokens>();
-                                            dbContext.Tokens.Add(t);
-                                            dbContext.SaveChanges();
+                                            dbContext.BulkInsert(result.Data, options =>
+                                            {
+                                                options.InsertIfNotExists = true;
+                                                options.ColumnPrimaryKeyExpression = t => t.Token_Id;
+                                            });
                                         }
-                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw;
+                                }
                             }
                         }
                     }

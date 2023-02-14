@@ -2,26 +2,26 @@ using TradeMonkey.TokenMetrics.Domain.Services;
 
 namespace TradeMonkey.TokenMetrics.Trigger.Get
 {
-    public class Get_Trigger
+    public class GetGrades
     {
         private readonly ILogger _logger;
 
         [InjectService]
         public GetTokensSvc GetTokensSvc { get; set; }
 
-        public Get_Trigger(GetTokensSvc getTokensSvc) =>
+        public GetGrades(GetTokensSvc getTokensSvc) =>
             GetTokensSvc = getTokensSvc
                 ?? throw new ArgumentNullException(nameof(GetTokensSvc));
 
-        [Function(nameof(Get_Trigger))]
+        [Function(nameof(GetGrades))]
         public async Task<HttpResponseData> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "get-all_tokens")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "get-grades")] HttpRequestData req,
             FunctionContext executionContext,
-            string tokens,
+            string timeFrame,
             CancellationToken hostCancellationToken = default)
         {
             // validate
-            if (string.IsNullOrEmpty(tokens))
+            if (string.IsNullOrEmpty(timeFrame))
                 throw new Exception(FunctionEvents.TokenMetricsInvalidRequest);
 
             // create a linked token source

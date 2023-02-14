@@ -45,7 +45,7 @@ public partial class QuantmetricsT2datum
 
     public string Symbol { get; set; }
 
-    public int TokenId { get; set; }
+    public int Token_Id { get; set; }
 
     public double WorstDay { get; set; }
 

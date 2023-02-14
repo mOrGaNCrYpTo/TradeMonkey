@@ -15,7 +15,7 @@ namespace TradeMonkey.Data.Context.Configurations
             entity.HasNoKey();
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            entity.Property(e => e.TokenId)
+            entity.Property(e => e.Token_Id)
             .IsRequired()
             .HasMaxLength(50)
             .IsUnicode(false);

@@ -1,14 +1,9 @@
-﻿public class Token
-{
-    public string NAME { get; set; }
-    public string SYMBOL { get; set; }
-    public int TOKEN_ID { get; set; }
-}
+﻿using TradeMonkey.Data.Entity;
 
 public class TokenResponse
 {
-    public List<Token> data { get; set; }
-    public int length { get; set; }
-    public string message { get; set; }
-    public bool success { get; set; }
+    public List<Tokens> Data { get; set; }
+    public int Length { get; set; }
+    public string Message { get; set; }
+    public bool Success { get; set; }
 }

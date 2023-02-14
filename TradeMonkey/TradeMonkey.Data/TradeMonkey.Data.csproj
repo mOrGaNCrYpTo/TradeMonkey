@@ -19,11 +19,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Context\" />
-    <Folder Include="Entity\" />
+    <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="7.18.4" />
   </ItemGroup>
 
 </Project>

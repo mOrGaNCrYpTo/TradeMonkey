@@ -1,7 +1,7 @@
 ﻿namespace TradeMonkey.TokenMetrics.Domain.Services
 {
     [RegisterService]
-    public sealed class GetTokensSvc : BaseSvc
+    public sealed class GetTokensSvc : BaseHttpSvc
     {
         [InjectService]
         public ApiRepository ApiRepo { get; private set; }

@@ -1,7 +1,7 @@
-﻿namespace $rootnamespace$.$domain$.Function.Service
+﻿namespace TradeMonkey.Function.Domain.Services
 {
     public class BaseHttpSvc
-{
-    public Request Request { get; set; } = new();
-}
+    {
+        public Request Request { get; set; } = new();
+    }
 }

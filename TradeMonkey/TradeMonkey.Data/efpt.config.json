@@ -47,10 +47,6 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Token]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[Tokens]",
          "ObjectType": 0
       },
