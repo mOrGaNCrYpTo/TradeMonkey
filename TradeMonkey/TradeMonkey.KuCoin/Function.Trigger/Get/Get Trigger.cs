@@ -1,21 +1,21 @@
-using TradeMonkey.TokenMetrics.Domain.Services;
+using TradeMonkey.KuCoin.Domain.Services;
 
-namespace TradeMonkey.TokenMetrics.Trigger.Get
+namespace TradeMonkey.KuCoin.Trigger.Get
 {
-    public class GetGrades
+    public class GetHoldings
     {
         private readonly ILogger _logger;
 
         [InjectService]
-        public GetTokensSvc GetTokensSvc { get; set; }
+        public GetHoldingsSvc GetHoldingsSvc { get; set; }
 
-        public GetGrades(GetTokensSvc getTokensSvc) =>
-            GetTokensSvc = getTokensSvc
-                ?? throw new ArgumentNullException(nameof(GetTokensSvc));
+        public GetHoldings(GetHoldingsSvc getHoldingsSvc) =>
+            GetHoldingsSvc = getHoldingsSvc
+                ?? throw new ArgumentNullException(nameof(getHoldingsSvc));
 
-        [Function(nameof(GetGrades))]
+        [Function(nameof(GetHoldings))]
         public async Task<HttpResponseData> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "get-grades")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "get-holdings")] HttpRequestData req,
             FunctionContext executionContext,
             string timeFrame,
             CancellationToken hostCancellationToken = default)
@@ -32,7 +32,7 @@ namespace TradeMonkey.TokenMetrics.Trigger.Get
             token.ThrowIfCancellationRequested();
 
             // get logger from the context
-            var logger = executionContext.GetLogger(nameof(GetGrades));
+            var logger = executionContext.GetLogger(nameof(GetHoldings));
             logger.LogDebug(FunctionEvents.TokenMetricsRequestStarted);
 
             // create a response wrapper. Assume success unless we catch an exception
@@ -44,7 +44,7 @@ namespace TradeMonkey.TokenMetrics.Trigger.Get
 
                 // execute the request and get the response. always forward the cancellation token
                 // to the service
-                var response = await GetTokensSvc.ExecuteAsync(tokens, token);
+                var response = await Domain.Services.GetHoldingsSvc.ExecuteAsync(token);
 
                 await functionResponse.WriteAsJsonAsync(response);
             }

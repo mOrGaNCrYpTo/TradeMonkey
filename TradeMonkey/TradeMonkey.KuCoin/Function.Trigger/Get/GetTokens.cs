@@ -1,27 +1,27 @@
-using TradeMonkey.TokenMetrics.Domain.Services;
+using TradeMonkey.KuCoin.Domain.Services;
 
-namespace TradeMonkey.TokenMetrics.Trigger.Get
+namespace TradeMonkey.KuCoin.Trigger.Get
 {
-    public class GetGrades
+    public class GetTokens
     {
         private readonly ILogger _logger;
 
         [InjectService]
-        public GetTokensSvc GetTokensSvc { get; set; }
+        public GetAccounts GetTokensSvc { get; set; }
 
-        public GetGrades(GetTokensSvc getTokensSvc) =>
+        public GetTokens(GetAccounts getTokensSvc) =>
             GetTokensSvc = getTokensSvc
                 ?? throw new ArgumentNullException(nameof(GetTokensSvc));
 
-        [Function(nameof(GetGrades))]
+        [Function(nameof(GetTokens))]
         public async Task<HttpResponseData> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "get-grades")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "get-all_tokens")] HttpRequestData req,
             FunctionContext executionContext,
-            string timeFrame,
+            string tokens,
             CancellationToken hostCancellationToken = default)
         {
             // validate
-            if (string.IsNullOrEmpty(timeFrame))
+            if (string.IsNullOrEmpty(tokens))
                 throw new Exception(FunctionEvents.TokenMetricsInvalidRequest);
 
             // create a linked token source
@@ -32,7 +32,7 @@ namespace TradeMonkey.TokenMetrics.Trigger.Get
             token.ThrowIfCancellationRequested();
 
             // get logger from the context
-            var logger = executionContext.GetLogger(nameof(GetGrades));
+            var logger = executionContext.GetLogger(nameof(GetTokens));
             logger.LogDebug(FunctionEvents.TokenMetricsRequestStarted);
 
             // create a response wrapper. Assume success unless we catch an exception
