@@ -3,6 +3,7 @@ using Kucoin.Net.Enums;
 using Kucoin.Net.Objects.Models.Spot;
 using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.Objects;
+using System.Net.Quic;
 
 namespace TradeMonkey.KuCoin.Domain.Repository
 {
@@ -21,17 +22,44 @@ namespace TradeMonkey.KuCoin.Domain.Repository
                 ?? throw new ArgumentNullException(nameof(kucoinClient));
         }
 
-        public async Task<WebCallResult<IEnumerable<Account>> GetAccountsAsync(CancellationToken token)
+        // Get accounts and balances
+        public async Task<WebCallResult<IEnumerable<KucoinAccount>>> GetAccountsAsync(CancellationToken token)
         {
-            try
-            {
-                return await _kucoinClient.SpotApi.Account.GetAccountsAsync(null, AccountType.Trade, token);
-    }
+            return await _kucoinClient.SpotApi.Account.GetAccountsAsync(null, null, token);
+        }
 
-            catch (Exception ex)
-            {
-                throw new Exception($"GetCorrelationDataAsync returned {_statusCode} with error: {ex.Message}");
-}
+        // Getting the order book of a symbol
+        public async Task<WebCallResult<IEnumerable<KucoinAsset>>> GetOrderBookAsync(CancellationToken token)
+        {
+            return await _kucoinClient.SpotApi.ExchangeData.GetAssetsAsync(token);
+        }
+
+        // Getting info on all symbols
+        public async Task<WebCallResult<IEnumerable<KucoinSymbol>>> GetSymbolsAsync(CancellationToken token)
+        {
+            return await _kucoinClient.SpotApi.ExchangeData.GetSymbolsAsync(null, token);
+        }
+
+        // Getting assets
+        public async Task<WebCallResult<KucoinTicks>> GetTickersAsync(CancellationToken token)
+        {
+            return await _kucoinClient.SpotApi.ExchangeData.GetTickersAsync(token);
+        }
+
+        // Place a limit order
+        public async Task<WebCallResult<KucoinNewOrder>> PostLimitOrder(string symbol,
+            int quantity, decimal limitPrice, CancellationToken token)
+        {
+            return await
+                _kucoinClient.SpotApi.Trading.PlaceOrderAsync(
+                    symbol,
+                    OrderSide.Buy,
+                    NewOrderType.Limit,
+                    quantity: quantity,
+                    price: limitPrice,
+                    timeInForce: TimeInForce.GoodTillCanceled,
+                    cancelAfter: null,
+                    cancell token);
         }
     }
 }

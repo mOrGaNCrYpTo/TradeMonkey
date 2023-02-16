@@ -7,9 +7,9 @@ namespace TradeMonkey.KuCoin.Trigger.Get
         private readonly ILogger _logger;
 
         [InjectService]
-        public GetHoldingsSvc GetHoldingsSvc { get; set; }
+        public GetAccountsSvc GetHoldingsSvc { get; set; }
 
-        public GetHoldings(GetHoldingsSvc getHoldingsSvc) =>
+        public GetHoldings(GetAccountsSvc getHoldingsSvc) =>
             GetHoldingsSvc = getHoldingsSvc
                 ?? throw new ArgumentNullException(nameof(getHoldingsSvc));
 
@@ -44,7 +44,7 @@ namespace TradeMonkey.KuCoin.Trigger.Get
 
                 // execute the request and get the response. always forward the cancellation token
                 // to the service
-                var response = await Domain.Services.GetHoldingsSvc.ExecuteAsync(token);
+                var response = await Domain.Services.GetAccountsSvc.ExecuteAsync(token);
 
                 await functionResponse.WriteAsJsonAsync(response);
             }

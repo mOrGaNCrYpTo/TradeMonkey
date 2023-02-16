@@ -7,9 +7,9 @@ namespace TradeMonkey.KuCoin.Trigger.Get
         private readonly ILogger _logger;
 
         [InjectService]
-        public GetAccounts GetTokensSvc { get; set; }
+        public GetAccountsSvc GetTokensSvc { get; set; }
 
-        public GetTokens(GetAccounts getTokensSvc) =>
+        public GetTokens(GetAccountsSvc getTokensSvc) =>
             GetTokensSvc = getTokensSvc
                 ?? throw new ArgumentNullException(nameof(GetTokensSvc));
 
