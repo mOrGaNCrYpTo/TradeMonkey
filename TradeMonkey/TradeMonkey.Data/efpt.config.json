@@ -4,7 +4,7 @@
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
-   "IncludeConnectionString": false,
+   "IncludeConnectionString": true,
    "ModelNamespace": null,
    "OutputContextPath": "Context",
    "OutputPath": "Entity",
@@ -27,6 +27,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[KucoinTickerHistories]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[PricePredictionDatum]",
          "ObjectType": 0
       },
@@ -40,6 +44,10 @@
       },
       {
          "Name": "[dbo].[ResistanceSupportDatum]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ScenarioAnalysisDatum]",
          "ObjectType": 0
       },
       {
@@ -62,7 +70,7 @@
    "UiHint": "HP\\MFSQL.TradeMonkey",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
-   "UseDatabaseNames": false,
+   "UseDatabaseNames": true,
    "UseDateOnlyTimeOnly": false,
    "UseDbContextSplitting": true,
    "UseFluentApiOnly": true,

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace TradeMonkey.Data.Entity;
 
-public partial class QuantmetricsT1datum
+public partial class QuantmetricsT1Datum
 {
     public int Id { get; set; }
 
@@ -33,7 +33,7 @@ public partial class QuantmetricsT1datum
 
     public string Symbol { get; set; }
 
-    public int Token_Id { get; set; }
+    public int TokenId { get; set; }
 
     public double Volatility { get; set; }
 

@@ -1,3 +1,7 @@
+using Kucoin.Net;
+using Kucoin.Net.Objects;
+using Kucoin.Net.Enums;
+
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
 
@@ -7,12 +11,22 @@ var host = new HostBuilder()
         // them to the ServicesCollection for dependency injection
         services.ScanCurrentAssembly();
 
+        var credentials = new KucoinApiCredentials("63f251c80c3f5700017762ff", "c7b1a1f8-eac8-40bf-9461-56cc24deb1a4", "89t@UzifA$Hb6p5");
+
+        var socketOptions = new KucoinSocketApiClientOptions
+        {
+            ApiCredentials = credentials,
+            BaseAddress = KucoinClientOptions.Default.SpotApiOptions.BaseAddress
+        };
+
+        services.AddKucoin();
+
         // avoid nested serialization
         services.Configure<JsonSerializerOptions>(options =>
         {
             options.ReferenceHandler = ReferenceHandler.IgnoreCycles; //doesn't add $id to json
             options.PropertyNameCaseInsensitive = true;
-            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            //options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         });
 
         // DbContext Pool

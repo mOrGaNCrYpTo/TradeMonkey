@@ -14,9 +14,7 @@ namespace TradeMonkey.Data.Context.Configurations
         {
             entity.HasKey(e => e.Token_Id);
 
-            entity.Property(e => e.Token_Id)
-            .ValueGeneratedNever()
-            .HasColumnName("Token_Id");
+            entity.Property(e => e.Token_Id).ValueGeneratedNever();
             entity.Property(e => e.Name)
             .IsRequired()
             .HasMaxLength(50)

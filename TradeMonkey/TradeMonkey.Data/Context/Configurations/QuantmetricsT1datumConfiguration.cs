@@ -8,12 +8,10 @@ using TradeMonkey.Data.Entity;
 
 namespace TradeMonkey.Data.Context.Configurations
 {
-    public partial class QuantmetricsT1datumConfiguration : IEntityTypeConfiguration<QuantmetricsT1datum>
+    public partial class QuantmetricsT1DatumConfiguration : IEntityTypeConfiguration<QuantmetricsT1Datum>
     {
-        public void Configure(EntityTypeBuilder<QuantmetricsT1datum> entity)
+        public void Configure(EntityTypeBuilder<QuantmetricsT1Datum> entity)
         {
-            entity.ToTable("QuantmetricsT1Datum");
-
             entity.Property(e => e.Date)
             .IsRequired()
             .HasMaxLength(255)
@@ -27,14 +25,14 @@ namespace TradeMonkey.Data.Context.Configurations
             .HasMaxLength(255)
             .IsUnicode(false);
 
-            entity.HasOne(d => d.Token).WithMany(p => p.QuantmetricsT1datum)
-            .HasForeignKey(d => d.Token_Id)
+            entity.HasOne(d => d.Token).WithMany(p => p.QuantmetricsT1Datum)
+            .HasForeignKey(d => d.TokenId)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_QuantmetricsT1Datum_Tokens");
 
             OnConfigurePartial(entity);
         }
 
-        partial void OnConfigurePartial(EntityTypeBuilder<QuantmetricsT1datum> entity);
+        partial void OnConfigurePartial(EntityTypeBuilder<QuantmetricsT1Datum> entity);
     }
 }

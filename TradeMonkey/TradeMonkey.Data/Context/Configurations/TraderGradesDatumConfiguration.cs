@@ -28,7 +28,7 @@ namespace TradeMonkey.Data.Context.Configurations
             .IsRequired()
             .HasMaxLength(50)
             .IsUnicode(false);
-            entity.Property(e => e.Token_Id)
+            entity.Property(e => e.TokenId)
             .IsRequired()
             .HasMaxLength(50)
             .IsUnicode(false);

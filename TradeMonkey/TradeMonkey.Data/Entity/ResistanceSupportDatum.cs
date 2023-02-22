@@ -13,5 +13,5 @@ public partial class ResistanceSupportDatum
 
     public int Level { get; set; }
 
-    public string Token_Id { get; set; }
+    public string TokenId { get; set; }
 }

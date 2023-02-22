@@ -12,7 +12,6 @@ namespace TradeMonkey.Data.Context.Configurations
     {
         public void Configure(EntityTypeBuilder<IndiciesDatum> entity)
         {
-            entity.Property(e => e.BlWeight).HasColumnName("BL_Weight");
             entity.Property(e => e.Date).HasColumnType("date");
 
             OnConfigurePartial(entity);

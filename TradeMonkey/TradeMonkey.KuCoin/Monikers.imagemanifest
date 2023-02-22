@@ -3,7 +3,7 @@
 <!-- Version: 14.0.50929.2 -->
 <ImageManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/VisualStudio/ImageManifestSchema/2014">
   <Symbols>
-    <String Name="Resources" Value="/TradeMonkey;Component/../TradeMonkey.Function" />
+    <String Name="Resources" Value="/TradeMonkey.KuCoin;Component/../TradeMonkey.KuCoin" />
     <Guid Name="MonikersGuid" Value="{a63432cc-d534-45e0-80be-c104ad8649ec}" />
   </Symbols>
   <Images />

@@ -27,7 +27,7 @@ public partial class TradingIndicatorDatum
 
     public string Symbol { get; set; }
 
-    public int Token_Id { get; set; }
+    public int TokenId { get; set; }
 
     public double Volume { get; set; }
 

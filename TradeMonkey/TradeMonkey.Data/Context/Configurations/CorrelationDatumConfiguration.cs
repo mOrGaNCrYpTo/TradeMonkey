@@ -13,11 +13,9 @@ namespace TradeMonkey.Data.Context.Configurations
         public void Configure(EntityTypeBuilder<CorrelationDatum> entity)
         {
             entity.Property(e => e.Date).HasColumnType("date");
-            entity.Property(e => e.Token2Name)
+            entity.Property(e => e.Token_2_Name)
             .HasMaxLength(20)
-            .IsUnicode(false)
-            .HasColumnName("Token_2_Name");
-            entity.Property(e => e.Token2Symbol).HasColumnName("Token_2_Symbol");
+            .IsUnicode(false);
 
             OnConfigurePartial(entity);
         }

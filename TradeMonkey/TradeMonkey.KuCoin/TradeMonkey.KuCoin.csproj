@@ -47,7 +47,4 @@
     <Using Include="System.Text.Json.Serialization" />
     <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Function.Trigger\NewFolder\" />
-  </ItemGroup>
 </Project>

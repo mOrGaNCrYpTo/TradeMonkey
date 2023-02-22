@@ -12,7 +12,7 @@ namespace TradeMonkey.Data.Context.Configurations
     {
         public void Configure(EntityTypeBuilder<SentimentsDatum> entity)
         {
-            entity.HasKey(e => new { e.Epoch, e.Token_Id }).HasName("PK__Sentimen__BA902D88A91C6C0B");
+            entity.HasKey(e => new { e.Epoch, e.TokenId }).HasName("PK__Sentimen__BA902D88A91C6C0B");
 
             entity.Property(e => e.Date)
             .IsRequired()
@@ -38,7 +38,7 @@ namespace TradeMonkey.Data.Context.Configurations
             .IsUnicode(false);
 
             entity.HasOne(d => d.Token).WithMany(p => p.SentimentsDatum)
-            .HasForeignKey(d => d.Token_Id)
+            .HasForeignKey(d => d.TokenId)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_SentimentsDatum_Tokens");
 

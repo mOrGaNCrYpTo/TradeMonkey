@@ -13,3 +13,15 @@ global using TradeMonkey.KuCoin.Domain.Value.Constants;
 global using TradeMonkey.KuCoin.Domain.Value.Request;
 global using TradeMonkey.KuCoin.Domain.Value.Response;
 global using TradeMonkey.KuCoin.Function.Domain.Services;
+
+global using System.Net.WebSockets;
+
+global using Kucoin.Net.Clients;
+global using Kucoin.Net.Objects.Models.Spot;
+
+//global using Kucoin.Net.Objects.Spot;
+
+global using Microsoft.Extensions.Primitives;
+
+global using Newtonsoft.Json;
+global using Newtonsoft.Json.Linq;

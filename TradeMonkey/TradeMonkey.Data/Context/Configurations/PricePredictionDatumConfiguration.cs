@@ -22,7 +22,7 @@ namespace TradeMonkey.Data.Context.Configurations
             .IsUnicode(false);
 
             entity.HasOne(d => d.Token).WithMany(p => p.PricePredictionDatum)
-            .HasForeignKey(d => d.Token_Id)
+            .HasForeignKey(d => d.TokenId)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_PricePredictionDatum_Tokens");
 

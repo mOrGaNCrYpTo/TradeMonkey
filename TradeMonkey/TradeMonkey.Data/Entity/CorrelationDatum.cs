@@ -13,9 +13,9 @@ public partial class CorrelationDatum
 
     public DateTime Date { get; set; }
 
-    public string Token2Name { get; set; }
+    public string Token_2_Name { get; set; }
 
-    public int? Token2Symbol { get; set; }
+    public int? Token_2_Symbol { get; set; }
 
     public long? Epoch { get; set; }
 }

@@ -25,7 +25,7 @@ public partial class SentimentsDatum
 
     public string Symbol { get; set; }
 
-    public int Token_Id { get; set; }
+    public int TokenId { get; set; }
 
     public virtual Tokens Token { get; set; }
 }

@@ -9,7 +9,7 @@ public partial class IndiciesDatum
 {
     public int Id { get; set; }
 
-    public int BlWeight { get; set; }
+    public int BL_Weight { get; set; }
 
     public DateTime? Date { get; set; }
 }

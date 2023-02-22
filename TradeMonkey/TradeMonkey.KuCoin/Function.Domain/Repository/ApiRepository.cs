@@ -58,8 +58,36 @@ namespace TradeMonkey.KuCoin.Domain.Repository
                     quantity: quantity,
                     price: limitPrice,
                     timeInForce: TimeInForce.GoodTillCanceled,
-                    cancelAfter: null,
-                    cancell token);
+                    cancelAfter: null);
+        }
+
+        public async Task<WebCallResult<KucoinNewOrder>> PostMarketOrderAsync(string symbol, OrderSide orderSide,
+           int quantity, CancellationToken token)
+        {
+            return await
+                _kucoinClient.SpotApi.Trading.PlaceOrderAsync(
+                    symbol,
+                    orderSide,
+                    NewOrderType.Market,
+                    quoteQuantity: quantity);
+        }
+
+        public async Task<WebCallResult<KucoinNewOrder>> PostStopOrderAsync(string symbol,
+           int quantity, TradeType tradeType, decimal stopPrice, TimeInForce timeInForce, TimeSpan cancelAfter,
+           CancellationToken token)
+        {
+            return await
+                _kucoinClient.SpotApi.Trading.PlaceStopOrderAsync(
+                    symbol,
+                    OrderSide.Buy,
+                    NewOrderType.Limit,
+                    StopCondition.Loss,
+                    quantity: quantity,
+                    tradeType: tradeType,
+                    stopPrice: stopPrice,
+                    timeInForce: timeInForce,
+                    cancelAfter: cancelAfter
+                    );
         }
     }
 }
