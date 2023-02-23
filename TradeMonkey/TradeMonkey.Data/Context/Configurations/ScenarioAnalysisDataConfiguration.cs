@@ -8,11 +8,11 @@ using TradeMonkey.Data.Entity;
 
 namespace TradeMonkey.Data.Context.Configurations
 {
-    public partial class TradingIndicatorDatumConfiguration : IEntityTypeConfiguration<TradingIndicatorDatum>
+    public partial class ScenarioAnalysisDataConfiguration : IEntityTypeConfiguration<ScenarioAnalysisData>
     {
-        public void Configure(EntityTypeBuilder<TradingIndicatorDatum> entity)
+        public void Configure(EntityTypeBuilder<ScenarioAnalysisData> entity)
         {
-            entity.HasKey(e => new { e.Epoch, e.TokenId, e.Id }).HasName("PK__tmp_ms_x__BCA239641003802F");
+            entity.HasKey(e => new { e.Epoch, e.TokenId, e.Id }).HasName("PK__tmp_ms_x__BCA23964E7351B1D");
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.Date)
@@ -31,6 +31,6 @@ namespace TradeMonkey.Data.Context.Configurations
             OnConfigurePartial(entity);
         }
 
-        partial void OnConfigurePartial(EntityTypeBuilder<TradingIndicatorDatum> entity);
+        partial void OnConfigurePartial(EntityTypeBuilder<ScenarioAnalysisData> entity);
     }
 }

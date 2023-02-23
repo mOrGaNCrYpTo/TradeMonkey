@@ -1,10 +1,10 @@
 ﻿namespace TradeMonkey.Data.Context.Configurations
 {
-    public partial class TokenConfiguration : IEntityTypeConfiguration<Tokens>
+    public partial class TokenConfiguration : IEntityTypeConfiguration<TokenMetricsTokens>
     {
-        partial void OnConfigurePartial(EntityTypeBuilder<Tokens> entity);
+        partial void OnConfigurePartial(EntityTypeBuilder<TokenMetricsTokens> entity);
 
-        public void Configure(EntityTypeBuilder<Tokens> entity)
+        public void Configure(EntityTypeBuilder<TokenMetricsTokens> entity)
         {
             entity.HasKey(e => e.Token_Id).HasName("PK__Token__658FEEEACA5CFF1A");
 

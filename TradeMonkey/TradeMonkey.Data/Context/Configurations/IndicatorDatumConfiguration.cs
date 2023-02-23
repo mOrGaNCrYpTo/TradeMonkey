@@ -8,20 +8,17 @@ using TradeMonkey.Data.Entity;
 
 namespace TradeMonkey.Data.Context.Configurations
 {
-    public partial class ResistanceSupportDatumConfiguration : IEntityTypeConfiguration<ResistanceSupportDatum>
+    public partial class IndicatorDatumConfiguration : IEntityTypeConfiguration<IndicatorDatum>
     {
-        public void Configure(EntityTypeBuilder<ResistanceSupportDatum> entity)
+        public void Configure(EntityTypeBuilder<IndicatorDatum> entity)
         {
-            entity.HasKey(e => new { e.Epoch, e.TokenId, e.Id }).HasName("PK__tmp_ms_x__BCA2396434F1159F");
+            entity.HasKey(e => new { e.Epoch, e.Id }).HasName("PK__tmp_ms_x__6FE99DA692145329");
 
-            entity.Property(e => e.TokenId)
-            .HasMaxLength(50)
-            .IsUnicode(false);
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
             OnConfigurePartial(entity);
         }
 
-        partial void OnConfigurePartial(EntityTypeBuilder<ResistanceSupportDatum> entity);
+        partial void OnConfigurePartial(EntityTypeBuilder<IndicatorDatum> entity);
     }
 }

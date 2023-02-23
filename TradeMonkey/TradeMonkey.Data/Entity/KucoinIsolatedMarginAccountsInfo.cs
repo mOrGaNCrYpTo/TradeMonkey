@@ -5,13 +5,9 @@ using System.Collections.Generic;
 
 namespace TradeMonkey.Data.Entity;
 
-public partial class ResistanceSupportDatum
+public partial class KucoinIsolatedMarginAccountsInfo
 {
-    public int Id { get; set; }
+    public decimal TotalConversionBalance { get; set; }
 
-    public int Epoch { get; set; }
-
-    public int Level { get; set; }
-
-    public string TokenId { get; set; }
+    public decimal LiabilityConversionBalance { get; set; }
 }

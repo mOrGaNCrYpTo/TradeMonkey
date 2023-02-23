@@ -12,6 +12,9 @@ namespace TradeMonkey.Data.Context.Configurations
     {
         public void Configure(EntityTypeBuilder<QuantmetricsT1Datum> entity)
         {
+            entity.HasKey(e => e.Epoch).HasName("PK__Quantmet__0CC8D366723652D6");
+
+            entity.Property(e => e.Epoch).ValueGeneratedNever();
             entity.Property(e => e.Date)
             .IsRequired()
             .HasMaxLength(255)
@@ -24,11 +27,6 @@ namespace TradeMonkey.Data.Context.Configurations
             .IsRequired()
             .HasMaxLength(255)
             .IsUnicode(false);
-
-            entity.HasOne(d => d.Token).WithMany(p => p.QuantmetricsT1Datum)
-            .HasForeignKey(d => d.TokenId)
-            .OnDelete(DeleteBehavior.ClientSetNull)
-            .HasConstraintName("FK_QuantmetricsT1Datum_Tokens");
 
             OnConfigurePartial(entity);
         }

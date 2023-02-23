@@ -30,6 +30,4 @@ public partial class TradingIndicatorDatum
     public int TokenId { get; set; }
 
     public double Volume { get; set; }
-
-    public virtual Tokens Token { get; set; }
 }

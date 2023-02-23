@@ -5,27 +5,25 @@ using System.Collections.Generic;
 
 namespace TradeMonkey.Data.Entity;
 
-public partial class SentimentsDatum
+public partial class ScenarioAnalysisData
 {
     public int Id { get; set; }
 
+    public double CurrentDominance { get; set; }
+
     public string Date { get; set; }
+
+    public double Dominance { get; set; }
 
     public int Epoch { get; set; }
 
     public string Name { get; set; }
 
-    public string PolarityReddit { get; set; }
-
-    public double PolarityIndex { get; set; }
-
-    public string PolarityTelegram { get; set; }
-
-    public double PolarityTwitter { get; set; }
-
-    public string SentimentIndex { get; set; }
+    public double Prediction { get; set; }
 
     public string Symbol { get; set; }
 
     public int TokenId { get; set; }
+
+    public double TotalMarketCap { get; set; }
 }

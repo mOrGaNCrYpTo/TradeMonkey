@@ -12,6 +12,12 @@ namespace TradeMonkey.Data.Context.Configurations
     {
         public void Configure(EntityTypeBuilder<TraderGradesDatum> entity)
         {
+            entity.HasKey(e => new { e.Epoch, e.TokenId, e.Id }).HasName("PK__tmp_ms_x__BCA23964E82BF9C4");
+
+            entity.Property(e => e.TokenId)
+            .HasMaxLength(50)
+            .IsUnicode(false);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.Date)
             .IsRequired()
             .HasMaxLength(50)
@@ -25,10 +31,6 @@ namespace TradeMonkey.Data.Context.Configurations
             .HasMaxLength(50)
             .IsUnicode(false);
             entity.Property(e => e.TmTraderGrade)
-            .IsRequired()
-            .HasMaxLength(50)
-            .IsUnicode(false);
-            entity.Property(e => e.TokenId)
             .IsRequired()
             .HasMaxLength(50)
             .IsUnicode(false);

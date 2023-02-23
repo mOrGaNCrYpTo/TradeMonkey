@@ -4,36 +4,37 @@
     public class BreakoutStrategy
     {
         // Define some parameters for the breakout strategy
-        static readonly int periodLength = 20;
+        private static readonly int periodLength = 20;
 
-        static readonly decimal breakoutThreshold = 1.05m;
+        private static readonly decimal breakoutThreshold = 1.05m;
 
-        // Keep track of the highest high and lowest low over the last n periods
-        static List<decimal> highPrices = new List<decimal>();
+        private readonly TmDBContext _dbCtx;
 
-        static List<decimal> lowPrices = new List<decimal>();
-        public int FastMA { get; set; } = 50;
-        public int SlowMa { get; set; } = 200;
-
-        public static async Task ProcessDataAsync(KucoinStreamTick tick, CancellationToken ct = default)
+        public BreakoutStrategy(TmDBContext dBContext)
         {
-            // Add the current price to the high/low price lists, if it's not null
-            if (tick.LastPrice.HasValue)
+            _dbCtx = dBContext;
+        }
+
+        public async Task ProcessDataAsync(KucoinStreamTick streamtick, CancellationToken ct)
+        {
+            // Add the current price to the database
+            if (streamtick.LastPrice.HasValue)
             {
-                highPrices.Add(tick.LastPrice.Value);
-                lowPrices.Add(tick.LastPrice.Value);
+                // Retrieve the last n periods of data from the database
+                var prices = await _dbCtx.KucoinTicks
+                    .Where(t => t.Symbol == streamtick.Symbol)
+                    .OrderByDescending(p => p.Id)
+                    .Take(periodLength)
+                    .ToListAsync();
 
-                // Trim the lists to keep only the last n periods
-                if (highPrices.Count > periodLength) highPrices.RemoveAt(0);
-                if (lowPrices.Count > periodLength) lowPrices.RemoveAt(0);
-
-                // Determine the highest high and lowest low over the last n periods
-                var highestHigh = highPrices.Max();
-                var lowestLow = lowPrices.Min();
+                // Extract the high and low prices from the retrieved data
+                var highestHigh = prices.Select(p => p.BestAskPrice).Max();
+                var lowestLow = prices.Select(p => p.BestAskPrice).Min();
 
                 // Check for a breakout opportunity
-                if (tick.LastPrice > highestHigh * breakoutThreshold)
+                if (streamtick.LastPrice > highestHigh * breakoutThreshold)
                 {
+                    // Trigger a buy order ...
                 }
                 else if (tick.LastPrice < lowestLow * (2 - breakoutThreshold))
                 {

@@ -15,19 +15,27 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[CorrelationDatum]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[IndicatorDatum]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[IndiciesDatum]",
+         "Name": "[dbo].[KucoinAccounts]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[KucoinTickerHistories]",
+         "Name": "[dbo].[KucoinIsolatedMarginAccounts]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[KucoinIsolatedMarginAccountsInfo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[KucoinKlines]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[KucoinTicks]",
          "ObjectType": 0
       },
       {
@@ -47,7 +55,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[ScenarioAnalysisDatum]",
+         "Name": "[dbo].[ScenarioAnalysisData]",
          "ObjectType": 0
       },
       {
@@ -55,7 +63,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Tokens]",
+         "Name": "[dbo].[TokenMetricsTokens]",
          "ObjectType": 0
       },
       {
@@ -67,7 +75,7 @@
          "ObjectType": 0
       }
    ],
-   "UiHint": "HP\\MFSQL.TradeMonkey",
+   "UiHint": "OTRROS-2WV24B3\\CMORGAN.TradeMonkey",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": true,

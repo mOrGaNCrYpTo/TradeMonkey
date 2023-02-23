@@ -12,8 +12,9 @@ namespace TradeMonkey.Data.Context.Configurations
     {
         public void Configure(EntityTypeBuilder<SentimentsDatum> entity)
         {
-            entity.HasKey(e => new { e.Epoch, e.TokenId }).HasName("PK__Sentimen__BA902D88A91C6C0B");
+            entity.HasKey(e => new { e.Epoch, e.TokenId, e.Id }).HasName("PK__tmp_ms_x__BCA239643402F80B");
 
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.Date)
             .IsRequired()
             .HasMaxLength(50)
@@ -36,11 +37,6 @@ namespace TradeMonkey.Data.Context.Configurations
             .IsRequired()
             .HasMaxLength(50)
             .IsUnicode(false);
-
-            entity.HasOne(d => d.Token).WithMany(p => p.SentimentsDatum)
-            .HasForeignKey(d => d.TokenId)
-            .OnDelete(DeleteBehavior.ClientSetNull)
-            .HasConstraintName("FK_SentimentsDatum_Tokens");
 
             OnConfigurePartial(entity);
         }

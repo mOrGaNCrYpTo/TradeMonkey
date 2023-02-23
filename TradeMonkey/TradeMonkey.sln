@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeMonkey.TokenMetrics", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeMonkey.Data", "TradeMonkey.Data\TradeMonkey.Data.csproj", "{9C44E1DA-1F75-4B68-8CEC-A8363BE992FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeMonkey.DataCollector", "TradeMonkey.DataCollector\TradeMonkey.DataCollector.csproj", "{55015F92-7D3E-4BE9-8849-7E310B17C53F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeMonkey.Bot", "TradeMonkey.DataCollector\TradeMonkey.Bot.csproj", "{55015F92-7D3E-4BE9-8849-7E310B17C53F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeMonkey.KuCoin", "TradeMonkey.KuCoin\TradeMonkey.KuCoin.csproj", "{B0E45DBF-2741-46E7-B0A2-C51E50AC261D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeMonkey.KuCoin", "TradeMonkey.KuCoin\TradeMonkey.KuCoin.csproj", "{B0E45DBF-2741-46E7-B0A2-C51E50AC261D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

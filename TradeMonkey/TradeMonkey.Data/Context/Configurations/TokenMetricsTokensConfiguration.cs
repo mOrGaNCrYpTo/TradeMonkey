@@ -8,17 +8,13 @@ using TradeMonkey.Data.Entity;
 
 namespace TradeMonkey.Data.Context.Configurations
 {
-    public partial class TradingIndicatorDatumConfiguration : IEntityTypeConfiguration<TradingIndicatorDatum>
+    public partial class TokenMetricsTokensConfiguration : IEntityTypeConfiguration<TokenMetricsTokens>
     {
-        public void Configure(EntityTypeBuilder<TradingIndicatorDatum> entity)
+        public void Configure(EntityTypeBuilder<TokenMetricsTokens> entity)
         {
-            entity.HasKey(e => new { e.Epoch, e.TokenId, e.Id }).HasName("PK__tmp_ms_x__BCA239641003802F");
+            entity.HasKey(e => new { e.TokenId, e.Id }).HasName("PK__tmp_ms_x__06AEA02A6F003C80");
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            entity.Property(e => e.Date)
-            .IsRequired()
-            .HasMaxLength(50)
-            .IsUnicode(false);
             entity.Property(e => e.Name)
             .IsRequired()
             .HasMaxLength(50)
@@ -31,6 +27,6 @@ namespace TradeMonkey.Data.Context.Configurations
             OnConfigurePartial(entity);
         }
 
-        partial void OnConfigurePartial(EntityTypeBuilder<TradingIndicatorDatum> entity);
+        partial void OnConfigurePartial(EntityTypeBuilder<TokenMetricsTokens> entity);
     }
 }

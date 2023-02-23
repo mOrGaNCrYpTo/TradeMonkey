@@ -50,6 +50,4 @@ public partial class QuantmetricsT2Datum
     public double WorstDay { get; set; }
 
     public double WorstMonth { get; set; }
-
-    public virtual Tokens Token { get; set; }
 }

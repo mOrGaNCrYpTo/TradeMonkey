@@ -6,6 +6,10 @@ namespace TradeMonkey.Data.Entity
 {
     public class KucoinTick
     {
+        public int Id { get; set; }
+
+        public string Symbol { get; set; } = string.Empty;
+
         /// <summary>
         /// The sequence of the tick
         /// </summary>

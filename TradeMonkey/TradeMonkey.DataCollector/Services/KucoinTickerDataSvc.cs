@@ -1,4 +1,4 @@
-﻿using TradeMonkey.Data.Context;
+﻿using Mapster;
 
 namespace TradeMonkey.DataCollector.Helpers
 {
@@ -16,15 +16,15 @@ namespace TradeMonkey.DataCollector.Helpers
             ApiRepository = apiRepository;
         }
 
-        public async Task FetchAndSaveTickerData(CancellationToken token)
+        public async Task ProcessTick(KucoinStreamTick streamtick, CancellationToken token)
         {
-            var tickers = await ApiRepository.GetTickersAsync(token);
-            var x = tickers.Data;
-            var allTicks = x.Data;
+            var tick = streamtick.Adapt<Data.Entity.KucoinTick>();
 
-            foreach (KucoinAllTick ticker in allTicks)
+            await _dbContext.KucoinTicks.AddAsync(tick);
+
+            foreach (KucoinTick ticker in allTicks)
             {
-                var tickerData = new KucoinAllTick
+                var tickerData = new KucoinTick
                 {
                     Symbol = ticker.Symbol,
                     SymbolName = ticker.SymbolName,
@@ -44,7 +44,7 @@ namespace TradeMonkey.DataCollector.Helpers
                     MakerFeeRate = ticker.MakerFeeRate,
                 };
 
-                _dbContext.KucoinTickerHistories.Add(tickerData);
+                _dbContext.KucoinTicks.Add(tickerData);
             }
             await _dbContext.SaveChangesAsync();
         }

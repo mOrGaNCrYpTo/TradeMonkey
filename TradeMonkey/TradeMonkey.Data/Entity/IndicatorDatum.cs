@@ -7,8 +7,6 @@ namespace TradeMonkey.Data.Entity;
 
 public partial class IndicatorDatum
 {
-    public int Id { get; set; }
-
     public int Epoch { get; set; }
 
     public int LastTmGradeSignal { get; set; }
@@ -18,4 +16,6 @@ public partial class IndicatorDatum
     public int TmGradeSignal { get; set; }
 
     public double TotalCryptoMcap { get; set; }
+
+    public int Id { get; set; }
 }

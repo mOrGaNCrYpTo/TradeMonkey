@@ -6,6 +6,5 @@
 
     public class TradingIndicator : Base
     {
-        public TradingIndicatorDatum[] Data { get; set; }
     }
 }

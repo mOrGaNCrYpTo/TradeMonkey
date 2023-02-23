@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace TradeMonkey.Data.Entity;
 
-public partial class ResistanceSupportDatum
+public partial class TokenMetricsTokens
 {
     public int Id { get; set; }
 
-    public int Epoch { get; set; }
+    public string Name { get; set; }
 
-    public int Level { get; set; }
+    public string Symbol { get; set; }
 
-    public string TokenId { get; set; }
+    public int TokenId { get; set; }
 }

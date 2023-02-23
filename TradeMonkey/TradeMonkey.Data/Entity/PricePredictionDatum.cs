@@ -23,9 +23,7 @@ public partial class PricePredictionDatum
 
     public string Symbol { get; set; }
 
-    public int TokenId { get; set; }
+    public string TokenId { get; set; }
 
     public double Volume { get; set; }
-
-    public virtual Tokens Token { get; set; }
 }

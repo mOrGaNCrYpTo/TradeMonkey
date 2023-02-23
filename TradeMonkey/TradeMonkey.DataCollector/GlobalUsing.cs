@@ -1,5 +1,4 @@
-﻿global using System.Globalization;
-global using System.Linq;
+﻿global using System.Linq;
 global using System.Text.Json;
 
 global using CryptoExchange.Net.Logging;
@@ -10,6 +9,15 @@ global using Kucoin.Net.Objects;
 global using Kucoin.Net.Objects.Models.Spot.Socket;
 
 global using Microsoft.Extensions.Logging;
+
+global using Kucoin.Net;
+
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.DependencyInjection;
+
+global using Quickwire;
+
+global using TradeMonkey.Data.Context;
 
 global using Quickwire.Attributes;
 

@@ -7,8 +7,6 @@ namespace TradeMonkey.Data.Entity;
 
 public partial class QuantmetricsT1Datum
 {
-    public int Id { get; set; }
-
     public double Beta { get; set; }
 
     public double Cagr { get; set; }
@@ -36,6 +34,4 @@ public partial class QuantmetricsT1Datum
     public int TokenId { get; set; }
 
     public double Volatility { get; set; }
-
-    public virtual Tokens Token { get; set; }
 }
