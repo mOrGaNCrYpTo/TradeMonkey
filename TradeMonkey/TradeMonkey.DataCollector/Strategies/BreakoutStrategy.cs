@@ -1,4 +1,6 @@
-﻿namespace TradeMonkey.DataCollector.Strategies
+﻿using Kucoin.Net.Clients.SpotApi;
+
+namespace TradeMonkey.DataCollector.Strategies
 {
     [RegisterService]
     public class BreakoutStrategy
@@ -10,9 +12,12 @@
 
         private readonly TmDBContext _dbCtx;
 
-        public BreakoutStrategy(TmDBContext dBContext)
+        private readonly KucoinClientSpotApiTrading _kucoinClient;
+
+        public BreakoutStrategy(TmDBContext dBContext, KucoinClientSpotApiTrading kucoinClient)
         {
             _dbCtx = dBContext;
+            _kucoinClient = kucoinClient;
         }
 
         public async Task ProcessDataAsync(KucoinStreamTick streamtick, CancellationToken ct)
@@ -34,11 +39,11 @@
                 // Check for a breakout opportunity
                 if (streamtick.LastPrice > highestHigh * breakoutThreshold)
                 {
-                    // Trigger a buy order ...
+                    _ = await _kucoinClient.PlaceOrderAsync(streamtick.Symbol, OrderSide.Buy, NewOrderType.Market, quantity: 1);
                 }
-                else if (tick.LastPrice < lowestLow * (2 - breakoutThreshold))
+                else if (streamtick.LastPrice < lowestLow * (2 - breakoutThreshold))
                 {
-                    // Trigger a sell order ...
+                    _ = await _kucoinClient.PlaceOrderAsync(streamtick.Symbol, OrderSide.Buy, NewOrderType.Market, quantity: 1);
                 }
             }
         }
