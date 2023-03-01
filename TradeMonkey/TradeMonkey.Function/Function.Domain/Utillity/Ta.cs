@@ -2,10 +2,10 @@
 {
     internal static class Ta
     {
-        public static double[] CalculateMovingAverage(double[] values, int period)
+        public static decimal[] CalculateMovingAverage(decimal[] values, int period)
         {
-            double[] maValues = new double[values.Length - period + 1];
-            double sum = 0;
+            decimal[] maValues = new decimal[values.Length - period + 1];
+            decimal sum = 0;
 
             for (int i = 0; i < period; i++)
             {

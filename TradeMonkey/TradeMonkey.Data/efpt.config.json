@@ -15,55 +15,59 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[CorrelationDatum]",
+         "Name": "[dbo].[Correlation_Datum]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[IndicatorDatum]",
+         "Name": "[dbo].[Indicator_Datum]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[IndiciesDatum]",
+         "Name": "[dbo].[Indicies_Datum]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[KucoinTickerHistories]",
+         "Name": "[dbo].[Kucoin_Account]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[PricePredictionDatum]",
+         "Name": "[dbo].[Kucoin_AllTick]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[QuantmetricsT1Datum]",
+         "Name": "[dbo].[PricePrediction_Datum]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[QuantmetricsT2Datum]",
+         "Name": "[dbo].[QuantmetricsT1_Datum]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[ResistanceSupportDatum]",
+         "Name": "[dbo].[QuantmetricsT2_Datum]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[ScenarioAnalysisDatum]",
+         "Name": "[dbo].[ResistanceSupport_Datum]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[SentimentsDatum]",
+         "Name": "[dbo].[ScenarioAnalysis_Datum]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Tokens]",
+         "Name": "[dbo].[Sentiments_Datum]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[TraderGradesDatum]",
+         "Name": "[dbo].[TokenMetrics_Token]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[TradingIndicatorDatum]",
+         "Name": "[dbo].[TraderGrades_Datum]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TradingIndicato_rDatum]",
          "ObjectType": 0
       }
    ],
@@ -76,8 +80,8 @@
    "UseFluentApiOnly": true,
    "UseHandleBars": false,
    "UseHierarchyId": false,
-   "UseInflector": false,
-   "UseLegacyPluralizer": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": true,
    "UseManyToManyEntity": true,
    "UseNoDefaultConstructor": false,
    "UseNoObjectFilter": false,

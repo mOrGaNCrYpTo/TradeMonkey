@@ -1,10 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Logging;
-
-namespace TradeMonkey.KuCoin.Function.Trigger.WebSocket
+﻿namespace TradeMonkey.KuCoin.Function.Trigger.WebSocket
 {
     public class KuCoinTickers
     {
@@ -25,7 +19,7 @@ namespace TradeMonkey.KuCoin.Function.Trigger.WebSocket
             var response = req.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
             response.WriteString($"Connection URL = '{connectionInfo.Url}'");
-            
+
             return response;
         }
     }

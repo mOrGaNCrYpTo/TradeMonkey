@@ -6,14 +6,14 @@
         private int ma21 = 21;
         private int ma55 = 55;
         private int ma8 = 8;
-        // double[] closePrices = GetClosePrices();
+        // decimal[] closePrices = GetClosePrices();
 
         internal async Task ExecuteAsync()
         {
-            //double[] ma8Values = Ta.CalculateMovingAverage(closePrices, ma8);
-            //double[] ma13Values = Ta.CalculateMovingAverage(closePrices, ma13);
-            //double[] ma21Values = Ta.CalculateMovingAverage(closePrices, ma21);
-            //double[] ma55Values = Ta.CalculateMovingAverage(closePrices, ma55);
+            //decimal[] ma8Values = Ta.CalculateMovingAverage(closePrices, ma8);
+            //decimal[] ma13Values = Ta.CalculateMovingAverage(closePrices, ma13);
+            //decimal[] ma21Values = Ta.CalculateMovingAverage(closePrices, ma21);
+            //decimal[] ma55Values = Ta.CalculateMovingAverage(closePrices, ma55);
         }
     }
 }

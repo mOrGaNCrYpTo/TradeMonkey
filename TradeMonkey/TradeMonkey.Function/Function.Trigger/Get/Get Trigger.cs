@@ -1,3 +1,4 @@
+using TradeMonkey.Data.Entity;
 using TradeMonkey.TokenMetrics.Domain.Services;
 
 namespace TradeMonkey.TokenMetrics.Trigger.Get
@@ -18,6 +19,7 @@ namespace TradeMonkey.TokenMetrics.Trigger.Get
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "get-grades")] HttpRequestData req,
             FunctionContext executionContext,
             string timeFrame,
+            string symbols,
             CancellationToken hostCancellationToken = default)
         {
             // validate
@@ -26,10 +28,10 @@ namespace TradeMonkey.TokenMetrics.Trigger.Get
 
             // create a linked token source
             var lts = CancellationTokenSource.CreateLinkedTokenSource(hostCancellationToken, executionContext.CancellationToken);
-            var token = lts.Token;
+            var ct = lts.Token;
 
             // throw and catch an exception if cancellation is requested
-            token.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
 
             // get logger from the context
             var logger = executionContext.GetLogger(nameof(GetGrades));
@@ -44,7 +46,7 @@ namespace TradeMonkey.TokenMetrics.Trigger.Get
 
                 // execute the request and get the response. always forward the cancellation token
                 // to the service
-                var response = await GetTokensSvc.ExecuteAsync(tokens, token);
+                var response = await GetTokensSvc.ExecuteAsync(symbols, ct);
 
                 await functionResponse.WriteAsJsonAsync(response);
             }

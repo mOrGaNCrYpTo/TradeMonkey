@@ -26,6 +26,7 @@ namespace TradeMonkey.KuCoin.Function.Trigger.Post
 
             try
             {
+                return functionResponse;
             }
             catch (Exception ex)
             {

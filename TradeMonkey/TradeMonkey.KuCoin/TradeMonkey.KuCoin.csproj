@@ -9,17 +9,20 @@
     <RootNamespace>TradeMonkey.KuCoin</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Kucoin.Net" Version="4.3.0" />
+    <Compile Remove="Function.Trigger\WebSocket\KuCoinTickers.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Kucoin.Net" Version="4.3.1" />
     <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.10.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.10.1" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.1.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.7.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="7.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.2">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="7.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -46,5 +49,11 @@
     </Using>
     <Using Include="System.Text.Json.Serialization" />
     <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Function.Trigger\WebSocket\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TradeMonkey.Data\TradeMonkey.Data.csproj" />
   </ItemGroup>
 </Project>
