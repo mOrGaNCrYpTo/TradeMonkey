@@ -58,5 +58,11 @@
                     cancelAfter: cancelAfter,
                     ct: token);
         }
+
+        public async Task CancelOrderAsync(string orderId, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+            await KucoinClient.SpotApi.Trading.CancelOrderAsync(orderId, ct);
+        }
     }
 }

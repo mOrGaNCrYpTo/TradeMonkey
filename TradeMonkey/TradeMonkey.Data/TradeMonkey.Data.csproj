@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Kucoin.Net" Version="4.3.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
@@ -24,7 +25,12 @@
 
   <ItemGroup>
     <Folder Include="Context\Configurations\" />
-    <Folder Include="Entity\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Monikers.imagemanifest">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </None>
   </ItemGroup>
 
 </Project>

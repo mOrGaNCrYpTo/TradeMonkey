@@ -1,13 +1,11 @@
-﻿using TradeMonkey.DataCollector.Value.Response;
+﻿using TradeMonkey.DataCollector.Services;
+using TradeMonkey.DataCollector.Value.Response;
 
 public static class Program
 {
     static async Task Main()
     {
-        // Step 2: Create a new instance of ServiceCollection
         var services = new ServiceCollection();
-
-        // Step 3: Register your services with the container
         services.ScanCurrentAssembly();
 
         services.AddDbContext<TmDBContext>();
@@ -26,14 +24,18 @@ public static class Program
             ApiCredentials = credentials
         });
 
-        // Step 4: Create a new instance of ServiceProvider
+        // Create a new instance of ServiceProvider
         var serviceProvider = services.BuildServiceProvider();
 
-        // Step 5: Resolve your services from the ServiceProvider
-        //var kucoinTickerDataSvc = serviceProvider.GetService<KucoinTickerDataSvc>();
+        // Resolve your services from the ServiceProvider
+        var kucoinTickerSvc = serviceProvider.GetService<KucoinTickerSvc>();
+
+        var ct = new CancellationToken();
+
+        ct.ThrowIfCancellationRequested();
 
         // Use your service
-        //await kucoinTickerDataSvc.FetchAndSaveTickerData(token);
+        await kucoinTickerSvc.GetLatestTickerDataAsync(ct);
 
         //_client = new KucoinSocketClient(options);
         //await SubscribeToAllTickerUpdatesAsync(ct);

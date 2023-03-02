@@ -2,11 +2,11 @@
 {
     public sealed class KuCoinDbRepository
     {
-        public TmDBContext DbContext { get; private set; }
+        private readonly TmDBContext _dbContext;
 
         public KuCoinDbRepository(TmDBContext tmDBContext)
         {
-            DbContext = tmDBContext ?? throw new ArgumentNullException(nameof(tmDBContext));
+            _dbContext = tmDBContext ?? throw new ArgumentNullException(nameof(tmDBContext));
         }
 
         public async Task<IEnumerable<Kucoin_AllTick>> GetTickerHistoriesAsync(List<string> symbols, int periodLength,
@@ -15,7 +15,7 @@
             ct.ThrowIfCancellationRequested();
 
             return await
-                DbContext.Kucoin_AllTicks
+                _dbContext.Kucoin_AllTicks
                     .OrderByDescending(kt => kt.timestamp)
                     .Where(t => symbols.Contains(t.symbol))
                     .Take(periodLength)
@@ -26,8 +26,16 @@
         {
             ct.ThrowIfCancellationRequested();
 
-            DbContext.Set<Kucoin_AllTick>().AddRange(data);
-            DbContext.SaveChanges();
+            _dbContext.Set<Kucoin_AllTick>().AddRange(data);
+            _dbContext.SaveChanges();
+        }
+
+        public async Task UpsertOrderDataAsync(IEnumerable<Kucoin_Order> data, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            _dbContext.Set<Kucoin_Order>().UpdateRange(data);
+            _dbContext.SaveChanges();
         }
     }
 }
