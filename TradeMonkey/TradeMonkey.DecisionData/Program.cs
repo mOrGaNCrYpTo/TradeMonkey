@@ -1,114 +1,97 @@
-﻿using TradeMonkey.DataCollector.Services;
-using TradeMonkey.DataCollector.Value.Response;
+﻿using Kucoin.Net;
 
-public static class Program
+using TradeMonkey.DecisionData.Services;
+
+namespace TradeMonkey.DecisionData
 {
-    static async Task Main()
+    public static class Program
     {
-        var services = new ServiceCollection();
-        services.ScanCurrentAssembly();
-
-        services.AddDbContext<TmDBContext>();
-
-        var credentials = new KucoinApiCredentials("63f3a3999ba1f40001e8c1a0",
-            "3abfb8ef-498e-43a7-8d8c-b500fdea0991", "89t@UzifA$Hb6p5");
-
-        KucoinClient.SetDefaultOptions(new KucoinClientOptions
+        static async Task Main()
         {
-            LogLevel = LogLevel.Debug,
-            ApiCredentials = credentials
-        });
+            var ct = new CancellationToken();
+            ct.ThrowIfCancellationRequested();
 
-        KucoinSocketClient.SetDefaultOptions(new KucoinSocketClientOptions
-        {
-            ApiCredentials = credentials
-        });
+            // Create a new instance of ServiceCollection
+            var services = new ServiceCollection();
 
-        // Create a new instance of ServiceProvider
-        var serviceProvider = services.BuildServiceProvider();
+            services.Configure<JsonSerializerOptions>(options =>
+            {
+                options.ReferenceHandler = ReferenceHandler.Preserve;
+                options.PropertyNameCaseInsensitive = true;
+            });
 
-        // Resolve your services from the ServiceProvider
-        var kucoinTickerSvc = serviceProvider.GetService<KucoinTickerSvc>();
+            var credentials = new KucoinApiCredentials("63f3a3999ba1f40001e8c1a0",
+                "3abfb8ef-498e-43a7-8d8c-b500fdea0991", "89t@UzifA$Hb6p5");
 
-        var ct = new CancellationToken();
+            services.AddDbContext<TmDBContext>(options =>
+                options.UseSqlServer(Settings.TradeMonkeyDb)
+            );
 
-        ct.ThrowIfCancellationRequested();
+            services.AddScoped<KucoinClient>();
 
-        // Use your service
-        await kucoinTickerSvc.GetLatestTickerDataAsync(ct);
+            services.AddKucoin((restClientOptions, socketClientOptions) =>
+            {
+                restClientOptions.ApiCredentials = credentials;
+                restClientOptions.LogLevel = LogLevel.Trace;
+                socketClientOptions.ApiCredentials = credentials;
+            });
 
-        //_client = new KucoinSocketClient(options);
-        //await SubscribeToAllTickerUpdatesAsync(ct);
-    }
+            services.AddHttpClient<TokenMetricsApiRepository>(httpClient =>
+            {
+                httpClient.BaseAddress = new Uri(Settings.TokenMetricsApiBaseUrl);
+                httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "Trade.Monkey");
+                httpClient.DefaultRequestHeaders.Add(Settings.TokenMetricsApiKeyName, Settings.TokenMetricsApiKeyVal);
+            })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(10));
 
-    static async Task UpdateAccountsAsync()
-    {
-        //var accounts = await _apiRepository.GetAccountsAsync(ct);
+            services.ScanCurrentAssembly(ServiceDescriptorMergeStrategy.TryAdd);
 
-        //if (accounts.Success)
-        //{
-        //    foreach (var account in accounts.Data)
-        //    {
-        //        Console.WriteLine(account.Asset);
-        //        Console.WriteLine(account.Available);
-        //    }
-        //}
-    }
+            // Create a new instance of ServiceProvider
+            var serviceProvider = services.BuildServiceProvider();
 
-    //static async Task SubscribeToAllTickerUpdatesAsync(CancellationToken ct)
-    //{
-    //    try
-    //    {
-    //        var result = await _client.SpotStreams.SubscribeToAllTickerUpdatesAsync(async (DataEvent<KucoinStreamTick> dataEvent) =>
-    //        {
-    //            // Handle the new ticker data here
-    //            KucoinStreamTick tick = dataEvent.Data;
-    //            Console.WriteLine($"Received new ticker data for {tick.Symbol}: last price = {tick.LastPrice}");
+            // Resolve your services from the ServiceProvider
+            var kucoinTickerSvc = serviceProvider.GetRequiredService<KucoinTickerSvc>();
 
-    // await KucoinTickerDataSvc.ProcessData(tick, ct); });
+            var tokenMetricsSvc = serviceProvider.GetRequiredService<TokenMetricsSvc>();
+            //await tokenMetricsSvc.GetAllTokens(ct);
 
-    //        if (result.Success)
-    //        {
-    //            Console.WriteLine("Subscribed to all ticker updates successfully.");
-    //        }
-    //        else
-    //        {
-    //            Console.WriteLine($"Failed to subscribe to ticker updates: {result.Error}");
-    //        }
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Console.WriteLine(ex.ToString());
-    //    }
-    //}
+            // Set the target timezone
+            TimeZoneInfo targetTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
 
-    internal static void InvokeHandler<T>(T data, Action<T> handler)
-    {
-        if (Equals(data, default(T)!))
-            return;
+            // Get the current UTC time
+            DateTime currentUtcTime = DateTime.UtcNow;
 
-        handler?.Invoke(data!);
-    }
+            // Convert to the target timezone
+            DateTime targetTime = TimeZoneInfo.ConvertTimeFromUtc(currentUtcTime, targetTimeZone);
 
-    internal static T GetData<T>(DataEvent<JsonElement> tokenData)
-    {
-        JsonSvc jsonSvc = new JsonSvc();
-        var desResult = jsonSvc.Deserialize<KucoinUpdateMessage<T>>(tokenData.Data);
-        if (!desResult)
-        {
-            // _log.Write(LogLevel.Warning, "Failed to deserialize update: " + desResult.Error + ",
-            // data: " + tokenData);
-            return default!;
+            // Calculate the time until the next midnight in the target timezone
+            TimeSpan timeUntilMidnight = TimeSpan.FromDays(1) - targetTime.TimeOfDay;
+
+            // SET UP A TIMERS TO CALL THE API ENDPOINTS AT PLANNED INTERVALS
+            //var apiTimer = new Timer(async (state) =>
+            //{
+            // Get the latest ticker data from the KuCoin API for tickers SAVING THIS FOR
+            // GETTTING THE TOP COINS. GOING TO USE A STATIC LIST FOR NOW await kucoinTickerSvc.GetLatestTickerDataAsync(ct);
+            //var symbols = await kucoinTickerSvc.GetTopTokensAsync(1000000, 0.5, 20, ct);
+
+            // Future me. Add an endpoint to get these
+            List<int> symbols = new()
+                {
+                    2974,3119,2974,3119,3306,3312,3315,3369,3375,3415,3924,3988,4015,14934
+                };
+
+            // Now get the trader grades for the top tokens
+            DateTime dateTime = DateTime.Now;
+            var startDate = dateTime.AddDays(-90).ToString("yyyy-MM-dd");
+            var endDate = dateTime.ToString("yyyy-MM-dd");
+            var limit = 100000;
+
+            var tokenMetricsGrades = await tokenMetricsSvc.GetTraderGradesAsync(symbols, startDate, endDate, limit, ct);
+            var tokenMetricsPrices = await tokenMetricsSvc.GetPricesAsync(symbols, startDate, endDate, limit, ct);
+            //var tokenMetricsIndicator = await tokenMetricsSvc.GetIndicatorAsync(symbols, startDate, endDate, limit, ct);
+            //var tokenMetricsResistanceSupport = await tokenMetricsSvc.GetResistanceSupportAsync(symbols, startDate, endDate, limit, ct);
+            //}, null, timeUntilMidnight, TimeSpan.FromDays(1));
         }
-        return desResult.Data.Data;
-    }
-
-    internal static string? TryGetSymbolFromTopic(DataEvent<JsonElement> data)
-    {
-        string? symbol = null;
-        var topic = data.Data[0].ToString();
-        if (topic != null && topic.Contains(':'))
-            symbol = topic.Split(':').Last();
-        return symbol;
     }
 }

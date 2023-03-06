@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.DataCollector.Repositories
+﻿namespace TradeMonkey.DecisionData.Repositories
 {
     [RegisterService]
     public sealed class KucoinRepository

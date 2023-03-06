@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "TradeMonkey.TradingView": {
-      "commandName": "Project",
-      "commandLineArgs": "--port 7135",
-      "launchBrowser": false
-    }
-  }
-}

@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.DataCollector.Services
+﻿namespace TradeMonkey.DecisionData.Services
 {
     [RegisterService]
     public sealed class KucoinOrderSvc

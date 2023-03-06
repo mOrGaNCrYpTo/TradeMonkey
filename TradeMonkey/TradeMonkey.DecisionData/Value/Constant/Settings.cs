@@ -13,7 +13,11 @@
         public static string KucoinApiSecretVal { get; set; } = "3abfb8ef-498e-43a7-8d8c-b500fdea0991";
         public static string KucoinApiPassVal { get; set; } = "89t@UzifA$Hb6p5";
 
-        public static string TokenMetricsApiKeyName { get; set; } = "tm-c48b9859-8e63-44ba-8e42-1e620b4acd6c";
-        public static string TokenMetricsApiKeyVal { get; set; } = "tm-c48b9859-8e63-44ba-8e42-1e620b4acd6c";
+        public static string TokenMetricsApiKeyName { get; set; } = "api_key";
+        public static string TokenMetricsApiKeyVal { get; set; } = "tm-957bdb5c-d4e4-433d-91d5-0bf60e8ae129";
+        public static string TokenMetricsApiBaseUrl { get; set; } = "https://api.tokenmetrics.com/v1";
+
+        public static string TradeMonkeyDb { get; set; } =
+            "Data Source=HP\\MFSQL;Initial Catalog=TradeMonkey;Integrated Security=True;Trust Server Certificate=True";
     }
 }

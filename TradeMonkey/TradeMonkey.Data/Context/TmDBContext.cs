@@ -19,53 +19,59 @@ public partial class TmDBContext : DbContext
     {
     }
 
-    public virtual DbSet<Correlation_Datum> Correlation_Datums { get; set; }
+    public virtual DbSet<CorrelationDatum> CorrelationDatums { get; set; }
 
-    public virtual DbSet<Indicator_Datum> Indicator_Datums { get; set; }
+    public virtual DbSet<IndicatorDatum> IndicatorDatums { get; set; }
 
-    public virtual DbSet<Indicies_Datum> Indicies_Datums { get; set; }
+    public virtual DbSet<IndiciesDatum> IndiciesDatums { get; set; }
 
-    public virtual DbSet<Kucoin_Account> Kucoin_Accounts { get; set; }
+    public virtual DbSet<Kucoin24hourStats> Kucoin24hourStats { get; set; }
 
-    public virtual DbSet<Kucoin_AllTick> Kucoin_AllTicks { get; set; }
+    public virtual DbSet<KucoinAccount> KucoinAccounts { get; set; }
 
-    public virtual DbSet<PricePrediction_Datum> PricePrediction_Datums { get; set; }
+    public virtual DbSet<KucoinAllTick> KucoinAllTicks { get; set; }
 
-    public virtual DbSet<QuantmetricsT1_Datum> QuantmetricsT1_Datums { get; set; }
+    public virtual DbSet<KucoinTokenMetricsSymbol> KucoinTokenMetricsSymbols { get; set; }
 
-    public virtual DbSet<QuantmetricsT2_Datum> QuantmetricsT2_Datums { get; set; }
+    public virtual DbSet<PricePredictionDatum> PricePredictionDatums { get; set; }
 
-    public virtual DbSet<ResistanceSupport_Datum> ResistanceSupport_Datums { get; set; }
+    public virtual DbSet<QuantmetricsT1Datums> QuantmetricsT1Datums { get; set; }
 
-    public virtual DbSet<ScenarioAnalysis_Datum> ScenarioAnalysis_Datums { get; set; }
+    public virtual DbSet<QuantmetricsT2Datums> QuantmetricsT2Datums { get; set; }
 
-    public virtual DbSet<Sentiments_Datum> Sentiments_Datums { get; set; }
+    public virtual DbSet<ResistanceSupportDatum> ResistanceSupportDatums { get; set; }
 
-    public virtual DbSet<TokenMetrics_Token> TokenMetrics_Tokens { get; set; }
+    public virtual DbSet<ScenarioAnalysisDatum> ScenarioAnalysisDatums { get; set; }
 
-    public virtual DbSet<TraderGrades_Datum> TraderGrades_Datums { get; set; }
+    public virtual DbSet<SentimentsDatum> SentimentsDatums { get; set; }
 
-    public virtual DbSet<TradingIndicato_rDatum> TradingIndicato_rDatums { get; set; }
+    public virtual DbSet<TokenMetricsPrice> TokenMetricsPrices { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=HP\\MFSQL;Initial Catalog=TradeMonkey;Integrated Security=True;Encrypt=false;TrustServerCertificate=Yes");
+    public virtual DbSet<TokenMetricsToken> TokenMetricsTokens { get; set; }
+
+    public virtual DbSet<TraderGradesDatum> TraderGradesDatums { get; set; }
+
+    public virtual DbSet<TradingIndicatorDatum> TradingIndicatorDatums { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-            modelBuilder.ApplyConfiguration(new Configurations.Correlation_DatumConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.Indicator_DatumConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.Indicies_DatumConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.Kucoin_AccountConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.Kucoin_AllTickConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.PricePrediction_DatumConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.QuantmetricsT1_DatumConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.QuantmetricsT2_DatumConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.ResistanceSupport_DatumConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.ScenarioAnalysis_DatumConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.Sentiments_DatumConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.TokenMetrics_TokenConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.TraderGrades_DatumConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.TradingIndicato_rDatumConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.CorrelationDatumConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.IndicatorDatumConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.IndiciesDatumConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.Kucoin24hourStatsConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.KucoinAccountConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.KucoinAllTickConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.KucoinTokenMetricsSymbolConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.PricePredictionDatumConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.QuantmetricsT1DatumsConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.QuantmetricsT2DatumsConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.ResistanceSupportDatumConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.ScenarioAnalysisDatumConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.SentimentsDatumConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.TokenMetricsPriceConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.TokenMetricsTokenConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.TraderGradesDatumConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.TradingIndicatorDatumConfiguration());
 
         OnModelCreatingPartial(modelBuilder);
     }

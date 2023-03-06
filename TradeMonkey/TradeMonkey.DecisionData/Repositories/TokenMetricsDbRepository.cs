@@ -1,20 +1,33 @@
-﻿namespace TradeMonkey.DataCollector.Repositories
+﻿namespace TradeMonkey.DecisionData.Repositories
 {
+    using Microsoft.Data.SqlClient;
+    using Microsoft.EntityFrameworkCore;
+
     [RegisterService]
     public sealed class TokenMetricsDbRepository
     {
-        [InjectService]
-        public TmDBContext DbContext { get; private set; }
+        private readonly TmDBContext _dbContext;
 
+        [ServiceConstructor]
         public TokenMetricsDbRepository(TmDBContext tmDBContext)
         {
-            DbContext = tmDBContext ?? throw new ArgumentNullException(nameof(tmDBContext));
+            _dbContext = tmDBContext ?? throw new ArgumentNullException(nameof(tmDBContext));
+            _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            var x = _dbContext.Database.GetDbConnection().ConnectionString;
         }
 
-        public async Task UpsertTokensAsync(IEnumerable<TokenMetrics_Token> tokens, CancellationToken ct = default)
+        public async Task UpsertDataAsync<TEntity>(IEnumerable<TEntity> data, CancellationToken ct = default)
+             where TEntity : class
         {
-            await DbContext.TokenMetrics_Tokens.AddRangeAsync(tokens, ct);
-            await DbContext.SaveChangesAsync(ct);
+            ct.ThrowIfCancellationRequested();
+
+            // Get the DbSet for the entity type
+            DbSet<TEntity> dbSet = _dbContext.Set<TEntity>();
+
+            await dbSet.BulkUpdateAsync(data, ct);
+
+            // Save the changes to the database
+            await _dbContext.SaveChangesAsync(ct);
         }
     }
 }

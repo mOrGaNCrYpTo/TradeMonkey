@@ -15,66 +15,78 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[Correlation_Datum]",
+         "Name": "[dbo].[Correlation_Datums]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Indicator_Datum]",
+         "Name": "[dbo].[Indicator_Datums]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Indicies_Datum]",
+         "Name": "[dbo].[Indicies_Datums]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Kucoin_Account]",
+         "Name": "[dbo].[Kucoin_24HourStats]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Kucoin_AllTick]",
+         "Name": "[dbo].[Kucoin_Accounts]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[PricePrediction_Datum]",
+         "Name": "[dbo].[Kucoin_AllTicks]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[QuantmetricsT1_Datum]",
+         "Name": "[dbo].[KucoinTokenMetricsSymbols]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[QuantmetricsT2_Datum]",
+         "Name": "[dbo].[PricePrediction_Datums]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[ResistanceSupport_Datum]",
+         "Name": "[dbo].[QuantmetricsT1_Datums]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[ScenarioAnalysis_Datum]",
+         "Name": "[dbo].[QuantmetricsT2_Datums]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Sentiments_Datum]",
+         "Name": "[dbo].[ResistanceSupport_Datums]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[TokenMetrics_Token]",
+         "Name": "[dbo].[ScenarioAnalysis_Datums]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[TraderGrades_Datum]",
+         "Name": "[dbo].[Sentiments_Datums]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[TradingIndicato_rDatum]",
+         "Name": "[dbo].[TokenMetrics_Prices]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TokenMetrics_Tokens]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TraderGrades_Datums]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TradingIndicator_Datums]",
          "ObjectType": 0
       }
    ],
    "UiHint": "HP\\MFSQL.TradeMonkey",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
-   "UseDatabaseNames": true,
+   "UseDatabaseNames": false,
    "UseDateOnlyTimeOnly": false,
    "UseDbContextSplitting": true,
    "UseFluentApiOnly": true,
