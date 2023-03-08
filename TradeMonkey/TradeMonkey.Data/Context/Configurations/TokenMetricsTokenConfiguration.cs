@@ -12,11 +12,11 @@ namespace TradeMonkey.Data.Context.Configurations
     {
         public void Configure(EntityTypeBuilder<TokenMetricsToken> entity)
         {
-            entity.HasKey(e => e.Token_Id).HasName("PK_Tokens");
+            entity.HasKey(e => e.TokenId).HasName("PK_Tokens");
 
             entity.ToTable("TokenMetrics_Tokens");
 
-            entity.Property(e => e.Token_Id)
+            entity.Property(e => e.TokenId)
             .ValueGeneratedNever()
             .HasColumnName("Token_Id");
             entity.Property(e => e.Name)

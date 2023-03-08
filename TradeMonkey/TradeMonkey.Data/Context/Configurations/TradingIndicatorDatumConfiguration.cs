@@ -16,6 +16,8 @@ namespace TradeMonkey.Data.Context.Configurations
 
             entity.ToTable("TradingIndicator_Datums");
 
+            entity.HasIndex(e => e.TokenId1, "IX_TradingIndicato_rDatums_TokenId");
+
             entity.Property(e => e.TokenId)
             .ValueGeneratedNever()
             .HasColumnName("Token_Id");
@@ -31,6 +33,7 @@ namespace TradeMonkey.Data.Context.Configurations
             .IsRequired()
             .HasMaxLength(50)
             .IsUnicode(false);
+            entity.Property(e => e.TokenId1).HasColumnName("TokenId");
 
             OnConfigurePartial(entity);
         }

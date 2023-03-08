@@ -2,34 +2,26 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace TradeMonkey.Data.Entity;
 
 public partial class TraderGradesDatum
 {
-    [JsonPropertyName("tokenId")]
-    public int Token_Id { get; set; }
+    public int Id { get; set; }
 
-    [JsonPropertyName("date")]
+    public int TokenId { get; set; }
+
     public string Date { get; set; }
 
-    [JsonPropertyName("epoch")]
     public int Epoch { get; set; }
 
-    [JsonPropertyName("name")]
     public string Name { get; set; }
 
-    [JsonPropertyName("quantGrade")]
-    public double QuantGrade { get; set; }
+    public decimal QuantGrade { get; set; }
 
-    [JsonPropertyName("symbol")]
     public string Symbol { get; set; }
 
-    [JsonPropertyName("taGrade")]
-    public double TaGrade { get; set; }
+    public decimal TaGrade { get; set; }
 
-    [JsonPropertyName("tmTraderGrade")]
-    public string TmTraderGrade { get; set; }
-
+    public decimal TmTraderGrade { get; set; }
 }

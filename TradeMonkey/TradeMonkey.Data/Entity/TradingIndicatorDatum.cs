@@ -2,45 +2,32 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace TradeMonkey.Data.Entity;
 
 public partial class TradingIndicatorDatum
 {
-    [JsonPropertyName("tokenId")]
-    public int Token_Id { get; set; }
-
-    [JsonPropertyName("close")]
-    public double Close { get; set; }
-
-    [JsonPropertyName("date")]
-    public string Date { get; set; }
-
-    [JsonPropertyName("epoch")]
-    public int Epoch { get; set; }
-
-    [JsonPropertyName("holdingCumulativeRoi")]
-    public double? HoldingCumulativeRoi { get; set; }
-
-    [JsonPropertyName("lastSignal")]
-    public int LastSignal { get; set; }
-
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
-
-    [JsonPropertyName("signal")]
-    public int Signal { get; set; }
-
-    [JsonPropertyName("strategyCummulativeRoi")]
-    public double? StrategyCummulativeRoi { get; set; }
-
-    [JsonPropertyName("symbol")]
-    public string Symbol { get; set; }
-
-    [JsonPropertyName("tokenId")]
     public int TokenId { get; set; }
 
-    [JsonPropertyName("volume")]
+    public double Close { get; set; }
+
+    public string Date { get; set; }
+
+    public int Epoch { get; set; }
+
+    public double? HoldingCumulativeRoi { get; set; }
+
+    public int LastSignal { get; set; }
+
+    public string Name { get; set; }
+
+    public int Signal { get; set; }
+
+    public double? StrategyCummulativeRoi { get; set; }
+
+    public string Symbol { get; set; }
+
+    public int TokenId1 { get; set; }
+
     public double Volume { get; set; }
 }

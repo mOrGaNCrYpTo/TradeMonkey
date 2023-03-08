@@ -1,6 +1,6 @@
 ﻿using Mapster;
 
-namespace TradeMonkey.DecisionData.Services
+namespace TradeMonkey.Trader.Services
 {
     [RegisterService]
     public sealed class KucoinTickerSvc

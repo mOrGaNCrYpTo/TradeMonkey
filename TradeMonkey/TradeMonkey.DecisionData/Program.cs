@@ -1,8 +1,8 @@
 ﻿using Kucoin.Net;
 
-using TradeMonkey.DecisionData.Services;
+using TradeMonkey.Trader.Services;
 
-namespace TradeMonkey.DecisionData
+namespace TradeMonkey.Trader
 {
     public static class Program
     {
@@ -16,7 +16,7 @@ namespace TradeMonkey.DecisionData
 
             services.Configure<JsonSerializerOptions>(options =>
             {
-                options.ReferenceHandler = ReferenceHandler.Preserve;
+                options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 options.PropertyNameCaseInsensitive = true;
             });
 
@@ -36,12 +36,24 @@ namespace TradeMonkey.DecisionData
                 socketClientOptions.ApiCredentials = credentials;
             });
 
+            // Add UriBuilder as a singleton service
+            services.AddScoped(provider =>
+            {
+                var uriBuilder = new UriBuilder
+                {
+                    Scheme = "https",
+                    Host = Settings.TokenMetricsApiBaseUrl,
+                    //Port = 443
+                };
+                return uriBuilder;
+            });
+
             services.AddHttpClient<TokenMetricsApiRepository>(httpClient =>
             {
-                httpClient.BaseAddress = new Uri(Settings.TokenMetricsApiBaseUrl);
                 httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
                 httpClient.DefaultRequestHeaders.Add("User-Agent", "Trade.Monkey");
                 httpClient.DefaultRequestHeaders.Add(Settings.TokenMetricsApiKeyName, Settings.TokenMetricsApiKeyVal);
+                httpClient.Timeout = TimeSpan.FromMinutes(10);
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(10));
 
@@ -68,30 +80,36 @@ namespace TradeMonkey.DecisionData
             // Calculate the time until the next midnight in the target timezone
             TimeSpan timeUntilMidnight = TimeSpan.FromDays(1) - targetTime.TimeOfDay;
 
-            // SET UP A TIMERS TO CALL THE API ENDPOINTS AT PLANNED INTERVALS
-            //var apiTimer = new Timer(async (state) =>
-            //{
-            // Get the latest ticker data from the KuCoin API for tickers SAVING THIS FOR
-            // GETTTING THE TOP COINS. GOING TO USE A STATIC LIST FOR NOW await kucoinTickerSvc.GetLatestTickerDataAsync(ct);
-            //var symbols = await kucoinTickerSvc.GetTopTokensAsync(1000000, 0.5, 20, ct);
+            //SET UP A TIMERS TO CALL THE API ENDPOINTS AT PLANNED INTERVALS
+            var apiTimer = new Timer(async (state) =>
+            {
+                // Get the latest ticker data from the KuCoin API for tickers
+                var symbols = await kucoinTickerSvc.GetTopTokensAsync(1000000, 0.5, 20, ct);
+            }, null, timeUntilMidnight, TimeSpan.FromDays(1));
 
             // Future me. Add an endpoint to get these
             List<int> symbols = new()
-                {
-                    2974,3119,2974,3119,3306,3312,3315,3369,3375,3415,3924,3988,4015,14934
-                };
+            {
+                2974,3119,2974,3119,3306,3312,3315,3369,3375,3415,3924,3988,4015,14934,17659,565,1892,3600,4462,11642,11814,12631,15595,16200,17010,20420,22067,24472,24529
+            };
 
             // Now get the trader grades for the top tokens
             DateTime dateTime = DateTime.Now;
-            var startDate = dateTime.AddDays(-90).ToString("yyyy-MM-dd");
+            var startDate = dateTime.AddDays(-1).ToString("yyyy-MM-dd");
             var endDate = dateTime.ToString("yyyy-MM-dd");
-            var limit = 100000;
+            var limit = 1000000;
 
-            var tokenMetricsGrades = await tokenMetricsSvc.GetTraderGradesAsync(symbols, startDate, endDate, limit, ct);
-            var tokenMetricsPrices = await tokenMetricsSvc.GetPricesAsync(symbols, startDate, endDate, limit, ct);
+            for (int i = 0; i < symbols.Count; i += 5)
+            {
+                List<int> batch = symbols.GetRange(i, Math.Min(5, symbols.Count - i));
+                Console.WriteLine("Processing batch: " + string.Join(",", batch));
+
+                startDate = dateTime.AddDays(-90).ToString("yyyy-MM-dd");
+                var tokenMetricsPrices = await tokenMetricsSvc.GetPricesAsync(symbols, startDate, endDate, limit, ct);
+            }
+
             //var tokenMetricsIndicator = await tokenMetricsSvc.GetIndicatorAsync(symbols, startDate, endDate, limit, ct);
             //var tokenMetricsResistanceSupport = await tokenMetricsSvc.GetResistanceSupportAsync(symbols, startDate, endDate, limit, ct);
-            //}, null, timeUntilMidnight, TimeSpan.FromDays(1));
         }
     }
 }

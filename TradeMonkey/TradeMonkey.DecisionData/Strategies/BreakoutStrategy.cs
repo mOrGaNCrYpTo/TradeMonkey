@@ -1,4 +1,4 @@
-﻿using TradeMonkey.DecisionData.Services;
+﻿using TradeMonkey.Trader.Services;
 
 namespace TradeMonkey.DataCollector.Strategies
 {

@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.DecisionData.Value.Constant
+﻿namespace TradeMonkey.Trader.Value.Constant
 {
     public static class Settings
     {
@@ -15,9 +15,9 @@
 
         public static string TokenMetricsApiKeyName { get; set; } = "api_key";
         public static string TokenMetricsApiKeyVal { get; set; } = "tm-957bdb5c-d4e4-433d-91d5-0bf60e8ae129";
-        public static string TokenMetricsApiBaseUrl { get; set; } = "https://api.tokenmetrics.com/v1";
+        public static string TokenMetricsApiBaseUrl { get; set; } = "api.tokenmetrics.com/v1";
 
         public static string TradeMonkeyDb { get; set; } =
-            "Data Source=HP\\MFSQL;Initial Catalog=TradeMonkey;Integrated Security=True;Trust Server Certificate=True";
+            "Data Source=HP\\MFSQL;Database=TradeMonkey;Integrated Security=True;Encrypt=false;TrustServerCertificate=True";
     }
 }

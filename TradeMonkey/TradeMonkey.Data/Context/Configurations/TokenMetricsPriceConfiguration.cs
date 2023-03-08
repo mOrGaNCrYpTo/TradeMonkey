@@ -16,16 +16,16 @@ namespace TradeMonkey.Data.Context.Configurations
 
             entity.ToTable("TokenMetrics_Prices");
 
-            entity.Property(e => e.Close).HasColumnType("decimal(18, 8)");
-            entity.Property(e => e.CurrentPrice).HasColumnType("decimal(18, 8)");
+            entity.Property(e => e.Close).HasColumnType("decimal(18, 12)");
+            entity.Property(e => e.CurrentPrice).HasColumnType("decimal(18, 12)");
             entity.Property(e => e.Date).HasColumnType("datetime");
-            entity.Property(e => e.High).HasColumnType("decimal(18, 8)");
-            entity.Property(e => e.Low).HasColumnType("decimal(18, 8)");
+            entity.Property(e => e.High).HasColumnType("decimal(18, 12)");
+            entity.Property(e => e.Low).HasColumnType("decimal(18, 12)");
             entity.Property(e => e.Name)
             .IsRequired()
             .HasMaxLength(50)
             .IsUnicode(false);
-            entity.Property(e => e.Open).HasColumnType("decimal(18, 8)");
+            entity.Property(e => e.Open).HasColumnType("decimal(18, 12)");
             entity.Property(e => e.Symbol)
             .IsRequired()
             .HasMaxLength(10)

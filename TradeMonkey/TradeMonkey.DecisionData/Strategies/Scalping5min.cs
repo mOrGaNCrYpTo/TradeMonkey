@@ -1,7 +1,7 @@
 ﻿using Mapster;
 
 using TradeMonkey.Data.Entity;
-using TradeMonkey.DecisionData.Value.Aggregate;
+using TradeMonkey.Trader.Value.Aggregate;
 
 namespace TradeMonkey.DataCollector.Strategies
 {

@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.DecisionData.Services
+﻿namespace TradeMonkey.Trader.Services
 {
     public sealed class KucoinSocketSvc
     {

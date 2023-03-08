@@ -12,13 +12,10 @@ namespace TradeMonkey.Data.Context.Configurations
     {
         public void Configure(EntityTypeBuilder<TraderGradesDatum> entity)
         {
-            entity.HasKey(e => e.Token_Id);
+            entity.HasKey(e => e.Id).HasName("PK_TraderGrades_Datums_1");
 
             entity.ToTable("TraderGrades_Datums");
 
-            entity.Property(e => e.Token_Id)
-            .ValueGeneratedNever()
-            .HasColumnName("Token_Id");
             entity.Property(e => e.Date)
             .IsRequired()
             .HasMaxLength(50)
@@ -27,14 +24,14 @@ namespace TradeMonkey.Data.Context.Configurations
             .IsRequired()
             .HasMaxLength(50)
             .IsUnicode(false);
+            entity.Property(e => e.QuantGrade).HasColumnType("decimal(18, 12)");
             entity.Property(e => e.Symbol)
             .IsRequired()
             .HasMaxLength(50)
             .IsUnicode(false);
-            entity.Property(e => e.TmTraderGrade)
-            .IsRequired()
-            .HasMaxLength(50)
-            .IsUnicode(false);          
+            entity.Property(e => e.TaGrade).HasColumnType("decimal(18, 12)");
+            entity.Property(e => e.TmTraderGrade).HasColumnType("decimal(18, 12)");
+            entity.Property(e => e.TokenId).HasColumnName("Token_Id");
 
             OnConfigurePartial(entity);
         }

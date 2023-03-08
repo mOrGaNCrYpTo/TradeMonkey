@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.DecisionData.Value.Response
+﻿namespace TradeMonkey.Trader.Value.Response
 {
     public class BaseTokenMetricsResponse
     {

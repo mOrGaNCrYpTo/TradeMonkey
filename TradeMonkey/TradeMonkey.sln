@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeMonkey.Data", "TradeMonkey.Data\TradeMonkey.Data.csproj", "{9C44E1DA-1F75-4B68-8CEC-A8363BE992FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeMonkey.DecisionData", "TradeMonkey.DecisionData\TradeMonkey.DecisionData.csproj", "{7071FD7A-3C27-4598-915A-B452592572EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeMonkey.Trader", "TradeMonkey.DecisionData\TradeMonkey.Trader.csproj", "{7071FD7A-3C27-4598-915A-B452592572EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

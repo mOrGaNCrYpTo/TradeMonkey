@@ -1,6 +1,6 @@
 ﻿using TradeMonkey.Data.Entity;
 
-namespace TradeMonkey.DecisionData.Value.Response
+namespace TradeMonkey.Trader.Value.Response
 {
     public sealed class TokenMetricsPriceResponse : BaseTokenMetricsResponse
     {

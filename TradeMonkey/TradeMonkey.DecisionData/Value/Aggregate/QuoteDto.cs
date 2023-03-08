@@ -1,6 +1,6 @@
 ﻿using Skender.Stock.Indicators;
 
-namespace TradeMonkey.DecisionData.Value.Aggregate
+namespace TradeMonkey.Trader.Value.Aggregate
 {
     public sealed class QuoteDto : TokenMetricsPrice, IQuote
     {

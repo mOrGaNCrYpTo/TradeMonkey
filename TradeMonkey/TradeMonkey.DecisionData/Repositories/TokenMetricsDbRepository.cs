@@ -1,8 +1,5 @@
-﻿namespace TradeMonkey.DecisionData.Repositories
+﻿namespace TradeMonkey.Trader.Repositories
 {
-    using Microsoft.Data.SqlClient;
-    using Microsoft.EntityFrameworkCore;
-
     [RegisterService]
     public sealed class TokenMetricsDbRepository
     {
@@ -13,10 +10,9 @@
         {
             _dbContext = tmDBContext ?? throw new ArgumentNullException(nameof(tmDBContext));
             _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var x = _dbContext.Database.GetDbConnection().ConnectionString;
         }
 
-        public async Task UpsertDataAsync<TEntity>(IEnumerable<TEntity> data, CancellationToken ct = default)
+        public async Task BulkInsertDataAsync<TEntity>(IEnumerable<TEntity> data, CancellationToken ct = default)
              where TEntity : class
         {
             ct.ThrowIfCancellationRequested();
@@ -24,7 +20,7 @@
             // Get the DbSet for the entity type
             DbSet<TEntity> dbSet = _dbContext.Set<TEntity>();
 
-            await dbSet.BulkUpdateAsync(data, ct);
+            await dbSet.BulkInsertAsync(data, ct);
 
             // Save the changes to the database
             await _dbContext.SaveChangesAsync(ct);

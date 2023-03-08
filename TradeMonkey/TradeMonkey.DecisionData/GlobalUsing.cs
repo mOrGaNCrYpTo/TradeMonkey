@@ -23,10 +23,10 @@ global using System.Text.Json;
 
 global using TradeMonkey.Data.Context;
 global using TradeMonkey.Data.Entity;
-global using TradeMonkey.DecisionData.Helpers;
-global using TradeMonkey.DecisionData.Repositories;
+global using TradeMonkey.Trader.Helpers;
+global using TradeMonkey.Trader.Repositories;
 global using TradeMonkey.Data.Value;
-global using TradeMonkey.DecisionData.Value.Constant;
-global using TradeMonkey.DecisionData.Value.Response;
+global using TradeMonkey.Trader.Value.Constant;
+global using TradeMonkey.Trader.Value.Response;
 
 global using JsonSerializer = System.Text.Json.JsonSerializer;

@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.DecisionData.Value.Aggregate
+﻿namespace TradeMonkey.Trader.Value.Aggregate
 {
     public sealed class TokenMetricsAggregate
     {

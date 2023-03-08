@@ -1,6 +1,6 @@
-﻿using TradeMonkey.DecisionData.Value.Aggregate;
+﻿using TradeMonkey.Trader.Value.Aggregate;
 
-namespace TradeMonkey.DecisionData.Repositories
+namespace TradeMonkey.Trader.Repositories
 {
     [RegisterService]
     public sealed class KuCoinDbRepository

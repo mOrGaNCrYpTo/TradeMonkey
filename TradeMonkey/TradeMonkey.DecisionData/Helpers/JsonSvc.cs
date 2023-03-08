@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.DecisionData.Helpers
+﻿namespace TradeMonkey.Trader.Helpers
 {
     [RegisterService]
     public class JsonSvc

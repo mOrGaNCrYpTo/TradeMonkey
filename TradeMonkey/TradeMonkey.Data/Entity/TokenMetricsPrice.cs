@@ -2,7 +2,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace TradeMonkey.Data.Entity;
 
@@ -10,36 +9,25 @@ public partial class TokenMetricsPrice
 {
     public int Id { get; set; }
 
-    [JsonPropertyName("tokenId")]
     public int TokenId { get; set; }
 
-    [JsonPropertyName("name")]
     public string Name { get; set; }
 
-    [JsonPropertyName("symbol")]
     public string Symbol { get; set; }
 
-    [JsonPropertyName("currentPrice")]
     public decimal CurrentPrice { get; set; }
 
-    [JsonPropertyName("open")]
     public decimal Open { get; set; }
 
-    [JsonPropertyName("high")]
     public decimal High { get; set; }
 
-    [JsonPropertyName("low")]
     public decimal Low { get; set; }
 
-    [JsonPropertyName("close")]
     public decimal Close { get; set; }
 
-    [JsonPropertyName("volume")]
     public decimal Volume { get; set; }
 
-    [JsonPropertyName("epoch")]
     public int Epoch { get; set; }
 
-    [JsonPropertyName("date")]
     public DateTime Date { get; set; }
 }
