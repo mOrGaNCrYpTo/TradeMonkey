@@ -24,7 +24,7 @@ namespace TradeMonkey.Trader.Services
                 throw new ArgumentNullException(nameof(kucoinClient));
         }
 
-        public async Task GetLatestTickerDataAsync(CancellationToken ct)
+        public async Task GetAllTickerDataAsync(CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -35,7 +35,17 @@ namespace TradeMonkey.Trader.Services
             await Repo.InsertDataAsync(tickers, ct);
         }
 
-        // NOT USING THIS FOR NOW.
+        public async Task GetTickerDataAsync(string symbol, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            var result = await _client.SpotApi.ExchangeData.GetTickerAsync(symbol, ct);
+            var data = result.Data;
+            var tickers = result.Data.Adapt<IEnumerable<Kucoin.Net.Objects.Models.Spot.KucoinTick>>();
+
+            await Repo.InsertDataAsync(tickers, ct);
+        }
+
         public async Task<List<string>> GetTopTokensAsync(int thresholdVolume, double thresholdChange, int numberOfTokens, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();

@@ -42,8 +42,7 @@ namespace TradeMonkey.Trader
                 var uriBuilder = new UriBuilder
                 {
                     Scheme = "https",
-                    Host = Settings.TokenMetricsApiBaseUrl,
-                    //Port = 443
+                    Host = Settings.TokenMetricsApiBaseUrl
                 };
                 return uriBuilder;
             });
@@ -80,32 +79,36 @@ namespace TradeMonkey.Trader
             // Calculate the time until the next midnight in the target timezone
             TimeSpan timeUntilMidnight = TimeSpan.FromDays(1) - targetTime.TimeOfDay;
 
-            //SET UP A TIMERS TO CALL THE API ENDPOINTS AT PLANNED INTERVALS
-            var apiTimer = new Timer(async (state) =>
-            {
-                // Get the latest ticker data from the KuCoin API for tickers
-                var symbols = await kucoinTickerSvc.GetTopTokensAsync(1000000, 0.5, 20, ct);
-            }, null, timeUntilMidnight, TimeSpan.FromDays(1));
+            ////SET UP A TIMERS TO CALL THE API ENDPOINTS AT PLANNED INTERVALS
+            //var apiTimer = new Timer(async (state) =>
+            //{
+            //    // Get the latest ticker data from the KuCoin API for tickers
+            //    var symbols = await kucoinTickerSvc.GetTopTokensAsync(1000000, 0.5, 20, ct);
+            //}, null, timeUntilMidnight, TimeSpan.FromDays(1));
+
+            // Get the latest ticker data from the KuCoin API for tickers
+            var kucoinSymbols = await kucoinTickerSvc.GetTopTokensAsync(1000000, 0.5, 20, ct);
 
             // Future me. Add an endpoint to get these
             List<int> symbols = new()
             {
-                2974,3119,2974,3119,3306,3312,3315,3369,3375,3415,3924,3988,4015,14934,17659,565,1892,3600,4462,11642,11814,12631,15595,16200,17010,20420,22067,24472,24529
+                2974,3119,2974,3119,3306,3312,3315,3369,3375,3415,3924,3988,4015,14934,17659,
+                1892,3600,4462,11642,11814,12631,15595,17010,20420,22067,24472,24529
             };
 
             // Now get the trader grades for the top tokens
             DateTime dateTime = DateTime.Now;
-            var startDate = dateTime.AddDays(-1).ToString("yyyy-MM-dd");
-            var endDate = dateTime.ToString("yyyy-MM-dd");
+            string startDate = DateOnly.FromDateTime(dateTime.AddDays(-30)).ToString("yyyy-MM-dd");
+            string endDate = DateOnly.FromDateTime(dateTime).ToString("yyyy-MM-dd");
             var limit = 1000000;
 
             for (int i = 0; i < symbols.Count; i += 5)
             {
-                List<int> batch = symbols.GetRange(i, Math.Min(5, symbols.Count - i));
-                Console.WriteLine("Processing batch: " + string.Join(",", batch));
+                List<int> batch = symbols.Skip(i).Take(5).ToList();
 
-                startDate = dateTime.AddDays(-90).ToString("yyyy-MM-dd");
-                var tokenMetricsPrices = await tokenMetricsSvc.GetPricesAsync(symbols, startDate, endDate, limit, ct);
+                // startDate = dateTime.AddDays(-90).ToString("yyyy-MM-dd");
+                //var tokenMetricsPrices = await tokenMetricsSvc.GetPricesAsync(batch, startDate, endDate, limit, ct);
+                var tokenMetricsGrades = await tokenMetricsSvc.GetTraderGradesAsync(batch, startDate, endDate, limit, ct);
             }
 
             //var tokenMetricsIndicator = await tokenMetricsSvc.GetIndicatorAsync(symbols, startDate, endDate, limit, ct);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Intrinsics;
 
 namespace TradeMonkey.Trader.Services
 {
@@ -25,7 +26,7 @@ namespace TradeMonkey.Trader.Services
         {
             ct.ThrowIfCancellationRequested();
 
-            _uriBuilder.Path = "Token";
+            _uriBuilder.Path = "/Token";
 
             ApiRepo.ActionUrl = _uriBuilder.Uri;
 
@@ -52,7 +53,7 @@ namespace TradeMonkey.Trader.Services
                 PropertyNameCaseInsensitive = true
             };
 
-            _uriBuilder.Path = "trader-grades";
+            _uriBuilder.Path = "v1/trader-grades";
             _uriBuilder.Query = $"tokens={String.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
 
             ApiRepo.ActionUrl = _uriBuilder.Uri;
@@ -77,7 +78,7 @@ namespace TradeMonkey.Trader.Services
             Console.WriteLine("GETTING TOKEN METRICS PRICES");
             Console.WriteLine("");
 
-            _uriBuilder.Path = "Price";
+            _uriBuilder.Path = "v1/Price";
             _uriBuilder.Query = $"tokens={String.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
 
             ApiRepo.ActionUrl = _uriBuilder.Uri;
