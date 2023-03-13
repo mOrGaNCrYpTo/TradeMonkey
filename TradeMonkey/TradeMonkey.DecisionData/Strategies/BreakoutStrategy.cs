@@ -1,4 +1,5 @@
-﻿using TradeMonkey.Trader.Services;
+﻿using TradeMonkey.Services;
+using TradeMonkey.Services.Repositories;
 
 namespace TradeMonkey.DataCollector.Strategies
 {

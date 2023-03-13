@@ -3,6 +3,7 @@ using Kucoin.Net.Objects.Models.Spot.Socket;
 
 using System.Collections.Generic;
 
+using TradeMonkey.Services;
 using TradeMonkey.Trader.Services;
 
 using static System.Runtime.InteropServices.JavaScript.JSType;
