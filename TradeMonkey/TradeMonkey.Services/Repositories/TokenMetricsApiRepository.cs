@@ -20,6 +20,7 @@
 
             try
             {
+                Console.WriteLine(ActionUrl);
                 using var request = new HttpRequestMessage(HttpMethod.Get, ActionUrl);
                 using var response = await _httpClient.SendAsync(request, token);
 
@@ -30,6 +31,7 @@
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error: {ex.Message} - URL: {ActionUrl}");
                 throw new Exception($"GetEntityAsync returned {statusCode} with error: {ex.Message}");
             }
         }

@@ -1,4 +1,7 @@
-﻿namespace TradeMonkey.Services
+﻿using System;
+using System.Runtime.Intrinsics;
+
+namespace TradeMonkey.Trader.Services
 {
     [RegisterService]
     public sealed class TokenMetricsSvc
@@ -23,7 +26,7 @@
         {
             ct.ThrowIfCancellationRequested();
 
-            _uriBuilder.Path = "Token";
+            _uriBuilder.Path = "/Token";
 
             ApiRepo.ActionUrl = _uriBuilder.Uri;
 
@@ -50,8 +53,8 @@
                 PropertyNameCaseInsensitive = true
             };
 
-            _uriBuilder.Path = "trader-grades";
-            _uriBuilder.Query = $"tokens={string.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
+            _uriBuilder.Path = "v1/trader-grades";
+            _uriBuilder.Query = $"tokens={String.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
 
             ApiRepo.ActionUrl = _uriBuilder.Uri;
 
@@ -75,8 +78,8 @@
             Console.WriteLine("GETTING TOKEN METRICS PRICES");
             Console.WriteLine("");
 
-            _uriBuilder.Path = "Price";
-            _uriBuilder.Query = $"tokens={string.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
+            _uriBuilder.Path = "v1/Price";
+            _uriBuilder.Query = $"tokens={String.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
 
             ApiRepo.ActionUrl = _uriBuilder.Uri;
 

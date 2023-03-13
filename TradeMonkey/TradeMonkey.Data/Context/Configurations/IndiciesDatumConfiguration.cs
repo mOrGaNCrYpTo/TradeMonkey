@@ -20,7 +20,6 @@ namespace TradeMonkey.Data.Context.Configurations
             .ValueGeneratedNever()
             .HasColumnName("Token_Id");
             entity.Property(e => e.BlWeight).HasColumnName("BL_Weight");
-            entity.Property(e => e.Date).HasColumnType("date");
 
             OnConfigurePartial(entity);
         }

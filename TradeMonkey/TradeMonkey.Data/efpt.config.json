@@ -1,105 +1,109 @@
 ﻿{
-   "CodeGenerationMode": 3,
-   "ContextClassName": "TmDBContext",
-   "ContextNamespace": null,
-   "DefaultDacpacSchema": null,
-   "FilterSchemas": false,
-   "IncludeConnectionString": true,
-   "ModelNamespace": null,
-   "OutputContextPath": "Context",
-   "OutputPath": "Entity",
-   "PreserveCasingWithRegex": true,
-   "ProjectRootNamespace": "TradeMonkey.Data",
-   "Schemas": null,
-   "SelectedHandlebarsLanguage": 0,
-   "SelectedToBeGenerated": 0,
-   "Tables": [
-      {
-         "Name": "[dbo].[Correlation_Datums]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Indicator_Datums]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Indicies_Datums]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Kucoin_24HourStats]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Kucoin_Accounts]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Kucoin_AllTicks]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[KucoinTokenMetricsSymbols]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[PricePrediction_Datums]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[QuantmetricsT1_Datums]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[QuantmetricsT2_Datums]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[ResistanceSupport_Datums]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[ScenarioAnalysis_Datums]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Sentiments_Datums]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[TokenMetrics_Prices]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[TokenMetrics_Tokens]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[TraderGrades_Datums]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[TradingIndicator_Datums]",
-         "ObjectType": 0
-      }
-   ],
-   "UiHint": "HP\\MFSQL.TradeMonkey",
-   "UncountableWords": null,
-   "UseBoolPropertiesWithoutDefaultSql": false,
-   "UseDatabaseNames": false,
-   "UseDateOnlyTimeOnly": false,
-   "UseDbContextSplitting": true,
-   "UseFluentApiOnly": true,
-   "UseHandleBars": false,
-   "UseHierarchyId": false,
-   "UseInflector": true,
-   "UseLegacyPluralizer": true,
-   "UseManyToManyEntity": true,
-   "UseNoDefaultConstructor": false,
-   "UseNoObjectFilter": false,
-   "UseNodaTime": false,
-   "UseNullableReferences": false,
-   "UseSchemaFolders": false,
-   "UseSpatial": false,
-   "UseT4": false
+  "CodeGenerationMode": 3,
+  "ContextClassName": "TmDBContext",
+  "ContextNamespace": null,
+  "DefaultDacpacSchema": null,
+  "FilterSchemas": false,
+  "IncludeConnectionString": true,
+  "ModelNamespace": null,
+  "OutputContextPath": "Context",
+  "OutputPath": "Entity",
+  "PreserveCasingWithRegex": true,
+  "ProjectRootNamespace": "TradeMonkey.Data",
+  "Schemas": null,
+  "SelectedHandlebarsLanguage": 0,
+  "SelectedToBeGenerated": 0,
+  "Tables": [
+    {
+      "Name": "[dbo].[Correlation_Datums]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[Indicator_Datums]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[Indicies_Datums]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[Kucoin_24HourStats]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[Kucoin_Accounts]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[Kucoin_AllTicks]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[Kucoin_Tick]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[KucoinTokenMetricsSymbols]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[PricePrediction_Datums]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[QuantmetricsT1_Datums]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[QuantmetricsT2_Datums]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[ResistanceSupport_Datums]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[ScenarioAnalysis_Datums]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[Sentiments_Datums]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[TokenMetrics_Prices]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[TokenMetrics_Tokens]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[TraderGrades_Datums]",
+      "ObjectType": 0
+    },
+    {
+      "Name": "[dbo].[TradingIndicator_Datums]",
+      "ObjectType": 0
+    }
+  ],
+  "UiHint": "HP\\MFSQL.TradeMonkey",
+  "UncountableWords": null,
+  "UseBoolPropertiesWithoutDefaultSql": false,
+  "UseDatabaseNames": false,
+  "UseDateOnlyTimeOnly": true,
+  "UseDbContextSplitting": true,
+  "UseFluentApiOnly": true,
+  "UseHandleBars": false,
+  "UseHierarchyId": false,
+  "UseInflector": true,
+  "UseLegacyPluralizer": true,
+  "UseManyToManyEntity": true,
+  "UseNoDefaultConstructor": false,
+  "UseNoObjectFilter": false,
+  "UseNodaTime": false,
+  "UseNullableReferences": false,
+  "UseSchemaFolders": false,
+  "UseSpatial": false,
+  "UseT4": false
 }

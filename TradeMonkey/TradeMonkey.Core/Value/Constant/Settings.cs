@@ -15,7 +15,7 @@
 
         public static string TokenMetricsApiKeyName { get; set; } = "api_key";
         public static string TokenMetricsApiKeyVal { get; set; } = "tm-957bdb5c-d4e4-433d-91d5-0bf60e8ae129";
-        public static string TokenMetricsApiBaseUrl { get; set; } = "api.tokenmetrics.com/v1";
+        public static string TokenMetricsApiBaseUrl { get; set; } = "api.tokenmetrics.com";
 
         public static string TradeMonkeyDb { get; set; } =
             "Data Source=HP\\MFSQL;Database=TradeMonkey;Integrated Security=True;Encrypt=false;TrustServerCertificate=True";
