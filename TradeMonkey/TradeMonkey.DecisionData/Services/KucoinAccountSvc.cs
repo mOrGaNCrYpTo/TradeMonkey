@@ -1,4 +1,6 @@
-﻿namespace TradeMonkey.Trader.Services
+﻿using KucoinAccount = Kucoin.Net.Objects.Models.Spot.KucoinAccount;
+
+namespace TradeMonkey.Trader.Services
 {
     [RegisterService]
     public sealed class KucoinAccountSvc
@@ -16,11 +18,12 @@
                 throw new ArgumentNullException(nameof(repository));
         }
 
-        public async Task<List<Kucoin.Net.Objects.Models.Spot.KucoinAccount>> GetAccountsAsync(CancellationToken ct)
+        public async Task<List<KucoinAccount>> GetAccountsAsync(string? asset, AccountType? accountType,
+            CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
-            var ret = await Repo.GetAccountsAsync(ct);
+            var ret = await Repo.GetAccountsAsync(asset, accountType, ct);
             return ret.Data.ToList();
         }
     }

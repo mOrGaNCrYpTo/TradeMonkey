@@ -9,7 +9,7 @@
         public TokenMetricsDbRepository(TmDBContext tmDBContext)
         {
             _dbContext = tmDBContext ?? throw new ArgumentNullException(nameof(tmDBContext));
-            _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            //_dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         public async Task BulkInsertDataAsync<TEntity>(IEnumerable<TEntity> data, CancellationToken ct = default)

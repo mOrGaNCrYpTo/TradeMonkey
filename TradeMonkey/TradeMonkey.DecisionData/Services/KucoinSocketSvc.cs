@@ -1,21 +1,27 @@
-﻿namespace TradeMonkey.Trader.Services
+﻿using Kucoin.Net.Objects.Models.Spot.Socket;
+
+namespace TradeMonkey.Trader.Services
 {
+    [RegisterService]
     public sealed class KucoinSocketSvc
     {
-        private readonly KucoinSocketClient _client;
-        private readonly KuCoinDbRepository _repo;
+        [InjectService]
+        public KucoinSocketClient SocketClient { get; private set; }
+
+        [InjectService]
+        public KuCoinDbRepository Repo { get; private set; }
 
         public KucoinSocketSvc(KucoinSocketClient client, KuCoinDbRepository repo)
         {
-            _client = client;
-            _repo = repo;
+            SocketClient = client;
+            Repo = repo;
         }
 
         public async Task SubscribeToAllTickerUpdatesAsync(CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
-            var subscribeResult = await _client.SpotStreams.SubscribeToAllTickerUpdatesAsync(data =>
+            var subscribeResult = await SocketClient.SpotStreams.SubscribeToAllTickerUpdatesAsync(data =>
             {
                 // Handle ticker data
             });
@@ -25,14 +31,21 @@
         {
             ct.ThrowIfCancellationRequested();
 
-            var subscribeResult = await _client.SpotStreams.SubscribeToOrderUpdatesAsync(data =>
+            var subscribeResult = await SocketClient.SpotStreams.SubscribeToOrderUpdatesAsync(data =>
             {
                 // Handle order updates
-            },
-            data =>
+            }, data =>
             {
                 // Handle match updates
-            });
+            }, ct);
+        }
+
+        public async Task SaveTickerStreamAggregateAsync(Kucoin.Net.Objects.Models.Spot.KucoinTick ticker,
+            CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+            await Repo.InsertOneAsync(ticker, ct);
+            Console.WriteLine("Saved");
         }
     }
 }

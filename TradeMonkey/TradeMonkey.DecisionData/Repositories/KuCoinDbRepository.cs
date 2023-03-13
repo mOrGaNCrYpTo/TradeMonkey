@@ -74,12 +74,26 @@ namespace TradeMonkey.Trader.Repositories
             return topTokens;
         }
 
-        public async Task InsertDataAsync<TEntity>(IEnumerable<TEntity> data, CancellationToken ct) where TEntity : class
+        public async Task InsertManyAsync<TEntity>(IEnumerable<TEntity> data, CancellationToken ct) where TEntity : class
         {
             ct.ThrowIfCancellationRequested();
 
             await _dbContext.Set<TEntity>().BulkInsertAsync(data, ct);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task InsertOneAsync<TEntity>(TEntity data, CancellationToken ct) where TEntity : class
+        {
+            ct.ThrowIfCancellationRequested();
+
+            await _dbContext.Set<TEntity>().SingleInsertAsync(data, ct);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public void InsertOne<TEntity>(TEntity data) where TEntity : class
+        {
+            _dbContext.Set<TEntity>().SingleInsert(data);
+            _dbContext.SaveChanges();
         }
     }
 }

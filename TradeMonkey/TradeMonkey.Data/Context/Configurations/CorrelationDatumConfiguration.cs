@@ -19,7 +19,6 @@ namespace TradeMonkey.Data.Context.Configurations
             entity.Property(e => e.TokenId)
             .ValueGeneratedNever()
             .HasColumnName("Token_Id");
-            entity.Property(e => e.Date).HasColumnType("date");
             entity.Property(e => e.Token2Name)
             .HasMaxLength(20)
             .IsUnicode(false)

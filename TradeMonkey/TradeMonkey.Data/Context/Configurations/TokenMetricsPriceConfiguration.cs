@@ -30,7 +30,7 @@ namespace TradeMonkey.Data.Context.Configurations
             .IsRequired()
             .HasMaxLength(10)
             .IsUnicode(false);
-            entity.Property(e => e.Volume).HasColumnType("decimal(28, 16)");
+            entity.Property(e => e.Volume).HasColumnType("decimal(28, 8)");
 
             OnConfigurePartial(entity);
         }

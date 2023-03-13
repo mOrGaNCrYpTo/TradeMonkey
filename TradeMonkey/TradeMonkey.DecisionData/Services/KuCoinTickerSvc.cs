@@ -1,5 +1,7 @@
 ﻿using Mapster;
 
+using KucoinTick = TradeMonkey.Data.Entity.KucoinTick;
+
 namespace TradeMonkey.Trader.Services
 {
     [RegisterService]
@@ -32,18 +34,30 @@ namespace TradeMonkey.Trader.Services
             var data = result.Data.Data;
             var tickers = result.Data.Data.Adapt<IEnumerable<Kucoin.Net.Objects.Models.Spot.KucoinAllTick>>();
 
-            await Repo.InsertDataAsync(tickers, ct);
+            await Repo.InsertManyAsync(tickers, ct);
         }
 
-        public async Task GetTickerDataAsync(string symbol, CancellationToken ct)
+        public async Task GetLatestTickerDataAsync(string symbol, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
+            Console.WriteLine("Getting latest Kucoin ticker data...");
+
             var result = await _client.SpotApi.ExchangeData.GetTickerAsync(symbol, ct);
             var data = result.Data;
-            var tickers = result.Data.Adapt<IEnumerable<Kucoin.Net.Objects.Models.Spot.KucoinTick>>();
 
-            await Repo.InsertDataAsync(tickers, ct);
+            var ticker = new KucoinTick
+            {
+                BestAskPrice = data.BestAskPrice,
+                BestBidPrice = data.BestBidPrice,
+                LastPrice = data.LastPrice,
+                Sequence = data.Sequence,
+                Timestamp = data.Timestamp
+            };
+
+            //var tickers = data.Adapt<KucoinTick>();
+
+            await Repo.InsertOneAsync(ticker, ct);
         }
 
         public async Task<List<string>> GetTopTokensAsync(int thresholdVolume, double thresholdChange, int numberOfTokens, CancellationToken ct)
