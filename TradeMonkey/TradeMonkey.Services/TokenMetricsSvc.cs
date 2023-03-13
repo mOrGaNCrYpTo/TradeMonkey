@@ -94,5 +94,80 @@ namespace TradeMonkey.Trader.Services
 
             return null;
         }
+
+        public async Task<IEnumerable<TokenMetricsPrice>?> GetMarketIndicatorAsync(List<string> symbols,
+          string startDate, string endDate, int limit, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            Console.WriteLine("GETTING TOKEN METRICS PRICES");
+            Console.WriteLine("");
+
+            _uriBuilder.Path = "v1/market-indicator";
+            _uriBuilder.Query = $"tokens={String.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
+
+            ApiRepo.ActionUrl = _uriBuilder.Uri;
+
+            var json = await ApiRepo.GetAsync(ct);
+            var result = JsonSerializer.Deserialize<TokenMetricsPriceResponse>(json);
+
+            if (result != null && result.Data.Any())
+            {
+                await DbRepo.BulkInsertDataAsync(result.Data, ct);
+                return result.Data;
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<TokenMetricsPrice>?> GetResistanceSupportAsync(List<string> symbols,
+             string startDate, string endDate, int limit, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            Console.WriteLine("GETTING TOKEN METRICS RESISTANCE SUPPORT");
+            Console.WriteLine("");
+
+            _uriBuilder.Path = "v1/resistance-support";
+            _uriBuilder.Query = $"tokens={String.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
+
+            ApiRepo.ActionUrl = _uriBuilder.Uri;
+
+            var json = await ApiRepo.GetAsync(ct);
+            var result = JsonSerializer.Deserialize<TokenMetricsPriceResponse>(json);
+
+            if (result != null && result.Data.Any())
+            {
+                await DbRepo.BulkInsertDataAsync(result.Data, ct);
+                return result.Data;
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<TokenMetricsPrice>?> GetPricePredictions(List<string> symbols,
+           string startDate, string endDate, int limit, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            Console.WriteLine("GETTING TOKEN METRICS RESISTANCE SUPPORT");
+            Console.WriteLine("");
+
+            _uriBuilder.Path = "v1/resistance-support";
+            _uriBuilder.Query = $"tokens={String.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
+
+            ApiRepo.ActionUrl = _uriBuilder.Uri;
+
+            var json = await ApiRepo.GetAsync(ct);
+            var result = JsonSerializer.Deserialize<TokenMetricsPriceResponse>(json);
+
+            if (result != null && result.Data.Any())
+            {
+                await DbRepo.BulkInsertDataAsync(result.Data, ct);
+                return result.Data;
+            }
+
+            return null;
+        }
     }
 }

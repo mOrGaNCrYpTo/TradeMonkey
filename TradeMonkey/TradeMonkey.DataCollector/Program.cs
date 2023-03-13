@@ -1,12 +1,6 @@
-﻿using Kucoin.Net;
-using Kucoin.Net.Objects.Models.Spot.Socket;
+﻿using Kucoin.Net.Objects.Models.Spot.Socket;
 
-using System.Collections.Generic;
-
-using TradeMonkey.Services;
 using TradeMonkey.Trader.Services;
-
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TradeMonkey.Trader
 {
@@ -107,7 +101,7 @@ namespace TradeMonkey.Trader
 
             // ******* TOKEN METRICS TIMERS ******* //
             var batch = new List<int> { 3375, 3306, 3379 };
-            var symbols = new List<string> { "ETH", "BTC" };
+            var symbols = new List<string> { "ETH", "BTC", "USDT" };
 
             // Now get the trader grades for the top tokens
             DateTime dateTime = DateTime.Now;
@@ -115,10 +109,13 @@ namespace TradeMonkey.Trader
             var endDate = dateTime.ToString("yyyy-MM-dd");
             var limit = 1000000;
 
-            var tokenMetricsPrices = await tokenMetricsSvc.GetPricesAsync(batch, startDate, endDate, limit, ct);
-            var tokenMetricsGrades = await tokenMetricsSvc.GetTraderGradesAsync(batch, startDate, endDate, limit, ct);
-            var tokenMetricsIndicator = await tokenMetricsSvc.GetIndicatorAsync(symbols, startDate, endDate, limit, ct);
-            var tokenMetricsResistanceSupport = await tokenMetricsSvc.GetResistanceSupportAsync(symbols, startDate, endDate, limit, ct);
+            List<Task> tasks = new()
+            {
+                tokenMetricsSvc.GetPricesAsync(batch, startDate, endDate, limit, cts.Token),
+                tokenMetricsSvc.GetTraderGradesAsync(batch, startDate, endDate, limit, cts.Token),
+                tokenMetricsSvc.GetMarketIndicatorAsync(symbols, startDate, endDate, limit, cts.Token),
+                tokenMetricsSvc.GetResistanceSupportAsync(symbols, startDate, endDate, limit, cts.Token)
+            };
 
             // ******* END TOKEN METRICS TIMERS ******* //
 
