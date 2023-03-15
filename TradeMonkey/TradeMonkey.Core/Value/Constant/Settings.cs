@@ -18,6 +18,8 @@
         public static string TokenMetricsApiBaseUrl { get; set; } = "api.tokenmetrics.com";
 
         public static string TradeMonkeyDb { get; set; } =
-            "Data Source=HP\\MFSQL;Database=TradeMonkey;Integrated Security=True;Encrypt=false;TrustServerCertificate=True";
+            @"Data Source=OTRROS-2WV24B3\CMORGAN;Database=TradeMonkey;Integrated Security=True;Encrypt=false;TrustServerCertificate=True";
+
+        //"Data Source=HP\\MFSQL;Database=TradeMonkey;Integrated Security=True;Encrypt=false;TrustServerCertificate=True";
     }
 }

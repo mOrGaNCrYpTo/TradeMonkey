@@ -1,7 +1,4 @@
-﻿using System;
-using System.Runtime.Intrinsics;
-
-namespace TradeMonkey.Trader.Services
+﻿namespace TradeMonkey.Trader.Services
 {
     [RegisterService]
     public sealed class TokenMetricsSvc
@@ -100,7 +97,7 @@ namespace TradeMonkey.Trader.Services
         {
             ct.ThrowIfCancellationRequested();
 
-            Console.WriteLine("GETTING TOKEN METRICS PRICES");
+            Console.WriteLine("GETTING TOKEN METRICS MARKET INDICATOR");
             Console.WriteLine("");
 
             _uriBuilder.Path = "v1/market-indicator";

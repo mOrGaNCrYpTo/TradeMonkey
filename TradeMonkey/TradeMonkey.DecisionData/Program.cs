@@ -1,18 +1,12 @@
-﻿using Kucoin.Net;
-using Kucoin.Net.Objects.Models.Spot.Socket;
-
-using System.Collections.Generic;
+﻿using Kucoin.Net.Objects.Models.Spot.Socket;
 
 using TradeMonkey.Trader.Services;
-
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TradeMonkey.Trader
 {
     public static class Program
     {
         private static List<KucoinStreamTick> tickList = new List<KucoinStreamTick>();
-        private static KucoinSocketSvc socketSvc;
         private static CancellationTokenSource cts = new CancellationTokenSource();
 
         static async Task Main()
@@ -100,6 +94,7 @@ namespace TradeMonkey.Trader
             var state = new TimerState { TradingPair = "ETH-BTC" };
             var timer = new Timer((s) => Task.Run(() => OnKucoinStreamTimerElapsed(s, dbContext)), state, 0, 300000);
 
+            // Ticker Websocket subscription
             await ReceivetickListAsync(kucoinSocketClient);
 
             // ******* END KUCOIN TIMERS ******* //
@@ -114,10 +109,10 @@ namespace TradeMonkey.Trader
             var endDate = dateTime.ToString("yyyy-MM-dd");
             var limit = 1000000;
 
-            var tokenMetricsPrices = await tokenMetricsSvc.GetPricesAsync(batch, startDate, endDate, limit, ct);
-            var tokenMetricsGrades = await tokenMetricsSvc.GetTraderGradesAsync(batch, startDate, endDate, limit, ct);
-            var tokenMetricsIndicator = await tokenMetricsSvc.GetIndicatorAsync(symbols, startDate, endDate, limit, ct);
-            var tokenMetricsResistanceSupport = await tokenMetricsSvc.GetResistanceSupportAsync(symbols, startDate, endDate, limit, ct);
+            var tokenMetricsPrices = await tokenMetricsSvc.GetPricesAsync(batch, startDate, endDate, limit, cts.Token);
+            var tokenMetricsGrades = await tokenMetricsSvc.GetTraderGradesAsync(batch, startDate, endDate, limit, cts.Token);
+            //var tokenMetricsIndicator = await tokenMetricsSvc.GetIndicatorAsync(symbols, startDate, endDate, limit, ct);
+            var tokenMetricsResistanceSupport = await tokenMetricsSvc.GetResistanceSupportAsync(symbols, startDate, endDate, limit, cts.Token);
 
             // ******* END TOKEN METRICS TIMERS ******* //
 
@@ -137,7 +132,7 @@ namespace TradeMonkey.Trader
 
             if (tickList.Any())
             {
-                var aggregateTick = new Data.Entity.KucoinTick
+                var aggregateTick = new KucoinTick
                 {
                     Sequence = tickList.Max(t => t.Sequence), // use the highest sequence number in the list
                     LastPrice = tickList.Average(t => t.LastPrice), // compute the average last price

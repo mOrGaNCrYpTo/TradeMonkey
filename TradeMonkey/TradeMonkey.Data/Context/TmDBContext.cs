@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
+
 using TradeMonkey.Data.Context.Configurations;
 using TradeMonkey.Data.Entity;
 #nullable disable
@@ -17,6 +19,11 @@ public partial class TmDBContext : DbContext
     public TmDBContext(DbContextOptions<TmDBContext> options)
         : base(options)
     {
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        //optionsBuilder.UseSqlServer(@"Data Source=OTRROS-2WV24B3\CMORGAN;Database=TradeMonkey;Integrated Security=True;Encrypt=false;TrustServerCertificate=True");
     }
 
     public virtual DbSet<CorrelationDatum> CorrelationDatums { get; set; }

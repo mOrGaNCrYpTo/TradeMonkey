@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Kucoin.Net" Version="4.3.1" />
     <PackageReference Include="Mapster" Version="7.3.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.4" />
     <PackageReference Include="Quickwire" Version="1.3.2" />
   </ItemGroup>
 
