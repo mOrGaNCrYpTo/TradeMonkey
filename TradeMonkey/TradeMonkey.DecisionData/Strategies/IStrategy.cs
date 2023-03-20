@@ -1,4 +1,5 @@
-﻿using TradeMonkey.Trader.Value.Aggregate;
+﻿using TradeMonkey.Core.Value.Aggregate;
+using TradeMonkey.Trader.Value.Constant;
 
 namespace TradeMonkey.Trader.Strategies
 {

@@ -37,8 +37,8 @@
             }
         }
 
-        public async Task<IEnumerable<TraderGradesDatum>?> GetTraderGradesAsync(List<int> symbols, string startDate,
-            string endDate, int limit, CancellationToken ct)
+        public async Task<IEnumerable<TraderGradesDatum>?> GetTraderGradesAsync(List<int> symbols, DateOnly startDate,
+            DateOnly endDate, int limit, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -68,7 +68,7 @@
         }
 
         public async Task<IEnumerable<TokenMetricsPrice>?> GetPricesAsync(List<int> symbols,
-            string startDate, string endDate, int limit, CancellationToken ct)
+            DateOnly startDate, DateOnly endDate, int limit, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -93,7 +93,7 @@
         }
 
         public async Task<IEnumerable<TokenMetricsPrice>?> GetMarketIndicatorAsync(List<string> symbols,
-          string startDate, string endDate, int limit, CancellationToken ct)
+          DateOnly startDate, DateOnly endDate, int limit, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -117,8 +117,8 @@
             return null;
         }
 
-        public async Task<IEnumerable<TokenMetricsPrice>?> GetResistanceSupportAsync(List<string> symbols,
-             string startDate, string endDate, int limit, CancellationToken ct)
+        public async Task<IEnumerable<TokenMetricsSupportResistance>?> GetResistanceSupportAsync(List<string> symbols,
+             DateOnly startDate, DateOnly endDate, int limit, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -131,19 +131,19 @@
             ApiRepo.ActionUrl = _uriBuilder.Uri;
 
             var json = await ApiRepo.GetAsync(ct);
-            var result = JsonSerializer.Deserialize<TokenMetricsPriceResponse>(json);
+            var result = JsonSerializer.Deserialize<IEnumerable<TokenMetricsSupportResistance>>(json);
 
-            if (result != null && result.Data.Any())
+            if (result != null)
             {
-                await DbRepo.BulkInsertDataAsync(result.Data, ct);
-                return result.Data;
+                await DbRepo.BulkInsertDataAsync(result, ct);
+                return result;
             }
 
             return null;
         }
 
         public async Task<IEnumerable<TokenMetricsPrice>?> GetPricePredictions(List<string> symbols,
-           string startDate, string endDate, int limit, CancellationToken ct)
+           DateOnly startDate, DateOnly endDate, int limit, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 

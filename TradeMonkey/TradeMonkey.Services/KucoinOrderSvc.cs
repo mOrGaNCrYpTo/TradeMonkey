@@ -33,7 +33,7 @@
         }
 
         public async Task<WebCallResult<KucoinNewOrder>> PostMarketOrderAsync(string symbol, OrderSide orderSide,
-           int quantity, CancellationToken token)
+           decimal quantity, CancellationToken token)
         {
             return await
                 KucoinClient.SpotApi.Trading.
@@ -42,7 +42,7 @@
         }
 
         public async Task<WebCallResult<KucoinNewOrder>> PostStopOrderAsync(string symbol, OrderSide orderSide,
-           int quantity, TradeType tradeType, decimal stopPrice, TimeInForce timeInForce, TimeSpan cancelAfter,
+           decimal quantity, TradeType tradeType, decimal stopPrice, TimeInForce timeInForce, TimeSpan cancelAfter,
            CancellationToken token)
         {
             return await

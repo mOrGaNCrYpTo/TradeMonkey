@@ -68,7 +68,7 @@ namespace TradeMonkey.Trader
 
             // Resolve your services from the ServiceProvider
             var kucoinTickerSvc = serviceProvider.GetRequiredService<KucoinTickerSvc>();
-            socketSvc = serviceProvider.GetRequiredService<KucoinSocketSvc>();
+            var socketSvc = serviceProvider.GetRequiredService<KucoinSocketSvc>();
             var kucoinSocketClient = serviceProvider.GetRequiredService<KucoinSocketClient>();
 
             var tokenMetricsSvc = serviceProvider.GetRequiredService<TokenMetricsSvc>();

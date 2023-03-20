@@ -1,13 +1,9 @@
-﻿using Skender.Stock.Indicators;
-
-using TradeMonkey.Trader.Value.Aggregate;
-
-namespace TradeMonkey.Trader.Strategies
+﻿namespace TradeMonkey.Trader.Strategies
 {
     [RegisterService]
-    public class TAIndicatorManager : ITAIndicatorManager
+    public static class TAIndicatorManager : ITAIndicatorManager
     {
-        public IEnumerable<decimal?> GetMomentumOscillator(IEnumerable<QuoteDto> quotes, int period)
+        public static IEnumerable<decimal?> GetMomentumOscillator(IEnumerable<QuoteDto> quotes, int period)
         {
             // Calculate the momentum for the given period
             var momentum = new List<decimal?>();
@@ -63,7 +59,7 @@ namespace TradeMonkey.Trader.Strategies
             return oscillator;
         }
 
-        public List<PeakPoint> GetPeakPoints(this IEnumerable<double> values)
+        public static List<PeakPoint> GetPeakPoints(this IEnumerable<double> values)
         {
             var peaks = new List<PeakPoint>();
 
@@ -80,7 +76,36 @@ namespace TradeMonkey.Trader.Strategies
             return peaks;
         }
 
-        public decimal GetAtr(IEnumerable<IQuote> quotes, int period)
+        public static decimal GetCurrentRsi(IEnumerable<IQuote> quotes, int periods)
+        {
+            var rsi = quotes.GetRsi(periods)
+                            .LastOrDefault()?.Rsi ?? double.NaN;
+
+            return (decimal)rsi;
+        }
+
+        public static IEnumerable<decimal> GetAllRsi(IEnumerable<IQuote> quotes, int periods)
+        {
+            return quotes.GetRsi(periods)
+                         .Select(rsiResult => (decimal)rsiResult.Rsi);
+        }
+
+        public static List<int> FindLowPoints(List<IQuote> quotes)
+        {
+            List<int> lowPoints = new List<int>();
+
+            for (int i = 1; i < quotes.Count - 1; i++)
+            {
+                if (quotes[i].Low < quotes[i - 1].Low && quotes[i].Low < quotes[i + 1].Low)
+                {
+                    lowPoints.Add(i);
+                }
+            }
+
+            return lowPoints;
+        }
+
+        public static decimal GetAtr(IEnumerable<IQuote> quotes, int period)
         {
             var candles = quotes.Select(q => new Quote
             {
@@ -100,7 +125,7 @@ namespace TradeMonkey.Trader.Strategies
             return (decimal)atr.LastOrDefault().Atr;
         }
 
-        public IEnumerable<RollingPivotsResult> GetRollingPivots(IEnumerable<IQuote> quotes, int windowPeriods, int offsetPeriods, PivotPointType pointType = PivotPointType.Standard)
+        public static IEnumerable<RollingPivotsResult> GetRollingPivots(IEnumerable<IQuote> quotes, int windowPeriods, int offsetPeriods, PivotPointType pointType = PivotPointType.Standard)
         {
             var candles = quotes.Select(q => new Candle(q.Date, q.Open, q.High, q.Low, q.Close, q.Volume)).ToList();
 
@@ -110,20 +135,20 @@ namespace TradeMonkey.Trader.Strategies
             return pivots;
         }
 
-        public decimal GetResistanceLevel(IEnumerable<IQuote> quotes)
+        public static decimal GetResistanceLevel(IEnumerable<IQuote> quotes)
         {
             IEnumerable<RollingPivotsResult>? pivots = quotes?.GetRollingPivots(20, 10);
 
             return pivots.Any() ? (decimal)pivots.Last().R3 : 0m;
         }
 
-        public decimal GetSupportLevel(IEnumerable<IQuote> quotes)
+        public static decimal GetSupportLevel(IEnumerable<IQuote> quotes)
         {
             var pivots = quotes.GetRollingPivots(20, 10);
             return (decimal)pivots.Last().S3;
         }
 
-        public decimal GetSma(IEnumerable<IQuote> quotes, int period)
+        public static decimal GetSma(IEnumerable<IQuote> quotes, int period)
         {
             // Convert quotes to Candle format
             List<Candle> candles = quotes
@@ -136,14 +161,8 @@ namespace TradeMonkey.Trader.Strategies
             return (decimal)sma.Sma;
         }
 
-        public decimal GetRsi(IEnumerable<IQuote> quotes, int periods)
-        {
-            var closes = quotes.Select(q => q.Close).ToArray();
-            var rsi = quotes.GetRsi(periods).LastOrDefault()?.Rsi ?? double.NaN;
-            return (decimal)rsi;
-        }
-
-        public decimal GetStochasticRSI(IEnumerable<IQuote> quotes, int rsiPeriods, int stochPeriods, int signalPeriods, int smoothPeriods)
+        public static decimal GetStochasticRSI(IEnumerable<IQuote> quotes,
+            int rsiPeriods, int stochPeriods, int signalPeriods, int smoothPeriods)
         {
             // Convert quotes to Candle format
             List<Candle> candles = quotes
@@ -151,20 +170,21 @@ namespace TradeMonkey.Trader.Strategies
                 .ToList();
 
             // Calculate Stochastic RSI using Skender.Stock.Indicators
-            StochRsiResult stochRsi =
-                candles.GetStochRsi(rsiPeriods, stochPeriods, signalPeriods, smoothPeriods).LastOrDefault();
+            StochRsiResult stochRsi = candles
+                                        .GetStochRsi(rsiPeriods, stochPeriods, signalPeriods, smoothPeriods)
+                                        .LastOrDefault();
 
             return (decimal)stochRsi.StochRsi;
         }
 
-        public async Task<decimal> GetSlopeAsync(IEnumerable<IQuote> quotes, int periods)
+        public static async Task<decimal> GetSlopeAsync(IEnumerable<IQuote> quotes, int periods)
         {
             var results = await Task.Run(() => quotes.GetSlope(periods).ToList());
             var slopeResult = results.LastOrDefault();
             return (decimal)slopeResult.Slope;
         }
 
-        public decimal GetLinearRegression(IEnumerable<IQuote> quotes, int periods)
+        public static decimal GetLinearRegression(IEnumerable<IQuote> quotes, int periods)
         {
             var closes = quotes.Select(q => q.Close).ToArray();
             var results = quotes.GetSlope(periods);
@@ -179,13 +199,31 @@ namespace TradeMonkey.Trader.Strategies
             return 0m;
         }
 
-        public bool CheckForBullishDivergence(IEnumerable<IQuote> quotes, IEnumerable<int> lowPoints, int rsi)
+        public static bool CheckForBullishDivergence(List<IQuote> quotes, int rsiPeriods = 14)
         {
+            IEnumerable<int> lowPoints = FindLowPoints(quotes);
+
             // Check if there is a higher low in the RSI
             foreach (var low in lowPoints)
             {
-                var rsiValues = IndicatorManager.GetRsi(quotes.Skip(low).Take(rsi + 1), rsi);
+                var rsiValues = GetAllRsi(quotes.Skip(low).Take(rsiPeriods + 1), rsiPeriods);
                 if (rsiValues.First() < rsiValues.Last())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool CheckForHiddenBullishDivergence(List<QuoteDto> quotes, double currentRsi, int rsiPeriods = 14)
+        {
+            // Check if there is a lower low in the price and a higher low in the RSI
+            for (int i = quotes.Count - 2; i >= 0; i--)
+            {
+                var rsiValues = GetAllRsi(quotes.Skip(i).Take(rsiPeriods + 1), rsiPeriods);
+
+                if (quotes[i].Low < quotes.Last().Low && rsiValues.Last() > currentRsi)
                 {
                     return true;
                 }

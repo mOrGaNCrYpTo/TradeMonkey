@@ -20,5 +20,6 @@ public partial class KucoinTick
     public decimal? BestBidPrice { get; set; }
 
     public decimal? BestBidQuantity { get; set; }
+
     public DateTime Timestamp { get; set; }
 }

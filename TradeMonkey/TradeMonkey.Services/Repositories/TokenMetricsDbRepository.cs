@@ -12,6 +12,42 @@
             //_dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
+        public async Task InsertAsync(IEnumerable<dynamic> data, CancellationToken ct = default)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            // Get the DbSet for the entity type
+            await _dbContext.AddRangeAsync(data, ct);
+
+            // Save the changes to the database
+            _ = await _dbContext.SaveChangesAsync(ct);
+        }
+
+        public async Task UpsertAsync(IEnumerable<dynamic> data, CancellationToken ct = default)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            // Get the DbSet for the entity type
+            await Task.Run(() => _dbContext.UpdateRange(data), ct);
+
+            // Save the changes to the database
+            _ = await _dbContext.SaveChangesAsync(ct);
+        }
+
+        public async Task BulkUpdateAsync<TEntity>(IEnumerable<TEntity> data, CancellationToken ct = default)
+            where TEntity : class
+        {
+            ct.ThrowIfCancellationRequested();
+
+            // Get the DbSet for the entity type
+            DbSet<TEntity> dbSet = _dbContext.Set<TEntity>();
+
+            await dbSet.BulkUpdateAsync(data, ct);
+
+            // Save the changes to the database
+            _ = await _dbContext.SaveChangesAsync(ct);
+        }
+
         public async Task BulkInsertDataAsync<TEntity>(IEnumerable<TEntity> data, CancellationToken ct = default)
              where TEntity : class
         {
@@ -23,7 +59,21 @@
             await dbSet.BulkInsertAsync(data, ct);
 
             // Save the changes to the database
-            await _dbContext.SaveChangesAsync(ct);
+            _ = await _dbContext.SaveChangesAsync(ct);
+        }
+
+        public async Task BulkDelete<TEntity>(IEnumerable<TEntity> data, CancellationToken ct = default)
+            where TEntity : class
+        {
+            ct.ThrowIfCancellationRequested();
+
+            // Get the DbSet for the entity type
+            DbSet<TEntity> dbSet = _dbContext.Set<TEntity>();
+
+            await dbSet.BulkDeleteAsync(data, ct);
+
+            // Save the changes to the database
+            _ = await _dbContext.SaveChangesAsync(ct);
         }
     }
 }

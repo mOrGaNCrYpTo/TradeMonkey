@@ -11,7 +11,7 @@ public partial class CorrelationDatum
 
     public double Correlation { get; set; }
 
-    public DateTime Date { get; set; }
+    public DateOnly Date { get; set; }
 
     public string Token2Name { get; set; }
 

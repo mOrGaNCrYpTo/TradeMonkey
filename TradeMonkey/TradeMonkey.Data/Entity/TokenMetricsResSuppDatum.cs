@@ -5,11 +5,13 @@ using System.Collections.Generic;
 
 namespace TradeMonkey.Data.Entity;
 
-public partial class IndiciesDatum
+public partial class TokenMetricsResSuppDatum
 {
     public int TokenId { get; set; }
 
-    public int BlWeight { get; set; }
+    public long Epoch { get; set; }
 
-    public DateOnly? Date { get; set; }
+    public decimal? Level { get; set; }
+
+    public DateTime DateCreated { get; set; }
 }

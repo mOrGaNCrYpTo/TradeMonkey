@@ -1,9 +1,12 @@
 ﻿using TradeMonkey.Trader.Services;
 
 using KucoinAccount = Kucoin.Net.Objects.Models.Spot.KucoinAccount;
+using Kucoin.Net.Enums;
+using TradeMonkey.Trader.Value.Constant;
 
 namespace TradeMonkey.Trader.Helpers
 {
+    [RegisterService]
     public sealed class TradingCalculators
     {
         [InjectService]

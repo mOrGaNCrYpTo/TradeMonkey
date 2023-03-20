@@ -1,6 +1,6 @@
 ﻿using TradeMonkey.Trader.Services;
 using Skender.Stock.Indicators;
-using TradeMonkey.Trader.Value.Aggregate;
+using TradeMonkey.Core.Value.Aggregate;
 
 namespace TradeMonkey.DataCollector.Strategies
 {
