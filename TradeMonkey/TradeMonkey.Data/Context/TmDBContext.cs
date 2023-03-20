@@ -73,7 +73,7 @@ public partial class TmDBContext : DbContext
             modelBuilder.ApplyConfiguration(new Configurations.ScenarioAnalysisDatumConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.SentimentsDatumConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.TokenMetricsPriceConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.TokenMetricsResistanceSupportConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.TokenMetricsResSuppDatumConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.TokenMetricsTokenConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.TraderGradesDatumConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.TradingIndicatorDatumConfiguration());

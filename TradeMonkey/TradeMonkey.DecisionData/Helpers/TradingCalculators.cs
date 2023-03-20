@@ -1,8 +1,4 @@
-﻿using TradeMonkey.Trader.Services;
-
-using KucoinAccount = Kucoin.Net.Objects.Models.Spot.KucoinAccount;
-using Kucoin.Net.Enums;
-using TradeMonkey.Trader.Value.Constant;
+﻿using KucoinAccount = Kucoin.Net.Objects.Models.Spot.KucoinAccount;
 
 namespace TradeMonkey.Trader.Helpers
 {

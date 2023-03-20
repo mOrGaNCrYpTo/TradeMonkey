@@ -104,9 +104,9 @@ namespace TradeMonkey.Trader
             var symbols = new List<string> { "ETH", "BTC" };
 
             // Now get the trader grades for the top tokens
-            DateTime dateTime = DateTime.Now;
-            var startDate = dateTime.AddDays(-1).ToString("yyyy-MM-dd");
-            var endDate = dateTime.ToString("yyyy-MM-dd");
+            DateTime currentDateTime = DateTime.Now;
+            var startDate = DateOnly.FromDateTime(currentDateTime.AddDays(-1));
+            var endDate = DateOnly.FromDateTime(currentDateTime);
             var limit = 1000000;
 
             var tokenMetricsPrices = await tokenMetricsSvc.GetPricesAsync(batch, startDate, endDate, limit, cts.Token);

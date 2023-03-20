@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-using Skender.Stock.Indicators;
+﻿using Skender.Stock.Indicators;
 
 namespace TradeMonkey.Core.Value.Aggregate
 {

@@ -127,8 +127,6 @@ namespace TradeMonkey.Trader
             DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
             DateOnly oneYearAgo = currentDate.AddDays(-1);
 
-            List<Task> tasks = new();
-
             DateOnly startDate = currentDate.AddDays(-5);
             DateOnly endDate = currentDate;
 
@@ -164,7 +162,7 @@ namespace TradeMonkey.Trader
 
                 Console.WriteLine($"Getting token metrics prices for {startDate} to {endDate}");
 
-                tasks.Add(tokenMetricsSvc.GetPricesAsync(batch, startDate, endDate, limit, ct)),
+                tasks.Add(tokenMetricsSvc.GetPricesAsync(batch, startDate, endDate, limit, ct));
 
                 // Move to the next month
                 oneYearAgo = endDate;
@@ -178,9 +176,9 @@ namespace TradeMonkey.Trader
             var batch = new List<int> { 3375, 3306 };
             var symbols = new List<string> { "ETH", "BTC" };
 
-            DateTime dateTime = DateTime.Now;
-            var startDate = dateTime.AddDays(-1).ToString("yyyy-MM-dd");
-            var endDate = dateTime.ToString("yyyy-MM-dd");
+            DateTime currentDateTime = DateTime.Now;
+            var startDate = DateOnly.FromDateTime(currentDateTime.AddDays(-1));
+            var endDate = DateOnly.FromDateTime(currentDateTime);
             var limit = 1000000;
 
             List<Task> tasks = new()
