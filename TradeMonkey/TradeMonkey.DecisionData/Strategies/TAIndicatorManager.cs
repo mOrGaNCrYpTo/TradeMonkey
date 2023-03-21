@@ -1,5 +1,25 @@
 ﻿namespace TradeMonkey.Trader.Strategies
 {
+    // Your 5-minute scalping strategy seems well thought out, but there's always room for
+    // improvement or potential additions. Here are some suggestions that could be useful for both
+    // your scalping strategy and future strategies, such as a breakout strategy:
+
+    //Use multiple time frames: Analyze charts on different time frames(e.g., 1-minute, 5-minute, and 15-minute) to get a better understanding of the overall trend and intraday price action.This can help with entry and exit points, as well as risk management.
+    //    Consider incorporating additional technical indicators: RSI and moving averages are good indicators, but you could also include others like MACD, Bollinger Bands, or Stochastic Oscillator to improve the accuracy of your entry and exit points, as well as identify potential reversals or breakouts.
+
+    //Focus on high volume and high liquidity pairs: To ensure smoother executions and minimize slippage, prioritize trading currency pairs with high liquidity and volume.Major pairs like EUR/USD, USD/JPY, and GBP/USD are good examples.
+
+    //Employ risk management strategies: Establish a risk-reward ratio that suits your trading goals and use stop-loss orders to protect your capital. Consider using a trailing stop to lock in profits and let your winning trades run.
+    //    Keep an economic calendar handy: Major news events and economic releases can have a significant impact on currency markets.Staying informed about these events can help you make better trading decisions and avoid unnecessary risks.
+
+    //Be flexible and adaptable: Market conditions can change rapidly, so be prepared to adjust your strategy as needed.Be open to learning from your trades and refine your approach based on the feedback you get from the market.
+
+    //Maintain a trading journal: Record your trades, including the reasons for entering and exiting positions, and regularly review your performance.This can help you identify patterns in your trading and areas for improvement.
+
+    //Develop a breakout strategy: Since you mentioned considering a future breakout strategy, start by identifying key support and resistance levels in the market. Look for consolidation patterns and employ additional technical indicators to confirm breakouts, such as volume or candlestick patterns.
+
+    //Remember, every trader's style and risk tolerance is different. Be sure to test and refine your strategy using a demo account before committing real money. This will help you understand how your strategy performs under different market conditions and build your confidence in executing trades.
+
     [RegisterService]
     public static class TAIndicatorManager
     {
@@ -59,6 +79,36 @@
             return oscillator;
         }
 
+        public static decimal GetRateOfChange(List<QuoteDto> quotes, int period)
+        {
+            if (quotes == null || quotes.Count == 0)
+            {
+                throw new ArgumentException("The quotes list cannot be null or empty.");
+            }
+
+            if (period < 1)
+            {
+                throw new ArgumentException("The period must be greater than or equal to 1.");
+            }
+
+            if (quotes.Count < period + 1)
+            {
+                throw new ArgumentException($"The quotes list must have at least {period + 1} items for the specified period.");
+            }
+
+            var currentPrice = quotes.Last().Close;
+            var previousPrice = quotes[quotes.Count - period - 1].Close;
+
+            if (previousPrice == 0)
+            {
+                throw new InvalidOperationException("The previous price cannot be zero.");
+            }
+
+            var roc = (currentPrice - previousPrice) / previousPrice * 100;
+
+            return roc;
+        }
+
         public static List<PeakPoint> GetPeakPoints(this IEnumerable<decimal> values)
         {
             var peaks = new List<PeakPoint>();
@@ -76,7 +126,8 @@
             return peaks;
         }
 
-        public static decimal GetCurrentRsi(IEnumerable<IQuote> quotes, int periods)
+        public static decimal GetPreviousRsi<TQuote>(this IEnumerable<TQuote> quotes, int periods)
+          where TQuote : IQuote
         {
             var rsi = quotes.GetRsi(periods)
                             .LastOrDefault()?.Rsi ?? default;
@@ -88,6 +139,21 @@
         {
             return quotes.GetRsi(periods)
                          .Select(rsiResult => (decimal)rsiResult.Rsi);
+        }
+
+        public static List<int> FindHighPoints(List<IQuote> quotes)
+        {
+            List<int> highPoints = new List<int>();
+
+            for (int i = 1; i < quotes.Count - 1; i++)
+            {
+                if (quotes[i].High > quotes[i - 1].High && quotes[i].High > quotes[i + 1].High)
+                {
+                    highPoints.Add(i);
+                }
+            }
+
+            return highPoints;
         }
 
         public static List<int> FindLowPoints(List<IQuote> quotes)
@@ -199,23 +265,6 @@
             return 0m;
         }
 
-        public static bool CheckForBullishDivergence(List<IQuote> quotes, int rsiPeriods = 14)
-        {
-            IEnumerable<int> lowPoints = FindLowPoints(quotes);
-
-            // Check if there is a higher low in the RSI
-            foreach (var low in lowPoints)
-            {
-                var rsiValues = GetAllRsi(quotes.Skip(low).Take(rsiPeriods + 1), rsiPeriods);
-                if (rsiValues.First() < rsiValues.Last())
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         public static bool IsUptrend(List<QuoteDto> quotes, int smaPeriodShort, int smaPeriodLong)
         {
             var smaShort = Indicator.GetSma(quotes, smaPeriodShort).Last().Sma;
@@ -291,6 +340,23 @@
             }
         }
 
+        public static bool CheckForBullishDivergence(List<IQuote> quotes, int rsiPeriods = 14)
+        {
+            IEnumerable<int> lowPoints = FindLowPoints(quotes);
+
+            // Check if there is a higher low in the RSI
+            foreach (var low in lowPoints)
+            {
+                var rsiValues = GetAllRsi(quotes.Skip(low).Take(rsiPeriods + 1), rsiPeriods);
+                if (rsiValues.First() < rsiValues.Last())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static bool CheckForHiddenBullishDivergence(List<QuoteDto> quotes, decimal currentRsi, int rsiPeriods = 14)
         {
             // Check if there is a lower low in the price and a higher low in the RSI
@@ -307,10 +373,27 @@
             return false;
         }
 
-        public static bool CheckForHiddenBearishDivergence(IEnumerable<QuoteDto> history, int oscillatorPeriod)
+        public static bool CheckForBearishDivergence(List<IQuote> quotes, int rsiPeriods = 14)
+        {
+            IEnumerable<int> highPoints = FindHighPoints(quotes);
+
+            // Check if there is a lower high in the RSI
+            foreach (var high in highPoints)
+            {
+                var rsiValues = GetAllRsi(quotes.Skip(high).Take(rsiPeriods + 1), rsiPeriods);
+                if (rsiValues.First() > rsiValues.Last())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool CheckForHiddenBearishDivergence(IEnumerable<QuoteDto> history, int oscillatorPeriod, int RsiPeriods)
         {
             var quotes = history.ToList();
-            var oscillator = TAIndicatorManager.GetMomentumOscillator(quotes, oscillatorPeriod);
+            var oscillator = GetMomentumOscillator(quotes, oscillatorPeriod);
 
             // Find the peaks of the oscillator
             List<PeakPoint> peakPoints = TAIndicatorManager.GetPeakPoints(oscillator);
@@ -323,16 +406,21 @@
             var previousPeak = peakPoints[peakPoints.Count - 2];
 
             // Find the lows between the two peaks
-            var lows = quotes.Skip(previousPeak.Index).Take(currentPeak.Index - previousPeak.Index + 1).Select(q => q.Low).ToList();
+            var lows = quotes.Skip(previousPeak.Index)
+                             .Take(currentPeak.Index - previousPeak.Index + 1)
+                             .Select(q => q.Low)
+                             .ToList();
 
             List<IQuote> iquotes = (List<IQuote>)history.OfType<IQuote>();
             List<int> lowPoints = TAIndicatorManager.FindLowPoints(iquotes);
 
             // Determine if the RSI has formed a hidden bearish divergence pattern
             var previousRsiValue = TAIndicatorManager
-                .GetCurrentRsi(quotes.GetRange(previousPeak.Index - RsiPeriods + 1, RsiPeriods + 1), RsiPeriods);
+                .GetAllRsi(quotes.GetRange(previousPeak.Index - RsiPeriods + 1, RsiPeriods + 1), RsiPeriods)
+                .LastOrDefault();
 
-            var rsiIsDivergent = rsi < previousRsiValue;
+            var currentRsi = quotes.GetPreviousRsi(RsiPeriods);
+            var rsiIsDivergent = currentRsi < previousRsiValue;
 
             // Determine if the oscillator has formed a hidden bearish divergence pattern
             decimal previousOscillatorValue = oscillator[previousPeak.Index];
@@ -340,8 +428,7 @@
 
             // Check if there is a bullish divergence between the RSI and the lows
             iquotes = (List<IQuote>)quotes.OfType<IQuote>();
-            var rsiDivergence = TAIndicatorManager.CheckForBullishDivergence(iquotes, RsiPeriods);
-
+            var rsiDivergence = TAIndicatorManager.CheckForBearishDivergence(iquotes, RsiPeriods);
             return rsiIsDivergent && oscillatorIsDivergent && rsiDivergence;
         }
     }

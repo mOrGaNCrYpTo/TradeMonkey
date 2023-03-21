@@ -1,5 +1,27 @@
-﻿namespace TradeMonkey.Trader
+﻿using CryptoExchange.Net.CommonObjects;
+
+namespace TradeMonkey.Trader
 {
+    // Modularize the trading rules to make the code more maintainable and easier to read. This
+    // would also allow you to experiment with different combinations of rules by simply enabling or
+    // disabling them withinthe GetTradingSignalAsync method.
+
+    // Implement an adaptive mechanism for adjusting parameters: You could implement a simple
+    // adaptive mechanism that adjusts certain parameters based on the recent performance of the
+    // strategy.For example, you could modify the rocThreshold based on how well the strategy has
+    // been performing lately.A more advanced approach would be to use machine learning techniques
+    // to optimize the parameters of the strategy based on historical data. Optimize the order
+    // execution process: You can optimize the order execution process by asynchronously executing
+    // the orders and monitoring their progress. This can help reduce the time spent waiting for
+    // orders to be placed and improve the strategy's responsiveness to market movements.
+
+    // Monitor and adapt to market conditions: Consider adding functionality to monitor market
+    // conditions and adjust the strategy accordingly. For example, you could track the overall
+    // market trend and only trade when the market is trending in the direction of the strategy.
+    // Risk management and position sizing: Implement dynamic risk management and position sizing
+    // algorithms to further optimize the strategy's performance. This could include adjusting the
+    // position size based on the current account balance and the strategy's recent performance.
+
     public class FiveMinuteScalper : BaseStrategy
     {
         [InjectService]
@@ -14,19 +36,29 @@
         [InjectService]
         public TradingCalculators TradingCalculators { get; private set; }
 
-        public FiveMinuteScalper(Symbol symbol, KucoinAccountSvc kucoinAccountSvc,
-          KucoinOrderSvc kucoinOrderSvc, TokenMetricsSvc tokenMetricsSvc, TradingCalculators tradingCalculators,
-          ILogger<FiveMinuteScalper> logger)
-                : base(tradingCalculators, symbol, logger)
+        // Additional properties for adaptive parameters
+        public int StopLossMultiplier { get; set; }
+
+        public int RewardPercent { get; set; }
+
+        public FiveMinuteScalper(
+        KucoinAccountSvc kucoinAccountSvc,
+        KucoinOrderSvc kucoinOrderSvc,
+        TokenMetricsSvc tokenMetricsSvc,
+        TradingCalculators tradingCalculators,
+        Symbol symbol,
+        ILogger<FiveMinuteScalper> logger,
+        int stopLossMultiplier = 2,
+        int rewardPercent = 2) : base(tradingCalculators, symbol, logger)
         {
             KucoinAccountSvc = kucoinAccountSvc ?? throw new ArgumentNullException(nameof(kucoinAccountSvc));
             TokenMetricsSvc = tokenMetricsSvc ?? throw new ArgumentNullException(nameof(tokenMetricsSvc));
             OrderService = kucoinOrderSvc ?? throw new ArgumentNullException(nameof(kucoinOrderSvc));
-            Symbol = symbol ?? throw new ArgumentNullException(nameof(symbol));
             TradingCalculators = tradingCalculators ?? throw new ArgumentNullException(nameof(tradingCalculators));
+            Symbol = symbol ?? throw new ArgumentNullException(nameof(symbol));
 
-            StopLossMultiplier = 2;
-            RewardPercent = 2;
+            StopLossMultiplier = stopLossMultiplier;
+            RewardPercent = rewardPercent;
         }
 
         public async Task ExecuteAsync(IEnumerable<QuoteDto> history, CancellationToken ct = default)
@@ -101,69 +133,48 @@
             var price = quotes.Last().Close;
             var atr = TAIndicatorManager.GetAtr(quotes, 14);
 
-            var stopLoss = price - (StopLossMultiplier * atr);
-            var takeProfit = price + (RewardPercent * atr);
+            decimal stopLossMultiplier = 2; // Customize the multiplier based on your risk tolerance
+            decimal takeProfitMultiplier = 3; // Customize the multiplier based on your desired reward ratio
+
+            int rocPeriod = 9; // Customize the ROC period as needed
+            decimal rocThreshold = 2.0M; // Customize the ROC threshold to determine fast movement
+
+            var roc = TAIndicatorManager.GetRateOfChange(quotes, rocPeriod);
+
+            // If the ROC value is above the threshold, indicating a fast upward movement, increase
+            // the take profit multiplier
+            if (roc > rocThreshold)
+            {
+                takeProfitMultiplier = 4; // Customize the increased multiplier based on your desired reward ratio
+            }
+
+            var stopLoss = price - (stopLossMultiplier * atr);
+            var takeProfit = price + (takeProfitMultiplier * atr);
 
             return (stopLoss, takeProfit);
         }
 
-        public bool CheckForHiddenBullishDivergence(List<IQuote> quotes)
-        {
-            return TAIndicatorManager.CheckForBullishDivergence(quotes, OscillatorPeriod);
-        }
-
-        public bool CheckForHiddenBearishDivergence(IEnumerable<QuoteDto> history, decimal rsi)
-        {
-            var quotes = history.ToList();
-            var oscillator = TAIndicatorManager.GetMomentumOscillator(quotes, OscillatorPeriod);
-
-            // Find the peaks of the oscillator
-            List<PeakPoint> peakPoints = TAIndicatorManager.GetPeakPoints(oscillator);
-
-            if (peakPoints.Count < 2)
-                return false;
-
-            // Determine the most recent peak and the one before it
-            var currentPeak = peakPoints.Last();
-            var previousPeak = peakPoints[peakPoints.Count - 2];
-
-            // Find the lows between the two peaks
-            var lows = quotes.Skip(previousPeak.Index).Take(currentPeak.Index - previousPeak.Index + 1).Select(q => q.Low).ToList();
-
-            List<IQuote> iquotes = (List<IQuote>)history.OfType<IQuote>();
-            List<int> lowPoints = TAIndicatorManager.FindLowPoints(iquotes);
-
-            // Determine if the RSI has formed a hidden bearish divergence pattern
-            var previousRsiValue = TAIndicatorManager
-                .GetCurrentRsi(quotes.GetRange(previousPeak.Index - RsiPeriods + 1, RsiPeriods + 1), RsiPeriods);
-
-            var rsiIsDivergent = rsi < previousRsiValue;
-
-            // Determine if the oscillator has formed a hidden bearish divergence pattern
-            decimal previousOscillatorValue = oscillator[previousPeak.Index];
-            var oscillatorIsDivergent = previousOscillatorValue < oscillator[currentPeak.Index];
-
-            // Check if there is a bullish divergence between the RSI and the lows
-            iquotes = (List<IQuote>)quotes.OfType<IQuote>();
-            var rsiDivergence = TAIndicatorManager.CheckForBullishDivergence(iquotes, RsiPeriods);
-
-            return rsiIsDivergent && oscillatorIsDivergent && rsiDivergence;
-        }
-
         private async Task<TradingSignal> GetTradingSignalAsync(List<QuoteDto> quotes)
         {
+            int goLongPoints = 0;
+            int goShortPoints = 0;
+            int noTradePoints = 0;
+
             // Get the last quote and the previous quote
             var lastQuote = quotes.Last();
             var prevQuote = quotes[^2];
 
-            // Rule 5: Calculate EMA(50) and EMA(100)
-            var ema50 = Indicator.GetEma(quotes, Ema50Periods);
-            var ema100 = Indicator.GetEma(quotes, Ema100Periods);
+            // Rule 5: Calculate EMA(50) and EMA(100) Calculate the 20-period exponential moving average
+            IEnumerable<EmaResult> ema20 = Indicator.GetEma(quotes, 20);
+            IEnumerable<EmaResult> ema50 = Indicator.GetEma(quotes, Ema50Periods);
+            IEnumerable<EmaResult> ema100 = Indicator.GetEma(quotes, Ema100Periods);
 
             // Rule 16, 17, 18: SMMA (21, 50, 200) and position rules
-            var smma21 = Indicator.GetSma(quotes, Smma21Periods);
-            var smma50 = Indicator.GetSma(quotes, Smma50Periods);
-            var smma200 = Indicator.GetSma(quotes, Smma200Periods);
+            IEnumerable<SmaResult> smma21 = Indicator.GetSma(quotes, Smma21Periods);
+            IEnumerable<SmaResult> smma50 = Indicator.GetSma(quotes, Smma50Periods);
+            IEnumerable<SmaResult> smma200 = Indicator.GetSma(quotes, Smma200Periods);
+
+            decimal atr = TAIndicatorManager.GetAtr(quotes, 14);
 
             // Rule 11: Stochastic oscillator
             var stochasticOscillator = Indicator.GetStoch(quotes, StochasticKLength, StochasticKSmoothing, StochasticDSmoothing);
@@ -178,9 +189,10 @@
             var resistance = TAIndicatorManager.GetResistanceLevel(quotes);
 
             // Rule 15: Only trade with the trend
-            var isUpTrend = TAIndicatorManager.IsUptrend(quotes: quotes,
-                                                         smaPeriodShort: SmaFastPeriods,
-                                                         smaPeriodLong: SmaSlowPeriods);
+            var isUpTrend = TAIndicatorManager
+                                .IsUptrend(quotes: quotes,
+                                           smaPeriodShort: SmaFastPeriods,
+                                           smaPeriodLong: SmaSlowPeriods);
 
             // Rule 19: Trade engulfing candles and 3 line strikes
             var isEngulfingCandle = TAIndicatorManager.IsEngulfingCandle(prevQuote, lastQuote);
@@ -188,23 +200,6 @@
 
             // Rule 23: Trade at the close of the first candle that crosses the 200 SMMA
             var isFirstSignal = TAIndicatorManager.IsFirstCandleCrossingSMA200(quotes);
-
-            // Rule 6: Open a long position on bullish crossover (already implemented in the
-            // original code)
-
-            // Rule 9, 10: Use bullish and bearish divergences and ATR (already implemented in the
-            // original code)
-
-            // Rule 25: 1:2 risk to reward ratio (use RiskPercent and TakeProfitPercent properties)
-
-            // Rule 26: If resistance is above then sell .08 and wait for resistance to sell the
-            // rest (or wait for a divergence)
-
-            // Rule 27: Only risk 1% of account balance per trade, with a take profit of 2% of
-            // account balance
-
-            // Calculate the 20-period exponential moving average
-            IEnumerable<EmaResult> ema20 = Indicator.GetEma(quotes, 20);
 
             // Calculate the MACD values
             var macdResults = quotes.GetMacd(SmaFastPeriods, SmaSlowPeriods, SignalPeriods).ToList();
@@ -240,7 +235,7 @@
                 signal = TradingSignal.GoShort;
             }
 
-            var rsi = TAIndicatorManager.GetCurrentRsi(quotes, RsiPeriods);
+            var rsi = TAIndicatorManager.GetPreviousRsi(quotes, RsiPeriods);
             var isRsiValidForPosition = TAIndicatorManager.IsRsiValidForPosition(rsi, signal);
 
             if (isRsiValidForPosition)
@@ -251,6 +246,19 @@
             {
                 return TradingSignal.None;
             }
+        }
+
+        private Tuple<int, int, int, int, int> GetMovingAverages()
+        {
+            var ema50 = Indicator.GetEma(quotes, Ema50Periods);
+            var ema100 = Indicator.GetEma(quotes, Ema100Periods);
+
+            // Rule 16, 17, 18: SMMA (21, 50, 200) and position rules
+            var smma21 = Indicator.GetSma(quotes, Smma21Periods).;
+            var smma50 = Indicator.GetSma(quotes, Smma50Periods);
+            var smma200 = Indicator.GetSma(quotes, Smma200Periods);
+
+            return new Tuple<int, int, int, int, int> { ema50, ema100, S }
         }
     }
 }

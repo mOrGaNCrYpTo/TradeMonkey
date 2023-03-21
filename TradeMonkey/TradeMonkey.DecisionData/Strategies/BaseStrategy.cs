@@ -2,6 +2,10 @@
 {
     public class BaseStrategy
     {
+        public int AtrPeriods { get; set; } = 14;
+        public int VwmaPeriods { get; set; }
+        public int RocPeriods { get; set; } = 9;
+        public decimal RocThreshold { get; set; } = 2.0M;
         public Symbol Symbol { get; set; }
         public ILogger Loggy { get; set; }
         public decimal EntryPrice { get; set; }
@@ -54,7 +58,8 @@
         /// <param name="rewardPercent">      </param>
         /// <param name="stopLossMultiplier"> </param>
         public BaseStrategy(ILogger logger, int smaFastPeriods, int smaMedPeriods,
-            int smaSlowPeriods, int rsiPeriods, int oscillatorPeriod, decimal riskPercent, decimal rewardPercent, int stopLossMultiplier)
+            int smaSlowPeriods, int rsiPeriods, int oscillatorPeriod, decimal riskPercent, decimal rewardPercent,
+            int stopLossMultiplier)
         {
             Loggy = logger ?? throw new ArgumentNullException(nameof(logger));
 
