@@ -7,16 +7,14 @@ namespace TradeMonkey.Trader.Services
     [RegisterService]
     public sealed class KucoinTickerSvc
     {
-        [InjectService]
-        public KucoinClient _client { get; private set; }
+        private readonly KucoinClient _client;
 
         [InjectService]
         public KuCoinDbRepository Repo { get; private set; }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="repository"> </param>
-        /// <exception cref="ArgumentNullException"> </exception>
+        /// <summary></summary>
+        /// <param name="repository"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public KucoinTickerSvc(KuCoinDbRepository repository, KucoinClient kucoinClient)
         {
             Repo = repository ??

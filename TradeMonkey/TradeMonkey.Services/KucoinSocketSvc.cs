@@ -1,6 +1,4 @@
-﻿using Kucoin.Net.Objects.Models.Spot.Socket;
-
-namespace TradeMonkey.Trader.Services
+﻿namespace TradeMonkey.Trader.Services
 {
     [RegisterService]
     public sealed class KucoinSocketSvc

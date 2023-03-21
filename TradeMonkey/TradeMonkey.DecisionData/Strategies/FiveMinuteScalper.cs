@@ -2,25 +2,14 @@
 
 namespace TradeMonkey.Trader
 {
-    // Modularize the trading rules to make the code more maintainable and easier to read. This
-    // would also allow you to experiment with different combinations of rules by simply enabling or
-    // disabling them withinthe GetTradingSignalAsync method.
+    // Modularize the trading rules to make the code more maintainable and easier to read. This would also allow you to experiment with different combinations of rules by simply enabling or disabling them withinthe GetTradingSignalAsync method.
 
-    // Implement an adaptive mechanism for adjusting parameters: You could implement a simple
-    // adaptive mechanism that adjusts certain parameters based on the recent performance of the
-    // strategy.For example, you could modify the rocThreshold based on how well the strategy has
-    // been performing lately.A more advanced approach would be to use machine learning techniques
-    // to optimize the parameters of the strategy based on historical data. Optimize the order
-    // execution process: You can optimize the order execution process by asynchronously executing
-    // the orders and monitoring their progress. This can help reduce the time spent waiting for
-    // orders to be placed and improve the strategy's responsiveness to market movements.
+    // Implement an adaptive mechanism for adjusting parameters: You could implement a simple adaptive mechanism that adjusts certain parameters based on the recent performance of the strategy.For example, you could modify the rocThreshold based on how well the strategy has been performing lately.A
+    // more advanced approach would be to use machine learning techniques to optimize the parameters of the strategy based on historical data. Optimize the order execution process: You can optimize the order execution process by asynchronously executing the orders and monitoring their progress. This
+    // can help reduce the time spent waiting for orders to be placed and improve the strategy's responsiveness to market movements.
 
-    // Monitor and adapt to market conditions: Consider adding functionality to monitor market
-    // conditions and adjust the strategy accordingly. For example, you could track the overall
-    // market trend and only trade when the market is trending in the direction of the strategy.
-    // Risk management and position sizing: Implement dynamic risk management and position sizing
-    // algorithms to further optimize the strategy's performance. This could include adjusting the
-    // position size based on the current account balance and the strategy's recent performance.
+    // Monitor and adapt to market conditions: Consider adding functionality to monitor market conditions and adjust the strategy accordingly. For example, you could track the overall market trend and only trade when the market is trending in the direction of the strategy. Risk management and
+    // position sizing: Implement dynamic risk management and position sizing algorithms to further optimize the strategy's performance. This could include adjusting the position size based on the current account balance and the strategy's recent performance.
 
     public class FiveMinuteScalper : BaseStrategy
     {
@@ -141,8 +130,7 @@ namespace TradeMonkey.Trader
 
             var roc = TAIndicatorManager.GetRateOfChange(quotes, rocPeriod);
 
-            // If the ROC value is above the threshold, indicating a fast upward movement, increase
-            // the take profit multiplier
+            // If the ROC value is above the threshold, indicating a fast upward movement, increase the take profit multiplier
             if (roc > rocThreshold)
             {
                 takeProfitMultiplier = 4; // Customize the increased multiplier based on your desired reward ratio
@@ -248,17 +236,14 @@ namespace TradeMonkey.Trader
             }
         }
 
-        private Tuple<int, int, int, int, int> GetMovingAverages()
-        {
-            var ema50 = Indicator.GetEma(quotes, Ema50Periods);
-            var ema100 = Indicator.GetEma(quotes, Ema100Periods);
+        //private Tuple<int, int, int, int, int> GetMovingAverages()
+        //{
+        //    var ema50 = Indicator.GetEma(quotes, Ema50Periods);
+        //    var ema100 = Indicator.GetEma(quotes, Ema100Periods);
 
-            // Rule 16, 17, 18: SMMA (21, 50, 200) and position rules
-            var smma21 = Indicator.GetSma(quotes, Smma21Periods).;
-            var smma50 = Indicator.GetSma(quotes, Smma50Periods);
-            var smma200 = Indicator.GetSma(quotes, Smma200Periods);
+        // // Rule 16, 17, 18: SMMA (21, 50, 200) and position rules var smma21 = Indicator.GetSma(quotes, Smma21Periods).; var smma50 = Indicator.GetSma(quotes, Smma50Periods); var smma200 = Indicator.GetSma(quotes, Smma200Periods);
 
-            return new Tuple<int, int, int, int, int> { ema50, ema100, S }
-        }
+        //    return new Tuple<int, int, int, int, int> { ema50, ema100, S }
+        //}
     }
 }

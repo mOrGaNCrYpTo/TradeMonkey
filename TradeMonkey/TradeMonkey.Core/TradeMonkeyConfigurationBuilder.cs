@@ -11,8 +11,8 @@
             // Create a new instance of ConfigurationBuilder
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{EnvironmentName}.json", true, true);
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            //.AddJsonFile($"appsettings.{EnvironmentName}.json", true, true);
 
             ConfigurationRoot = builder.Build();
 

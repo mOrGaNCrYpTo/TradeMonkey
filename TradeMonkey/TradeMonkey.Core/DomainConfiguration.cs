@@ -3,7 +3,7 @@
     public sealed class DomainConfiguration
     {
         public DatabaseSettings DatabaseSettings { get; private set; } = new();
-        public KucoinApiCredentials KucoinApiCredentials { get; private set; } = new();
+        public Kucoin.Net.Objects.KucoinApiCredentials KucoinApiCredentials { get; private set; }
         public LoggingOptions LoggingOptions { get; private set; } = new();
         public TokenMetricsApi TokenMetricsApi { get; private set; } = new();
         public TransientFaultHandlingOptions TransientFaultHandlingOptions { get; private set; } = new();
@@ -17,12 +17,12 @@
         public TimeSpan AutoRetryDelay { get; set; }
     }
 
-    public sealed class KucoinApiCredentials
-    {
-        public string ApiKey { get; set; }
-        public string SecretKey { get; set; }
-        public string Passphrase { get; set; }
-    }
+    //public sealed class KucoinApiCredentials
+    //{
+    //    public string ApiKey { get; set; }
+    //    public string SecretKey { get; set; }
+    //    public string Passphrase { get; set; }
+    //}
 
     public sealed class TokenMetricsApi
     {

@@ -35,11 +35,13 @@ namespace TradeMonkey.Trader
                     .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
             );
 
+            services.AddScoped<KuCoinDbRepository>();
             services.AddScoped<KucoinClient>();
             services.AddScoped<KucoinSocketClient>();
+            services.AddScoped<KucoinTickerSvc>();
             services.AddScoped<TokenMetricsSvc>();
 
-            var apiCredentials = _config.KucoinApiCredentials.Adapt<Kucoin.Net.Objects.KucoinApiCredentials>();
+            var apiCredentials = (Kucoin.Net.Objects.KucoinApiCredentials)_config.KucoinApiCredentials.Adapt<CryptoExchange.Net.Authentication.ApiCredentials>();
 
             services.AddKucoin((restClientOptions, socketClientOptions) =>
             {
@@ -75,7 +77,7 @@ namespace TradeMonkey.Trader
             services.ScanCurrentAssembly(ServiceDescriptorMergeStrategy.TryAdd);
         }
 
-        private static async Task RunAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
+        private static async Task RunAsync(IServiceProvider serviceProvider, CancellationToken ct)
         {
             var kucoinTickerSvc = serviceProvider.GetRequiredService<KucoinTickerSvc>();
             var socketSvc = serviceProvider.GetRequiredService<KucoinSocketSvc>();
@@ -92,29 +94,31 @@ namespace TradeMonkey.Trader
 
             var dbContext = serviceProvider.GetRequiredService<TmDBContext>();
 
-            var timerSettings = _config.TimerSettings;
+            await BackFillPriceAndSRDataAsync(tokenMetricsSvc, ct);
 
-            var state = new TimerState { TradingPair = "ETH-BTC" };
-            var kucoinTimer = new Timer((s) => Task.Run(() =>
-                OnKucoinStreamTimerElapsed(s, dbContext)), state, 0, timerSettings.KucoinStreamInterval);
+            //var timerSettings = _config.TimerSettings;
 
-            await ReceivetickListAsync(kucoinSocketClient);
+            //var state = new TimerState { TradingPair = "ETH-BTC" };
+            //var kucoinTimer = new Timer((s) => Task.Run(() =>
+            //    OnKucoinStreamTimerElapsed(s, dbContext)), state, 0, timerSettings.KucoinStreamInterval);
+
+            //await ReceivetickListAsync(kucoinSocketClient);
 
             // ******* END KUCOIN TIMERS ******* //
 
             // ******* TOKEN METRICS TIMERS ******* //
 
-            var tokenMetricsTimer =
-                new Timer((s) => Task.Run(() =>
-                        OnTokenMetricsPricesTimerElapsed(tokenMetricsSvc, _cts.Token)), state, 0,
-                            timerSettings.TokenMetricsPricesInterval);
+            //var tokenMetricsTimer =
+            //    new Timer((s) => Task.Run(() =>
+            //            OnTokenMetricsPricesTimerElapsed(tokenMetricsSvc, _cts.Token)), state, 0,
+            //                timerSettings.TokenMetricsPricesInterval);
 
             // ******* END TOKEN METRICS TIMERS ******* //
 
             // KEEP THE CONSOLE RUNNING BY WAITING FOR DATA INDEFINITELY
-            while (!cancellationToken.IsCancellationRequested)
+            while (!ct.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+                await Task.Delay(TimeSpan.FromSeconds(10), ct);
             }
         }
 
@@ -139,7 +143,7 @@ namespace TradeMonkey.Trader
             await Task.WhenAll(tasks);
         }
 
-        static async Task BackFillPriceAndSRData(TokenMetricsSvc tokenMetricsSvc, CancellationToken ct)
+        static async Task BackFillPriceAndSRDataAsync(TokenMetricsSvc tokenMetricsSvc, CancellationToken ct)
         {
             var batch = new List<int> { 3375, 3306 };
             var symbols = new List<string> { "ETH", "BTC" };
