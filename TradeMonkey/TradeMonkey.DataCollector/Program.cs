@@ -145,6 +145,8 @@ namespace TradeMonkey.Trader
 
         static async Task BackFillPriceAndSRDataAsync(TokenMetricsSvc tokenMetricsSvc, CancellationToken ct)
         {
+            KucoinTickerSvc
+
             var batch = new List<int> { 3375, 3306 };
             var symbols = new List<string> { "ETH", "BTC" };
             var limit = 1000000;
