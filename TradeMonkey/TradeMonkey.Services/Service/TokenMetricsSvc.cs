@@ -166,5 +166,12 @@
 
             return null;
         }
+
+        public async Task<List<int>> GetTokenIdsByName(List<string> symbols, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            return await DbRepo.GetTokenIdsByName(symbols, ct);
+        }
     }
 }

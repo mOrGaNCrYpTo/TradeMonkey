@@ -75,5 +75,16 @@
             // Save the changes to the database
             _ = await _dbContext.SaveChangesAsync(ct);
         }
+
+        public async Task<List<int>> GetTokenIdsByName(IEnumerable<string> symbols, CancellationToken ct = default)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            // Save the changes to the database
+            return await _dbContext.TokenMetricsTokens
+                            .Where(x => symbols.Contains(x.Symbol))
+                            .Select(x => x.TokenId)
+                            .ToListAsync(ct);
+        }
     }
 }

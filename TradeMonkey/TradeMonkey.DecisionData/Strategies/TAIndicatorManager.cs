@@ -1,25 +1,5 @@
 ﻿namespace TradeMonkey.Trader.Strategies
 {
-    // Your 5-minute scalping strategy seems well thought out, but there's always room for
-    // improvement or potential additions. Here are some suggestions that could be useful for both
-    // your scalping strategy and future strategies, such as a breakout strategy:
-
-    //Use multiple time frames: Analyze charts on different time frames(e.g., 1-minute, 5-minute, and 15-minute) to get a better understanding of the overall trend and intraday price action.This can help with entry and exit points, as well as risk management.
-    //    Consider incorporating additional technical indicators: RSI and moving averages are good indicators, but you could also include others like MACD, Bollinger Bands, or Stochastic Oscillator to improve the accuracy of your entry and exit points, as well as identify potential reversals or breakouts.
-
-    //Focus on high volume and high liquidity pairs: To ensure smoother executions and minimize slippage, prioritize trading currency pairs with high liquidity and volume.Major pairs like EUR/USD, USD/JPY, and GBP/USD are good examples.
-
-    //Employ risk management strategies: Establish a risk-reward ratio that suits your trading goals and use stop-loss orders to protect your capital. Consider using a trailing stop to lock in profits and let your winning trades run.
-    //    Keep an economic calendar handy: Major news events and economic releases can have a significant impact on currency markets.Staying informed about these events can help you make better trading decisions and avoid unnecessary risks.
-
-    //Be flexible and adaptable: Market conditions can change rapidly, so be prepared to adjust your strategy as needed.Be open to learning from your trades and refine your approach based on the feedback you get from the market.
-
-    //Maintain a trading journal: Record your trades, including the reasons for entering and exiting positions, and regularly review your performance.This can help you identify patterns in your trading and areas for improvement.
-
-    //Develop a breakout strategy: Since you mentioned considering a future breakout strategy, start by identifying key support and resistance levels in the market. Look for consolidation patterns and employ additional technical indicators to confirm breakouts, such as volume or candlestick patterns.
-
-    //Remember, every trader's style and risk tolerance is different. Be sure to test and refine your strategy using a demo account before committing real money. This will help you understand how your strategy performs under different market conditions and build your confidence in executing trades.
-
     [RegisterService]
     public static class TAIndicatorManager
     {
@@ -227,7 +207,7 @@
             return (decimal)sma.Sma;
         }
 
-        public static decimal GetStochasticRSI(IEnumerable<IQuote> quotes,
+        public static decimal GetStochasticRSI(List<IQuote> quotes,
             int rsiPeriods, int stochPeriods, int signalPeriods, int smoothPeriods)
         {
             // Convert quotes to Candle format
@@ -265,10 +245,10 @@
             return 0m;
         }
 
-        public static bool IsUptrend(List<QuoteDto> quotes, int smaPeriodShort, int smaPeriodLong)
+        public static async Task<bool> IsUptrend(List<QuoteDto> quotes, int smaPeriodShort, int smaPeriodLong)
         {
-            var smaShort = Indicator.GetSma(quotes, smaPeriodShort).Last().Sma;
-            var smaLong = Indicator.GetSma(quotes, smaPeriodLong).Last().Sma;
+            var smaShort = await Task.Run(() => Indicator.GetSma(quotes, smaPeriodShort).Last().Sma);
+            var smaLong = await Task.Run(() => Indicator.GetSma(quotes, smaPeriodLong).Last().Sma);
 
             return smaShort > smaLong;
         }
@@ -396,7 +376,7 @@
             var oscillator = GetMomentumOscillator(quotes, oscillatorPeriod);
 
             // Find the peaks of the oscillator
-            List<PeakPoint> peakPoints = TAIndicatorManager.GetPeakPoints(oscillator);
+            List<PeakPoint> peakPoints = GetPeakPoints(oscillator);
 
             if (peakPoints.Count < 2)
                 return false;
@@ -412,12 +392,12 @@
                              .ToList();
 
             List<IQuote> iquotes = (List<IQuote>)history.OfType<IQuote>();
-            List<int> lowPoints = TAIndicatorManager.FindLowPoints(iquotes);
+            List<int> lowPoints = FindLowPoints(iquotes);
 
             // Determine if the RSI has formed a hidden bearish divergence pattern
-            var previousRsiValue = TAIndicatorManager
-                .GetAllRsi(quotes.GetRange(previousPeak.Index - RsiPeriods + 1, RsiPeriods + 1), RsiPeriods)
-                .LastOrDefault();
+            var previousRsiValue =
+                GetAllRsi(quotes.GetRange(previousPeak.Index - RsiPeriods + 1, RsiPeriods + 1), RsiPeriods)
+               .LastOrDefault();
 
             var currentRsi = quotes.GetPreviousRsi(RsiPeriods);
             var rsiIsDivergent = currentRsi < previousRsiValue;
@@ -428,8 +408,29 @@
 
             // Check if there is a bullish divergence between the RSI and the lows
             iquotes = (List<IQuote>)quotes.OfType<IQuote>();
-            var rsiDivergence = TAIndicatorManager.CheckForBearishDivergence(iquotes, RsiPeriods);
+            var rsiDivergence = CheckForBearishDivergence(iquotes, RsiPeriods);
             return rsiIsDivergent && oscillatorIsDivergent && rsiDivergence;
+        }
+
+        public static async Task<Tuple<bool, bool, bool, bool>> GetEmaSmmaCrossoverSignals(
+            List<QuoteDto> quotes, QuoteDto lastQuote, int ema50Periods, int ema100Periods,
+            int smma21Periods, int smma50Periods, int smma200Periods)
+        {
+            IEnumerable<EmaResult> ema20 = Indicator.GetEma(quotes, 20);
+            IEnumerable<EmaResult> ema50 = Indicator.GetEma(quotes, ema50Periods);
+            IEnumerable<EmaResult> ema100 = Indicator.GetEma(quotes, ema100Periods);
+
+            IEnumerable<SmaResult> smma21 = Indicator.GetSma(quotes, smma21Periods);
+            IEnumerable<SmaResult> smma50 = Indicator.GetSma(quotes, smma50Periods);
+            IEnumerable<SmaResult> smma200 = Indicator.GetSma(quotes, smma200Periods);
+
+            bool emaCrossedAbove = lastQuote.Close > (decimal)ema20.Last().Ema && lastQuote.Close > (decimal)ema50.Last().Ema;
+            bool emaCrossedBelow = lastQuote.Close < (decimal)ema20.Last().Ema && lastQuote.Close < (decimal)ema50.Last().Ema;
+
+            bool smmaCrossedAbove = lastQuote.Close > (decimal)smma21.Last().Sma && lastQuote.Close > (decimal)smma50.Last().Sma;
+            bool smmaCrossedBelow = lastQuote.Close < (decimal)smma21.Last().Sma && lastQuote.Close < (decimal)smma50.Last().Sma;
+
+            return Tuple.Create(emaCrossedAbove, emaCrossedBelow, smmaCrossedAbove, smmaCrossedBelow);
         }
     }
 }

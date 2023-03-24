@@ -1,15 +1,26 @@
-﻿using Mapster;
+﻿using Kucoin.Net.Clients.SpotApi;
+using Kucoin.Net.Objects;
+
+using Mapster;
+
+using TradeMonkey.Data.Entity;
 
 namespace TradeMonkey.Trader
 {
-    public static class Program
+    public class Program
     {
-        private static List<KucoinStreamTick> tickList = new();
-        private static KucoinSocketSvc? _socketSvc;
-        private static CancellationTokenSource _cts = new CancellationTokenSource();
-        private static DomainConfiguration _config;
+        private List<KucoinStreamTick> tickList = new();
+        private KucoinSocketSvc? _socketSvc;
+        private CancellationTokenSource _cts = new CancellationTokenSource();
+        private DomainConfiguration _config;
 
-        static async Task Main()
+        public static async Task Main()
+        {
+            Program program = new Program();
+            await program.InitializeAsync();
+        }
+
+        public async Task InitializeAsync()
         {
             TradeMonkeyConfigurationBuilder _configurationBuilder = new("");
             _config = _configurationBuilder.DomainConfiguration;
@@ -22,7 +33,7 @@ namespace TradeMonkey.Trader
             await RunAsync(serviceProvider, _cts.Token);
         }
 
-        private static void ConfigureServices(IServiceCollection services)
+        private void ConfigureServices(IServiceCollection services)
         {
             services.Configure<JsonSerializerOptions>(options =>
             {
@@ -35,13 +46,7 @@ namespace TradeMonkey.Trader
                     .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
             );
 
-            services.AddScoped<KuCoinDbRepository>();
-            services.AddScoped<KucoinClient>();
-            services.AddScoped<KucoinSocketClient>();
-            services.AddScoped<KucoinTickerSvc>();
-            services.AddScoped<TokenMetricsSvc>();
-
-            var apiCredentials = (Kucoin.Net.Objects.KucoinApiCredentials)_config.KucoinApiCredentials.Adapt<CryptoExchange.Net.Authentication.ApiCredentials>();
+            var apiCredentials = (KucoinApiCredentials)_config.KucoinApiCredentials.Adapt<CryptoExchange.Net.Authentication.ApiCredentials>();
 
             services.AddKucoin((restClientOptions, socketClientOptions) =>
             {
@@ -52,6 +57,15 @@ namespace TradeMonkey.Trader
                 socketClientOptions.SpotStreamsOptions.ReconnectInterval = TimeSpan.FromSeconds(10);
                 socketClientOptions.SpotStreamsOptions.SocketResponseTimeout = TimeSpan.FromSeconds(10);
             });
+
+            services.AddScoped<KucoinSocketSvc>();
+            services.AddScoped<KucoinClientSpotApi>();
+            services.AddScoped<KucoinClientSpotApiAccount>();
+
+            services.AddScoped<KuCoinDbRepository>();
+            services.AddScoped<KucoinAccountSvc>();
+            services.AddScoped<KucoinTickerSvc>();
+            services.AddScoped<TokenMetricsSvc>();
 
             services.AddSingleton(provider =>
             {
@@ -77,12 +91,23 @@ namespace TradeMonkey.Trader
             services.ScanCurrentAssembly(ServiceDescriptorMergeStrategy.TryAdd);
         }
 
-        private static async Task RunAsync(IServiceProvider serviceProvider, CancellationToken ct)
+        private async Task RunAsync(IServiceProvider serviceProvider, CancellationToken ct)
         {
+            var kucoinAccountSvc = serviceProvider.GetRequiredService<KucoinAccountSvc>();
             var kucoinTickerSvc = serviceProvider.GetRequiredService<KucoinTickerSvc>();
             var socketSvc = serviceProvider.GetRequiredService<KucoinSocketSvc>();
             var kucoinSocketClient = serviceProvider.GetRequiredService<KucoinSocketClient>();
             var tokenMetricsSvc = serviceProvider.GetRequiredService<TokenMetricsSvc>();
+
+            var dbContext = serviceProvider.GetRequiredService<TmDBContext>();
+            await BackFillTokenMetricsDataAsync(tokenMetricsSvc, kucoinAccountSvc, ct);
+
+            //await SetupTasks();
+        }
+
+        async Task SetupTasks(KucoinSocketClient kucoinSocketClient, TokenMetricsSvc tokenMetricsSvc, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
 
             TimeZoneInfo targetTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
 
@@ -92,61 +117,70 @@ namespace TradeMonkey.Trader
 
             TimeSpan timeUntilMidnight = TimeSpan.FromDays(1) - targetTime.TimeOfDay;
 
-            var dbContext = serviceProvider.GetRequiredService<TmDBContext>();
+            var timerSettings = _config.TimerSettings;
 
-            await BackFillPriceAndSRDataAsync(tokenMetricsSvc, ct);
+            // Run tasks in the background var kucoinTask =
+            OnKucoinStreamTaskAsync(TimeSpan.FromSeconds(timerSettings.KucoinStreamInterval), ct); var
+            tokenMetricsTask = OnTokenMetricsPricesTaskAsync(,
+            TimeSpan.FromMinutes(timerSettings.TokenMetricsPricesInterval), ct);
 
-            //var timerSettings = _config.TimerSettings;
+            // Wait for all tasks to complete or be canceledtokenMetricsSvc
+            await Task.WhenAll(kucoinTask, tokenMetricsTask);
+        }
 
-            //var state = new TimerState { TradingPair = "ETH-BTC" };
-            //var kucoinTimer = new Timer((s) => Task.Run(() =>
-            //    OnKucoinStreamTimerElapsed(s, dbContext)), state, 0, timerSettings.KucoinStreamInterval);
+        async Task OnKucoinStreamTaskAsync(TimeSpan interval, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
 
-            //await ReceivetickListAsync(kucoinSocketClient);
-
-            // ******* END KUCOIN TIMERS ******* //
-
-            // ******* TOKEN METRICS TIMERS ******* //
-
-            //var tokenMetricsTimer =
-            //    new Timer((s) => Task.Run(() =>
-            //            OnTokenMetricsPricesTimerElapsed(tokenMetricsSvc, _cts.Token)), state, 0,
-            //                timerSettings.TokenMetricsPricesInterval);
-
-            // ******* END TOKEN METRICS TIMERS ******* //
-
-            // KEEP THE CONSOLE RUNNING BY WAITING FOR DATA INDEFINITELY
             while (!ct.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromSeconds(10), ct);
+                await Task.Delay(interval, ct);
+
+                Console.WriteLine("Kucoin Stream Task Triggered..");
+
+                // ... The original logic from OnKucoinStreamTimerElapsed method ...
             }
         }
 
-        static async Task OnTokenMetricsPricesTimerElapsed(TokenMetricsSvc tokenMetricsSvc, CancellationToken ct)
+        async Task OnTokenMetricsPricesTaskAsync(TokenMetricsSvc tokenMetricsSvc, TimeSpan interval, CancellationToken ct)
         {
-            var batch = new List<int> { 3375, 3306 };
-            var symbols = new List<string> { "ETH", "BTC" };
-            var limit = 1000000;
+            ct.ThrowIfCancellationRequested();
 
-            DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
-            DateOnly oneYearAgo = currentDate.AddDays(-1);
-
-            DateOnly startDate = currentDate.AddDays(-5);
-            DateOnly endDate = currentDate;
-
-            List<Task> tasks = new()
+            while (!ct.IsCancellationRequested)
             {
-                tokenMetricsSvc.GetPricesAsync(batch, startDate, endDate, limit, ct),
-                tokenMetricsSvc.GetResistanceSupportAsync(symbols, startDate, endDate, limit, ct)
-            };
+                await Task.Delay(interval, ct);
+
+                var batch = new List<int> { 3375, 3306 }; var symbols = new List<string> { "ETH", "BTC" };
+                var limit = 1000000;
+
+                DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now); DateOnly oneYearAgo = currentDate.AddDays(-1);
+
+                DateOnly startDate = currentDate.AddDays(-5); DateOnly endDate = currentDate;
+
+                List<Task> tasks = new()
+
+                     tokenMetricsSvc.GetPricesAsync(batch, startDate, endDate, limit, ct),
+                     tokenMetricsSvc.GetResistanceSupportAsync(symbols, startDate, endDate, limit, ct)
 
             await Task.WhenAll(tasks);
+            }
         }
 
-        static async Task BackFillPriceAndSRDataAsync(TokenMetricsSvc tokenMetricsSvc, CancellationToken ct)
+        async Task BackFillTokenMetricsDataAsync(TokenMetricsSvc tokenMetricsSvc, KucoinAccountSvc kucoinAccountSvc,
+       CancellationToken ct)
         {
+            ct.ThrowIfCancellationRequested();
+
+            var accountBalances = await kucoinAccountSvc.GetAccountsAsync(null, null, ct);
+            var assets = accountBalances
+                .Where(s => s.Holds > 0)
+                .Select(s => s.Asset)
+                .ToList();
+
+            var tokenIds = tokenMetricsSvc.GetTokenIdsByName(assets, ct);
+
             var batch = new List<int> { 3375, 3306 };
-            var symbols = new List<string> { "ETH", "BTC" };
+            var symbols = new List<string> { "ETH", "BTC", "SOL", "FTM" };
             var limit = 1000000;
 
             DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
@@ -175,8 +209,16 @@ namespace TradeMonkey.Trader
             await Task.WhenAll(tasks);
         }
 
-        static async Task OnTokenMetricsGradesTimerElapsed(TokenMetricsSvc tokenMetricsSvc, CancellationToken ct)
+        async Task<IEnumerable<Kucoin.Net.Objects.Models.Spot.KucoinAccount>> GetKucoinAccountData(KucoinAccountSvc svc, CancellationToken ct)
         {
+            ct.ThrowIfCancellationRequested();
+            return await svc.GetAccountsAsync(null, null, ct);
+        }
+
+        async Task OnTokenMetricsGradesTimerElapsed(TokenMetricsSvc tokenMetricsSvc, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+
             var batch = new List<int> { 3375, 3306 };
             var symbols = new List<string> { "ETH", "BTC" };
 
@@ -194,8 +236,10 @@ namespace TradeMonkey.Trader
             await Task.WhenAll(tasks);
         }
 
-        static void OnKucoinStreamTimerElapsed(object state, TmDBContext dbContext)
+        void OnKucoinStreamTimerElapsed(object state, TmDBContext dbContext, CancellationToken ct)
         {
+            ct.ThrowIfCancellationRequested();
+
             Console.WriteLine("Kucoin Stream Timer Elapsed..");
 
             TimerState timerState = (TimerState)state;
@@ -203,7 +247,7 @@ namespace TradeMonkey.Trader
 
             if (tickList.Any())
             {
-                var aggregateTick = new Data.Entity.KucoinTick
+                var aggregateTick = new KucoinTick
                 {
                     Sequence = tickList.Max(t => t.Sequence),
                     LastPrice = tickList.Average(t => t.LastPrice),
@@ -222,7 +266,7 @@ namespace TradeMonkey.Trader
             };
         }
 
-        static async Task ReceivetickListAsync(KucoinSocketClient client)
+        async Task ReceivetickListAsync(KucoinSocketClient client)
         {
             var subscribeResult = await client
                 .SpotStreams.SubscribeToTickerUpdatesAsync("ETH-BTC", async data =>

@@ -1,16 +1,7 @@
-﻿using CryptoExchange.Net.CommonObjects;
+﻿using TradeMonkey.Trader.Interfaces;
 
 namespace TradeMonkey.Trader
 {
-    // Modularize the trading rules to make the code more maintainable and easier to read. This would also allow you to experiment with different combinations of rules by simply enabling or disabling them withinthe GetTradingSignalAsync method.
-
-    // Implement an adaptive mechanism for adjusting parameters: You could implement a simple adaptive mechanism that adjusts certain parameters based on the recent performance of the strategy.For example, you could modify the rocThreshold based on how well the strategy has been performing lately.A
-    // more advanced approach would be to use machine learning techniques to optimize the parameters of the strategy based on historical data. Optimize the order execution process: You can optimize the order execution process by asynchronously executing the orders and monitoring their progress. This
-    // can help reduce the time spent waiting for orders to be placed and improve the strategy's responsiveness to market movements.
-
-    // Monitor and adapt to market conditions: Consider adding functionality to monitor market conditions and adjust the strategy accordingly. For example, you could track the overall market trend and only trade when the market is trending in the direction of the strategy. Risk management and
-    // position sizing: Implement dynamic risk management and position sizing algorithms to further optimize the strategy's performance. This could include adjusting the position size based on the current account balance and the strategy's recent performance.
-
     public class FiveMinuteScalper : BaseStrategy
     {
         [InjectService]
@@ -130,7 +121,8 @@ namespace TradeMonkey.Trader
 
             var roc = TAIndicatorManager.GetRateOfChange(quotes, rocPeriod);
 
-            // If the ROC value is above the threshold, indicating a fast upward movement, increase the take profit multiplier
+            // If the ROC value is above the threshold, indicating a fast upward movement, increase
+            // the take profit multiplier
             if (roc > rocThreshold)
             {
                 takeProfitMultiplier = 4; // Customize the increased multiplier based on your desired reward ratio
@@ -144,35 +136,61 @@ namespace TradeMonkey.Trader
 
         private async Task<TradingSignal> GetTradingSignalAsync(List<QuoteDto> quotes)
         {
+            var x = quotes.FirstOrDefault();
+
+            // Use a weighted points based system
             int goLongPoints = 0;
             int goShortPoints = 0;
             int noTradePoints = 0;
+
+            //You can consider creating separate rule sets for long and short trades.
+            //This can help you to better organize your rules and make it easier to manage them.
+            var tradingRules = new List<ITradingRule>
+            {
+                // ...
+            };
+
+            var longTradingRules = new List<ITradingRule> { /*...*/ };
+            var shortTradingRules = new List<ITradingRule> { /*...*/ };
+
+            // Check if all long rules are met, and if not, check if all short rules are met. If
+            // neither set of rules is entirely met, return TradingSignal.None.
+            foreach (var rule in tradingRules)
+            {
+                //if (await rule.EvaluateRuleSetAsync(quotes))
+                //{
+                //    return rule.Signal;
+                //}
+            }
+
+            return TradingSignal.None;
 
             // Get the last quote and the previous quote
             var lastQuote = quotes.Last();
             var prevQuote = quotes[^2];
 
-            // Rule 5: Calculate EMA(50) and EMA(100) Calculate the 20-period exponential moving average
-            IEnumerable<EmaResult> ema20 = Indicator.GetEma(quotes, 20);
-            IEnumerable<EmaResult> ema50 = Indicator.GetEma(quotes, Ema50Periods);
-            IEnumerable<EmaResult> ema100 = Indicator.GetEma(quotes, Ema100Periods);
+            Tuple<bool, bool, bool, bool> crossOverSignals =
+                await TAIndicatorManager.GetEmaSmmaCrossoverSignals(quotes, lastQuote, Ema50Periods, Ema100Periods,
+                Smma21Periods, Smma50Periods, Smma200Periods);
 
-            // Rule 16, 17, 18: SMMA (21, 50, 200) and position rules
-            IEnumerable<SmaResult> smma21 = Indicator.GetSma(quotes, Smma21Periods);
-            IEnumerable<SmaResult> smma50 = Indicator.GetSma(quotes, Smma50Periods);
-            IEnumerable<SmaResult> smma200 = Indicator.GetSma(quotes, Smma200Periods);
-
+            // ATR
             decimal atr = TAIndicatorManager.GetAtr(quotes, 14);
 
-            // Rule 11: Stochastic oscillator
+            // Assign points for each crossover signal and multiply the points awarded the ATR value
+            // or reduce Assign points for each crossover signal, adjusted for ATR
+            goLongPoints =
+                ((crossOverSignals.Item1 ? 1 : 0) * (int)Math.Floor(atr)) + ((crossOverSignals.Item3 ? 1 : 0) * (int)Math.Floor(atr * 0.5m));
+
+            goShortPoints =
+                ((crossOverSignals.Item2 ? 1 : 0) * (int)Math.Floor(atr)) + ((crossOverSignals.Item4 ? 1 : 0) * (int)Math.Floor(atr * 0.5m));
+
+            // Unused: Stochastic oscillator
             var stochasticOscillator = Indicator.GetStoch(quotes, StochasticKLength, StochasticKSmoothing, StochasticDSmoothing);
 
-            // Rule 12: Bollinger Bands
+            // Unused: Bollinger Bands
             var bollingerBands = Indicator.GetBollingerBands(quotes, BollingerBandsPeriods, BollingerBandsStdDev);
 
-            //TokenMetricsResSuppDatum tokenMetricsResSuppDatum = new TokenMetricsResSuppDatum();
-
-            // Rule 13, 14: Use support and resistance (use GetSupportLevel and GetResistanceLevel methods)
+            // Unused: Use support and resistance (use GetSupportLevel and GetResistanceLevel methods)
             var support = TAIndicatorManager.GetSupportLevel(quotes);
             var resistance = TAIndicatorManager.GetResistanceLevel(quotes);
 
@@ -182,11 +200,11 @@ namespace TradeMonkey.Trader
                                            smaPeriodShort: SmaFastPeriods,
                                            smaPeriodLong: SmaSlowPeriods);
 
-            // Rule 19: Trade engulfing candles and 3 line strikes
+            // Not yet utilized: Trade engulfing candles and 3 line strikes
             var isEngulfingCandle = TAIndicatorManager.IsEngulfingCandle(prevQuote, lastQuote);
             var isThreeLineStrike = TAIndicatorManager.IsThreeLineStrike(quotes);
 
-            // Rule 23: Trade at the close of the first candle that crosses the 200 SMMA
+            // Not yet utilized: Trade at the close of the first candle that crosses the 200 SMMA
             var isFirstSignal = TAIndicatorManager.IsFirstCandleCrossingSMA200(quotes);
 
             // Calculate the MACD values
@@ -206,6 +224,8 @@ namespace TradeMonkey.Trader
                 macdCrossedBelow = prevMacdResult.Macd > prevMacdResult.Signal && lastMacdResult.Macd < lastMacdResult.Signal;
             }
 
+            IEnumerable<EmaResult> ema20 = Indicator.GetEma(quotes, 20);
+
             // Check if the last quote is above the 20-period EMA
             var aboveEma20 = lastQuote.Close > (decimal)ema20.Last().Ema;
 
@@ -214,36 +234,27 @@ namespace TradeMonkey.Trader
 
             TradingSignal signal = TradingSignal.None;
 
-            if (macdCrossedAbove && aboveEma20)
-            {
-                signal = TradingSignal.GoLong;
-            }
-            else if (macdCrossedBelow && belowEma20)
-            {
-                signal = TradingSignal.GoShort;
-            }
+            //if (goLongPoints > goShortPoints && goLongPoints > noTradePoints && isUpTrend)
+            //{
+            //    signal = TradingSignal.GoLong;
+            //}
+            //else if (goShortPoints > goLongPoints && goShortPoints > noTradePoints && !isUpTrend)
+            //{
+            //    signal = TradingSignal.GoShort;
+            //}
+            //else if (macdCrossedAbove && aboveEma20)
+            //{
+            //    signal = TradingSignal.GoLong;
+            //}
+            //else if (macdCrossedBelow && belowEma20)
+            //{
+            //    signal = TradingSignal.GoShort;
+            //}
 
             var rsi = TAIndicatorManager.GetPreviousRsi(quotes, RsiPeriods);
             var isRsiValidForPosition = TAIndicatorManager.IsRsiValidForPosition(rsi, signal);
 
-            if (isRsiValidForPosition)
-            {
-                return signal;
-            }
-            else
-            {
-                return TradingSignal.None;
-            }
+            return isRsiValidForPosition ? signal : TradingSignal.None;
         }
-
-        //private Tuple<int, int, int, int, int> GetMovingAverages()
-        //{
-        //    var ema50 = Indicator.GetEma(quotes, Ema50Periods);
-        //    var ema100 = Indicator.GetEma(quotes, Ema100Periods);
-
-        // // Rule 16, 17, 18: SMMA (21, 50, 200) and position rules var smma21 = Indicator.GetSma(quotes, Smma21Periods).; var smma50 = Indicator.GetSma(quotes, Smma50Periods); var smma200 = Indicator.GetSma(quotes, Smma200Periods);
-
-        //    return new Tuple<int, int, int, int, int> { ema50, ema100, S }
-        //}
     }
 }

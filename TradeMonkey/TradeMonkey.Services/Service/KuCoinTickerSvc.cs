@@ -1,4 +1,11 @@
-﻿using Mapster;
+﻿using CryptoExchange.Net;
+
+using Kucoin.Net;
+using Kucoin.Net.Clients.SpotApi;
+
+using Mapster;
+
+using Newtonsoft.Json;
 
 using KucoinTick = TradeMonkey.Data.Entity.KucoinTick;
 
@@ -7,15 +14,16 @@ namespace TradeMonkey.Trader.Services
     [RegisterService]
     public sealed class KucoinTickerSvc
     {
-        private readonly KucoinClient _client;
+        private readonly KucoinClientSpotApi _client;
 
         [InjectService]
         public KuCoinDbRepository Repo { get; private set; }
 
-        /// <summary></summary>
-        /// <param name="repository"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public KucoinTickerSvc(KuCoinDbRepository repository, KucoinClient kucoinClient)
+        /// <summary>
+        /// </summary>
+        /// <param name="repository"> </param>
+        /// <exception cref="ArgumentNullException"> </exception>
+        public KucoinTickerSvc(KuCoinDbRepository repository, KucoinClientSpotApi kucoinClient)
         {
             Repo = repository ??
                 throw new ArgumentNullException(nameof(repository));
@@ -28,7 +36,7 @@ namespace TradeMonkey.Trader.Services
         {
             ct.ThrowIfCancellationRequested();
 
-            var result = await _client.SpotApi.ExchangeData.GetTickersAsync(ct);
+            var result = await _client.ExchangeData.GetTickersAsync(ct);
             var data = result.Data.Data;
             var tickers = result.Data.Data.Adapt<IEnumerable<Kucoin.Net.Objects.Models.Spot.KucoinAllTick>>();
 
@@ -41,7 +49,7 @@ namespace TradeMonkey.Trader.Services
 
             Console.WriteLine("Getting latest Kucoin ticker data...");
 
-            var result = await _client.SpotApi.ExchangeData.GetTickerAsync(symbol, ct);
+            var result = await _client.ExchangeData.GetTickerAsync(symbol, ct);
             var data = result.Data;
 
             var ticker = new KucoinTick
@@ -53,7 +61,26 @@ namespace TradeMonkey.Trader.Services
                 Timestamp = data.Timestamp
             };
 
-            //var tickers = data.Adapt<KucoinTick>();
+            await Repo.InsertOneAsync(ticker, ct);
+        }
+
+        public async Task GetTickerDataAsync(string symbol, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            Console.WriteLine("Getting latest Kucoin ticker data...");
+
+            var result = await _client.ExchangeData.GetTickerAsync(symbol, ct);
+            var data = result.Data;
+
+            var ticker = new KucoinTick
+            {
+                BestAskPrice = data.BestAskPrice,
+                BestBidPrice = data.BestBidPrice,
+                LastPrice = data.LastPrice,
+                Sequence = data.Sequence,
+                Timestamp = data.Timestamp
+            };
 
             await Repo.InsertOneAsync(ticker, ct);
         }
@@ -71,5 +98,19 @@ namespace TradeMonkey.Trader.Services
 
             return symbols;
         }
+
+        /// <inheritdoc/>
+        //public async Task<WebCallResult<IEnumerable<KucoinKline>>> GetKlinesAsync(string symbol, KlineInterval interval, DateTime? startTime = null, DateTime? endTime = null, CancellationToken ct = default)
+        //{
+        //    ct.ThrowIfCancellationRequested();
+
+        // Console.WriteLine("Getting latest Kucoin ticker data...");
+
+        // var result = await _client.ExchangeData.GetTickerAsync(symbol, ct); var data = result.Data;
+
+        // var klines = new Data.Entity.KucoinKline { ClosePrice = data.c };
+
+        //    await Repo.InsertManyAsync(klines, ct);
+        //}
     }
 }
