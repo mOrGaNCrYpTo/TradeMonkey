@@ -32,5 +32,6 @@ global using TradeMonkey.Trader.Strategies;
 global using TradeMonkey.Trader.Value.Aggregate;
 global using TradeMonkey.Trader.Value.Constant;
 global using TradeMonkey.Data.Entity;
+global using TradeMonkey.Trader.Interfaces;
 
 global using JsonSerializer = System.Text.Json.JsonSerializer;

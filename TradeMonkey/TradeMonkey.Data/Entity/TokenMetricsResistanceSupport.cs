@@ -5,17 +5,13 @@ using System.Collections.Generic;
 
 namespace TradeMonkey.Data.Entity;
 
-public partial class CorrelationDatum
+public partial class TokenMetricsResistanceSupport
 {
     public int TokenId { get; set; }
 
-    public double Correlation { get; set; }
+    public long Epoch { get; set; }
 
-    public DateOnly Date { get; set; }
+    public decimal? Level { get; set; }
 
-    public string Token2Name { get; set; }
-
-    public int? Token2Symbol { get; set; }
-
-    public long? Epoch { get; set; }
+    public DateTime DateCreated { get; set; }
 }

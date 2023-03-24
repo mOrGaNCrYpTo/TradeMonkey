@@ -1,53 +1,69 @@
 ﻿using Kucoin.Net.Objects.Models.Spot.Socket;
 
-using TradeMonkey.Trader.Services;
+using Mapster;
+
+using TradeMonkey.Core;
 
 namespace TradeMonkey.Trader
 {
     public static class Program
     {
-        private static List<KucoinStreamTick> tickList = new List<KucoinStreamTick>();
         private static CancellationTokenSource cts = new CancellationTokenSource();
+        private static List<KucoinStreamTick> tickList = new();
+        private static KucoinSocketSvc? _socketSvc;
+        private static CancellationTokenSource _cts = new CancellationTokenSource();
+        private static DomainConfiguration _config;
 
         static async Task Main()
         {
-            // Create a new instance of ServiceCollection
-            var services = new ServiceCollection();
+            TradeMonkeyConfigurationBuilder _configurationBuilder = new("");
+            _config = _configurationBuilder.DomainConfiguration;
 
+            var services = new ServiceCollection();
+            ConfigureServices(services);
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            await RunAsync(serviceProvider, _cts.Token);
+        }
+
+        private static void ConfigureServices(IServiceCollection services)
+        {
             services.Configure<JsonSerializerOptions>(options =>
             {
                 options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 options.PropertyNameCaseInsensitive = true;
             });
 
-            var credentials = new KucoinApiCredentials("63f3a3999ba1f40001e8c1a0",
-                "3abfb8ef-498e-43a7-8d8c-b500fdea0991", "89t@UzifA$Hb6p5");
-
             services.AddDbContext<TmDBContext>(options =>
-                options.UseSqlServer(Settings.TradeMonkeyDb)
+                options.UseSqlServer(_config.DatabaseSettings.ConnectionString)
                     .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
             );
 
+            services.AddScoped<KuCoinDbRepository>();
             services.AddScoped<KucoinClient>();
             services.AddScoped<KucoinSocketClient>();
+            services.AddScoped<KucoinTickerSvc>();
+            services.AddScoped<TokenMetricsSvc>();
+
+            var apiCredentials = (KucoinApiCredentials)_config.KucoinApiCredentials.Adapt<CryptoExchange.Net.Authentication.ApiCredentials>();
 
             services.AddKucoin((restClientOptions, socketClientOptions) =>
             {
-                restClientOptions.ApiCredentials = credentials;
+                restClientOptions.ApiCredentials = apiCredentials;
                 restClientOptions.LogLevel = LogLevel.Trace;
-                socketClientOptions.ApiCredentials = credentials;
+                socketClientOptions.ApiCredentials = apiCredentials;
                 socketClientOptions.SpotStreamsOptions.AutoReconnect = true;
                 socketClientOptions.SpotStreamsOptions.ReconnectInterval = TimeSpan.FromSeconds(10);
                 socketClientOptions.SpotStreamsOptions.SocketResponseTimeout = TimeSpan.FromSeconds(10);
             });
 
-            // Add UriBuilder as a singleton service
-            services.AddScoped(provider =>
+            services.AddSingleton(provider =>
             {
                 var uriBuilder = new UriBuilder
                 {
                     Scheme = "https",
-                    Host = Settings.TokenMetricsApiBaseUrl
+                    Host = _config.TokenMetricsApi.ApiBaseUrl
                 };
                 return uriBuilder;
             });
@@ -56,22 +72,30 @@ namespace TradeMonkey.Trader
             {
                 httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
                 httpClient.DefaultRequestHeaders.Add("User-Agent", "Trade.Monkey");
-                httpClient.DefaultRequestHeaders.Add(Settings.TokenMetricsApiKeyName, Settings.TokenMetricsApiKeyVal);
+                httpClient.DefaultRequestHeaders.Add(
+                    _config.TokenMetricsApi.ApiKeyName,
+                    _config.TokenMetricsApi.ApiKeyVal);
                 httpClient.Timeout = TimeSpan.FromMinutes(10);
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(10));
 
             services.ScanCurrentAssembly(ServiceDescriptorMergeStrategy.TryAdd);
+        }
 
-            // Create a new instance of ServiceProvider
-            var serviceProvider = services.BuildServiceProvider();
+        static async Task RunAsync(ServiceProvider serviceProvider, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
 
-            // Resolve your services from the ServiceProvider
-            var kucoinTickerSvc = serviceProvider.GetRequiredService<KucoinTickerSvc>();
-            var socketSvc = serviceProvider.GetRequiredService<KucoinSocketSvc>();
+            // Resolve clients
+            var kucoinClient = serviceProvider.GetRequiredService<KucoinClient>();
             var kucoinSocketClient = serviceProvider.GetRequiredService<KucoinSocketClient>();
 
+            // Resolve Services
+            var kucoinAccountSvc = serviceProvider.GetRequiredService<KucoinAccountSvc>();
+            var kucoinSocketSvc = serviceProvider.GetRequiredService<KucoinSocketSvc>();
+            var kucoinTickerSvc = serviceProvider.GetRequiredService<KucoinTickerSvc>();
             var tokenMetricsSvc = serviceProvider.GetRequiredService<TokenMetricsSvc>();
+
             //await tokenMetricsSvc.GetAllTokens(ct);
 
             // Set the target timezone
@@ -91,11 +115,23 @@ namespace TradeMonkey.Trader
             // ******* KUCOIN TIMERS ******* //
 
             // Stream aggregation process every -Default 5 minutes (300000 ms)
-            var state = new TimerState { TradingPair = "ETH-BTC" };
-            var timer = new Timer((s) => Task.Run(() => OnKucoinStreamTimerElapsed(s, dbContext)), state, 0, 300000);
+            //var state = new TimerState { TradingPair = "ETH-BTC" };
+            //var timer = new Timer((s) => Task.Run(() => OnKucoinStreamTimerElapsed(s, dbContext)), state, 0, 300000);
 
             // Ticker Websocket subscription
-            await ReceivetickListAsync(kucoinSocketClient);
+            //await ReceivetickListAsync(kucoinSocketClient);
+
+            // Get the symbols of the coins you're holding
+
+            var accountBalances = await kucoinAccountSvc.GetAccountsAsync(null, null, ct);
+            var assets = accountBalances
+                .Where(s => s.Holds > 0)
+                .Select(s => s.Asset)
+                .ToList();
+
+            // Define the time range for historical data
+            var endTime = DateTime.UtcNow;
+            var startTime = endTime.AddYears(-1);
 
             // ******* END KUCOIN TIMERS ******* //
 
@@ -122,6 +158,24 @@ namespace TradeMonkey.Trader
                 await Task.Delay(TimeSpan.FromSeconds(10));
             }
         }
+
+        //private static async Task GetHistoricalDataAsync(KucoinTickerSvc kucoinTickerSvc, List<string> symbols,
+        //    DateTime startTime, DateTime endTime)
+        //{
+        //    foreach (var symbol in symbols)
+        //    {
+        //        var klines = await kucoinClient.GetKlinesAsync(symbol, Kucoin.Net.Objects.KucoinKlineInterval.OneDay, startTime, endTime);
+
+        //        if (klines.Success)
+        //        {
+        //            // Save klines.Data to the database ...
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine($"Error fetching historical data for {symbol}: {klines.Error?.Message}");
+        //        }
+        //    }
+        //}
 
         static void OnKucoinStreamTimerElapsed(object state, TmDBContext dbContext)
         {
