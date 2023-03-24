@@ -1,12 +1,14 @@
 ﻿using Kucoin.Net.Clients.SpotApi;
 using Kucoin.Net.Objects.Models;
 
+using TradeMonkey.Services.Interface;
+
 using KucoinAccount = Kucoin.Net.Objects.Models.Spot.KucoinAccount;
 
 namespace TradeMonkey.Trader.Services
 {
     [RegisterService]
-    public sealed class KucoinAccountSvc
+    public sealed class KucoinAccountSvc : ITraderService
     {
         [InjectService]
         public KucoinClientSpotApiAccount KuCoinSpotClient { get; private set; }
@@ -14,10 +16,9 @@ namespace TradeMonkey.Trader.Services
         [InjectService]
         public KuCoinDbRepository DbRepo { get; private set; }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="repository"> </param>
-        /// <exception cref="ArgumentNullException"> </exception>
+        /// <summary></summary>
+        /// <param name="repository"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public KucoinAccountSvc(KucoinClientSpotApiAccount kucoinClientSpotApiAccount, KuCoinDbRepository kuCoinDbRepository)
         {
             KuCoinSpotClient = kucoinClientSpotApiAccount ??
@@ -26,13 +27,11 @@ namespace TradeMonkey.Trader.Services
             DbRepo = kuCoinDbRepository ?? throw new ArgumentNullException(nameof(kuCoinDbRepository));
         }
 
-        /// <summary>
-        /// Gets a transferable balance of a specified account.
-        /// </summary>
-        /// <param name="asset">       </param>
-        /// <param name="accountType"> </param>
-        /// <param name="ct">          </param>
-        /// <returns> </returns>
+        /// <summary>Gets a transferable balance of a specified account.</summary>
+        /// <param name="asset"></param>
+        /// <param name="accountType"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<KucoinTransferableAccount> GetTransferableAsync(string asset, AccountType accountType, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
@@ -40,18 +39,16 @@ namespace TradeMonkey.Trader.Services
             return result.Data;
         }
 
-        /// <summary>
-        /// Transfers assets between accounts
-        /// </summary>
-        /// <param name="asset">         </param>
-        /// <param name="from">          </param>
-        /// <param name="to">            </param>
-        /// <param name="quantity">      </param>
-        /// <param name="fromTag">       </param>
-        /// <param name="toTag">         </param>
-        /// <param name="clientOrderId"> </param>
-        /// <param name="ct">            </param>
-        /// <returns> </returns>
+        /// <summary>Transfers assets between accounts</summary>
+        /// <param name="asset"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="quantity"></param>
+        /// <param name="fromTag"></param>
+        /// <param name="toTag"></param>
+        /// <param name="clientOrderId"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<KucoinInnerTransfer> InnerTransferAsync(string asset, AccountType from, AccountType to,
             decimal quantity, string? fromTag = default, string? toTag = default, string? clientOrderId = default, CancellationToken ct = default)
         {
@@ -60,19 +57,17 @@ namespace TradeMonkey.Trader.Services
             return result.Data;
         }
 
-        /// <summary>
-        /// Withdraw an asset to an address, such as MetaMask or KuCoin wallet
-        /// </summary>
-        /// <param name="asset">         </param>
-        /// <param name="toAddress">     </param>
-        /// <param name="quantity">      </param>
-        /// <param name="memo">          </param>
-        /// <param name="isInner">       </param>
-        /// <param name="remark">        </param>
-        /// <param name="chain">         </param>
-        /// <param name="feeDeductType"> </param>
-        /// <param name="ct">            </param>
-        /// <returns> </returns>
+        /// <summary>Withdraw an asset to an address, such as MetaMask or KuCoin wallet</summary>
+        /// <param name="asset"></param>
+        /// <param name="toAddress"></param>
+        /// <param name="quantity"></param>
+        /// <param name="memo"></param>
+        /// <param name="isInner"></param>
+        /// <param name="remark"></param>
+        /// <param name="chain"></param>
+        /// <param name="feeDeductType"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<KucoinNewWithdrawal> WithdrawAsync(string asset, string toAddress, decimal quantity,
             string? memo, bool isInner, string? remark, string? chain = default, FeeDeductType?
             feeDeductType = default, CancellationToken ct = default)
@@ -83,12 +78,10 @@ namespace TradeMonkey.Trader.Services
             return result.Data;
         }
 
-        /// <summary>
-        /// Get isolated margin account info
-        /// </summary>
-        /// <param name="symbol"> </param>
-        /// <param name="ct">     </param>
-        /// <returns> </returns>
+        /// <summary>Get isolated margin account info</summary>
+        /// <param name="symbol"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<KucoinIsolatedMarginAccount> GetIsolatedMarginAccountAsync(string symbol,
             CancellationToken ct = default)
         {
@@ -97,11 +90,9 @@ namespace TradeMonkey.Trader.Services
             return result.Data;
         }
 
-        /// <summary>
-        /// Gets all isolated margin accounts info
-        /// </summary>
-        /// <param name="ct"> </param>
-        /// <returns> </returns>
+        /// <summary>Gets all isolated margin accounts info</summary>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<KucoinIsolatedMarginAccountsInfo> GetIsolatedMarginAccountsAsync(CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
@@ -116,13 +107,11 @@ namespace TradeMonkey.Trader.Services
             return result.Data;
         }
 
-        /// <summary>
-        /// Gets a list of accounts
-        /// </summary>
-        /// <param name="asset">       Optional: Get the accounts for a specific asset </param>
-        /// <param name="accountType"> Optional: Filter on type of account </param>
-        /// <param name="ct">          Optional: Cancellation token </param>
-        /// <returns> </returns>
+        /// <summary>Gets a list of accounts</summary>
+        /// <param name="asset">Optional: Get the accounts for a specific asset</param>
+        /// <param name="accountType">Optional: Filter on type of account</param>
+        /// <param name="ct">Optional: Cancellation token</param>
+        /// <returns></returns>
         public async Task<IEnumerable<KucoinAccount>> GetAccountsAsync(string? asset = default,
             AccountType? accountType = default, CancellationToken ct = default)
         {
@@ -132,12 +121,10 @@ namespace TradeMonkey.Trader.Services
             return accounts.Data;
         }
 
-        /// <summary>
-        /// Get a specific account and balance
-        /// </summary>
-        /// <param name="accountId"> </param>
-        /// <param name="ct">        </param>
-        /// <returns> </returns>
+        /// <summary>Get a specific account and balance</summary>
+        /// <param name="accountId"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<KucoinAccountSingle> GetAccountAsync(string accountId, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
@@ -146,11 +133,9 @@ namespace TradeMonkey.Trader.Services
             return account.Data;
         }
 
-        /// <summary>
-        /// Get the basic user fees
-        /// </summary>
-        /// <param name="ct"> </param>
-        /// <returns> </returns>
+        /// <summary>Get the basic user fees</summary>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<KucoinUserFee> GetBasicUserFeeAsync(CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
@@ -158,13 +143,11 @@ namespace TradeMonkey.Trader.Services
             return fee.Data;
         }
 
-        /// <summary>
-        /// Gets the deposit address for an asset
-        /// </summary>
-        /// <param name="asset">   The asset to get the address for </param>
-        /// <param name="network"> Optional: The network to get the address for </param>
-        /// <param name="ct">      Cancellation token </param>
-        /// <returns> </returns>
+        /// <summary>Gets the deposit address for an asset</summary>
+        /// <param name="asset">The asset to get the address for</param>
+        /// <param name="network">Optional: The network to get the address for</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns></returns>
         public async Task<KucoinDepositAddress> GetDepositAddressAsync(string asset, string? network = default,
             CancellationToken ct = default)
         {
@@ -173,12 +156,10 @@ namespace TradeMonkey.Trader.Services
             return address.Data;
         }
 
-        /// <summary>
-        /// Gets the deposit addresses for an asset
-        /// </summary>
-        /// <param name="asset"> </param>
-        /// <param name="ct">    </param>
-        /// <returns> </returns>
+        /// <summary>Gets the deposit addresses for an asset</summary>
+        /// <param name="asset"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<KucoinDepositAddress>> GetDepositAddressesAsync(string asset, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
@@ -186,18 +167,16 @@ namespace TradeMonkey.Trader.Services
             return add.Data;
         }
 
-        /// <summary>
-        /// Gets a list of account activity
-        /// </summary>
-        /// <param name="asset">       </param>
-        /// <param name="direction">   </param>
-        /// <param name="bizType">     </param>
-        /// <param name="startTime">   </param>
-        /// <param name="endTime">     </param>
-        /// <param name="currentPage"> </param>
-        /// <param name="pageSize">    </param>
-        /// <param name="ct">          </param>
-        /// <returns> </returns>
+        /// <summary>Gets a list of account activity</summary>
+        /// <param name="asset"></param>
+        /// <param name="direction"></param>
+        /// <param name="bizType"></param>
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="currentPage"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<KucoinPaginated<KucoinAccountActivity>> GetAccountLedgersAsync(string? asset = default,
             AccountDirection? direction = default, BizType? bizType = default, DateTime? startTime = default, DateTime?
             endTime = default, int? currentPage = default, int? pageSize = default, CancellationToken ct = default)
@@ -207,17 +186,15 @@ namespace TradeMonkey.Trader.Services
             return acct.Data;
         }
 
-        /// <summary>
-        /// Gets a list of deposits
-        /// </summary>
-        /// <param name="asset">       </param>
-        /// <param name="startTime">   </param>
-        /// <param name="endTime">     </param>
-        /// <param name="status">      </param>
-        /// <param name="currentPage"> </param>
-        /// <param name="pageSize">    </param>
-        /// <param name="ct">          </param>
-        /// <returns> </returns>
+        /// <summary>Gets a list of deposits</summary>
+        /// <param name="asset"></param>
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="status"></param>
+        /// <param name="currentPage"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<KucoinPaginated<KucoinDeposit>> GetDepositsAsync(string? asset = default,
             DateTime? startTime = default, DateTime? endTime = default, DepositStatus? status = default,
             int? currentPage = default, int? pageSize = default, CancellationToken ct = default)
@@ -227,12 +204,11 @@ namespace TradeMonkey.Trader.Services
             return result.Data;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="type">  </param>
-        /// <param name="asset"> </param>
-        /// <param name="ct">    </param>
-        /// <returns> </returns>
+        /// <summary></summary>
+        /// <param name="type"></param>
+        /// <param name="asset"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<KucoinNewAccount> CreateAccountAsync(AccountType type, string asset, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
@@ -240,12 +216,11 @@ namespace TradeMonkey.Trader.Services
             return result.Data;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="asset">   </param>
-        /// <param name="network"> </param>
-        /// <param name="ct">      </param>
-        /// <returns> </returns>
+        /// <summary></summary>
+        /// <param name="asset"></param>
+        /// <param name="network"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<KucoinDepositAddress> CreateDepositAddressAsync(string asset, string? network = default, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
@@ -253,12 +228,10 @@ namespace TradeMonkey.Trader.Services
             return result.Data;
         }
 
-        /// <summary>
-        /// Cancels a withdrawal
-        /// </summary>
-        /// <param name="withdrawalId"> </param>
-        /// <param name="ct">           </param>
-        /// <returns> </returns>
+        /// <summary>Cancels a withdrawal</summary>
+        /// <param name="withdrawalId"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<object> CancelWithdrawalAsync(string withdrawalId, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
@@ -266,11 +239,9 @@ namespace TradeMonkey.Trader.Services
             return result.Data;
         }
 
-        /// <summary>
-        /// Get cross margin risk limit
-        /// </summary>
-        /// <param name="ct"> </param>
-        /// <returns> </returns>
+        /// <summary>Get cross margin risk limit</summary>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<KucoinRiskLimitCrossMargin>> GetRiskLimitCrossMarginAsync(CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
@@ -278,11 +249,9 @@ namespace TradeMonkey.Trader.Services
             return result.Data;
         }
 
-        /// <summary>
-        /// Get isolated margin risk limit
-        /// </summary>
-        /// <param name="ct"> </param>
-        /// <returns> </returns>
+        /// <summary>Get isolated margin risk limit</summary>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<KucoinRiskLimitIsolatedMargin>> GetRiskLimitIsolatedMarginAsync(CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
@@ -290,12 +259,10 @@ namespace TradeMonkey.Trader.Services
             return result.Data;
         }
 
-        /// <summary>
-        /// Get the trading fee for a symbol
-        /// </summary>
-        /// <param name="symbol"> </param>
-        /// <param name="ct">     </param>
-        /// <returns> </returns>
+        /// <summary>Get the trading fee for a symbol</summary>
+        /// <param name="symbol"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
 
         public async Task<IEnumerable<KucoinTradeFee>> GetSymbolTradingFeesAsync(string symbol, CancellationToken ct = default)
         {
@@ -304,12 +271,10 @@ namespace TradeMonkey.Trader.Services
             return result.Data;
         }
 
-        /// <summary>
-        /// Get the trading fees for symbols
-        /// </summary>
-        /// <param name="symbol"> </param>
-        /// <param name="ct">     </param>
-        /// <returns> </returns>
+        /// <summary>Get the trading fees for symbols</summary>
+        /// <param name="symbol"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
 
         public async Task<IEnumerable<KucoinTradeFee>> GetSymbolTradingFeesAsync(IEnumerable<string> symbols,
             CancellationToken ct = default)
@@ -319,17 +284,15 @@ namespace TradeMonkey.Trader.Services
             return result.Data;
         }
 
-        /// <summary>
-        /// Gets a list of withdrawals
-        /// </summary>
-        /// <param name="asset">       </param>
-        /// <param name="startTime">   </param>
-        /// <param name="endTime">     </param>
-        /// <param name="status">      </param>
-        /// <param name="currentPage"> </param>
-        /// <param name="pageSize">    </param>
-        /// <param name="ct">          </param>
-        /// <returns> </returns>
+        /// <summary>Gets a list of withdrawals</summary>
+        /// <param name="asset"></param>
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="status"></param>
+        /// <param name="currentPage"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<KucoinPaginated<KucoinWithdrawal>> GetWithdrawalsAsync(string? asset = default,
             DateTime? startTime = default, DateTime? endTime = default, WithdrawalStatus? status = default,
             int? currentPage = default, int? pageSize = default, CancellationToken ct = default)

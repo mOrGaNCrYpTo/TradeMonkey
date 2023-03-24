@@ -18,7 +18,7 @@ namespace TradeMonkey.Trader.Helpers
         {
             // Get the available balance of the trading account
             List<KucoinAccount> accounts =
-                await KucoinAccountSvc.GetAccountsAsync(symbol, AccountType.Trade, ct);
+                (List<KucoinAccount>)await KucoinAccountSvc.GetAccountsAsync(symbol, AccountType.Trade, ct);
 
             KucoinAccount? account = accounts.Any() ? accounts.First() : null;
 
@@ -35,8 +35,7 @@ namespace TradeMonkey.Trader.Helpers
             // Calculate the difference between the entry price and stop loss price
             var priceDiff = entryPrice - stopLossPrice;
 
-            // Calculate the position size based on the maximum amount of money that can be risked
-            // and the price difference
+            // Calculate the position size based on the maximum amount of money that can be risked and the price difference
             var positionSize = maxRiskAmount / priceDiff;
 
             // Round the position size down to the nearest lot size

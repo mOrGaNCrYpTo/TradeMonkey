@@ -1,8 +1,10 @@
 ﻿using Kucoin.Net.Clients.SpotApi;
 
+using TradeMonkey.Services.Interface;
+
 namespace TradeMonkey.Services.Service
 {
-    public sealed class KucoinExchangeSvc
+    public sealed class KucoinExchangeSvc : ITraderService
     {
         private readonly KucoinClientSpotApiExchangeData Client;
 

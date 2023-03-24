@@ -1,19 +1,6 @@
-﻿using Kucoin.Net.Clients.SpotApi;
-using Kucoin.Net.Objects;
+﻿using System.Reflection;
 
-using Mapster;
-
-using Microsoft.Extensions.DependencyInjection;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
-
-using TradeMonkey.Data.Entity;
+using TradeMonkey.Services.Interface;
 
 namespace TradeMonkey.Trader
 {
@@ -45,8 +32,6 @@ namespace TradeMonkey.Trader
 
         private void ConfigureServices(IServiceCollection services)
         {
-            // ...
-
             services.AddHttpClient<TokenMetricsApiRepository>(httpClient =>
             {
                 httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -57,21 +42,22 @@ namespace TradeMonkey.Trader
                 httpClient.Timeout = TimeSpan.FromMinutes(10);
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(10));
-            services.ScanCurrentAssembly(ServiceDescriptorMergeStrategy.TryAdd);
+
+            services.ScanAssembly(Assembly.GetAssembly(typeof(ITraderService));
         }
 
         private async Task RunAsync(IServiceProvider serviceProvider, CancellationToken ct)
         {
+            var kucoinSocketClient = serviceProvider.GetService<KucoinSocketClient>();
             var kucoinAccountSvc = serviceProvider.GetRequiredService<KucoinAccountSvc>();
             var kucoinTickerSvc = serviceProvider.GetRequiredService<KucoinTickerSvc>();
             var socketSvc = serviceProvider.GetRequiredService<KucoinSocketSvc>();
-            var kucoinSocketClient = serviceProvider.GetRequiredService<KucoinSocketClient>();
             var tokenMetricsSvc = serviceProvider.GetRequiredService<TokenMetricsSvc>();
 
             var dbContext = serviceProvider.GetRequiredService<TmDBContext>();
             await BackFillTokenMetricsDataAsync(tokenMetricsSvc, kucoinAccountSvc, ct);
 
-            await SetupTasks(kucoinSocketClient, tokenMetricsSvc, ct);
+            //await SetupTasks(kucoinSocketClient, tokenMetricsSvc, ct);
         }
 
         async Task SetupTasks(KucoinSocketClient kucoinSocketClient, TokenMetricsSvc tokenMetricsSvc, CancellationToken ct)

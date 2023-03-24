@@ -1,7 +1,9 @@
-﻿namespace TradeMonkey.Trader.Services
+﻿using TradeMonkey.Services.Interface;
+
+namespace TradeMonkey.Trader.Services
 {
     [RegisterService]
-    public sealed class KucoinSocketSvc
+    public sealed class KucoinSocketSvc : ITraderService
     {
         [InjectService]
         public KucoinSocketClient SocketClient { get; private set; }

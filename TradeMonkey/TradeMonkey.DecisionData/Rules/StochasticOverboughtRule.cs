@@ -17,8 +17,8 @@
 
         public async Task<TradingSignal> EvaluateRuleSetAsync(List<QuoteDto> quotes)
         {
-            var stochasticValues = await TAIndicatorManager.GetStochasticRSI(quotes, _kPeriods, _dPeriods);
-            return stochasticValues.Last().PercentK > _overboughtThreshold;
+            //var stochasticValues = await TAIndicatorManager.GetStochasticRSI(quotes, _kPeriods, _dPeriods);
+            //return stochasticValues.Last().PercentK > _overboughtThreshold;
         }
     }
 }

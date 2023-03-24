@@ -1,15 +1,16 @@
-﻿namespace TradeMonkey.Services
+﻿using TradeMonkey.Services.Interface;
+
+namespace TradeMonkey.Services
 {
     [RegisterService]
-    public sealed class KucoinOrderSvc
+    public sealed class KucoinOrderSvc : ITraderService
     {
         [InjectService]
         public KucoinClient KucoinClient { get; private set; }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="repository"> </param>
-        /// <exception cref="ArgumentNullException"> </exception>
+        /// <summary></summary>
+        /// <param name="repository"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public KucoinOrderSvc(KucoinClient kucoinClient)
         {
             KucoinClient = kucoinClient ??

@@ -1,7 +1,9 @@
-﻿namespace TradeMonkey.Trader.Services
+﻿using TradeMonkey.Services.Interface;
+
+namespace TradeMonkey.Trader.Services
 {
     [RegisterService]
-    public sealed class TokenMetricsSvc
+    public sealed class TokenMetricsSvc : ITraderService
     {
         private UriBuilder _uriBuilder;
 

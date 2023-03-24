@@ -1,28 +1,24 @@
-﻿using CryptoExchange.Net;
-
-using Kucoin.Net;
-using Kucoin.Net.Clients.SpotApi;
+﻿using Kucoin.Net.Clients.SpotApi;
 
 using Mapster;
 
-using Newtonsoft.Json;
+using TradeMonkey.Services.Interface;
 
 using KucoinTick = TradeMonkey.Data.Entity.KucoinTick;
 
 namespace TradeMonkey.Trader.Services
 {
     [RegisterService]
-    public sealed class KucoinTickerSvc
+    public sealed class KucoinTickerSvc : ITraderService
     {
         private readonly KucoinClientSpotApi _client;
 
         [InjectService]
         public KuCoinDbRepository Repo { get; private set; }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="repository"> </param>
-        /// <exception cref="ArgumentNullException"> </exception>
+        /// <summary></summary>
+        /// <param name="repository"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public KucoinTickerSvc(KuCoinDbRepository repository, KucoinClientSpotApi kucoinClient)
         {
             Repo = repository ??
@@ -99,7 +95,7 @@ namespace TradeMonkey.Trader.Services
             return symbols;
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         //public async Task<WebCallResult<IEnumerable<KucoinKline>>> GetKlinesAsync(string symbol, KlineInterval interval, DateTime? startTime = null, DateTime? endTime = null, CancellationToken ct = default)
         //{
         //    ct.ThrowIfCancellationRequested();
