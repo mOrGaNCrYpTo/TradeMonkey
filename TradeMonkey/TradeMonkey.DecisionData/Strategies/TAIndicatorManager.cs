@@ -216,9 +216,27 @@
                 .ToList();
 
             // Calculate Stochastic RSI using Skender.Stock.Indicators
-            StochRsiResult stochRsi = candles
-                                        .GetStochRsi(rsiPeriods, stochPeriods, signalPeriods, smoothPeriods)
-                                        .LastOrDefault();
+            StochRsiResult stochRsi =
+                candles
+                    .GetStochRsi(rsiPeriods, stochPeriods, signalPeriods, smoothPeriods)
+                    .LastOrDefault();
+
+            return (decimal)stochRsi.StochRsi;
+        }
+
+        public static decimal IsStochasticOverbought(List<IQuote> quotes,
+           int rsiPeriods, int stochPeriods, int signalPeriods, int smoothPeriods)
+        {
+            // Convert quotes to Candle format
+            List<Candle> candles = quotes
+                .Select(q => new Candle(q.Date, q.Open, q.High, q.Low, q.Close, q.Volume))
+                .ToList();
+
+            // Calculate Stochastic RSI using Skender.Stock.Indicators
+            StochRsiResult stochRsi =
+                candles
+                    .GetStochRsi(rsiPeriods, stochPeriods, signalPeriods, smoothPeriods)
+                    .LastOrDefault();
 
             return (decimal)stochRsi.StochRsi;
         }

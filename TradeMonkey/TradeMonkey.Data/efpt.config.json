@@ -19,6 +19,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[CryptoData]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Indicator_Datums]",
          "ObjectType": 0
       },
@@ -36,6 +40,10 @@
       },
       {
          "Name": "[dbo].[Kucoin_AllTicks]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Kucoin_History]",
          "ObjectType": 0
       },
       {

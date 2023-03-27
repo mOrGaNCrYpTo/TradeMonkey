@@ -16,32 +16,27 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Migrations\20230314140700_Initial.cs" />
-    <Compile Include="Migrations\20230314140700_Initial.Designer.cs" />
-    <Compile Include="Migrations\TmDBContextModelSnapshot.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="ErikEJ.EntityFrameworkCore.SqlServer.DateOnlyTimeOnly" Version="7.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.3">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="7.19.0" />
+    <PackageReference Include="Quickwire" Version="1.3.2" />
+    <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="7.20.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Monikers.imagemanifest">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </None>
+    <Folder Include="CodeTemplates\" />
+    <Folder Include="Context\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

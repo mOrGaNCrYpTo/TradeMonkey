@@ -1,6 +1,4 @@
-﻿using TradeMonkey.Trader.Interfaces;
-
-namespace TradeMonkey.Trader
+﻿namespace TradeMonkey.Trader
 {
     public class FiveMinuteScalper : BaseStrategy
     {

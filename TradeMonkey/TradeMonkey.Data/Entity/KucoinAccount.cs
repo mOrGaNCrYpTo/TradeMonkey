@@ -7,13 +7,13 @@ namespace TradeMonkey.Data.Entity;
 
 public partial class KucoinAccount
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
-    public string Currency { get; set; }
+    public string Asset { get; set; }
 
     public string Type { get; set; }
 
-    public decimal Balance { get; set; }
+    public decimal Total { get; set; }
 
     public decimal Available { get; set; }
 

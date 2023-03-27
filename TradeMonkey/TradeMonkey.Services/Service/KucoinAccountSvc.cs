@@ -1,15 +1,16 @@
-﻿using Kucoin.Net.Clients.SpotApi;
+﻿using Kucoin.Net.Enums;
 using Kucoin.Net.Objects.Models;
 
-using KucoinAccount = Kucoin.Net.Objects.Models.Spot.KucoinAccount;
+using Mapster;
 
-namespace TradeMonkey.Trader.Services
+using KucoinAccount = TradeMonkey.Data.Entity.KucoinAccount;
+
+namespace TradeMonkey.Services
 {
     [RegisterService]
     public sealed class KucoinAccountSvc
     {
-        [InjectService]
-        public KucoinClientSpotApiAccount KuCoinSpotClient { get; private set; }
+        private readonly KucoinClient _kucoinClient;
 
         [InjectService]
         public KuCoinDbRepository DbRepo { get; private set; }
@@ -18,11 +19,9 @@ namespace TradeMonkey.Trader.Services
         /// </summary>
         /// <param name="repository"> </param>
         /// <exception cref="ArgumentNullException"> </exception>
-        public KucoinAccountSvc(KucoinClientSpotApiAccount kucoinClientSpotApiAccount, KuCoinDbRepository kuCoinDbRepository)
+        public KucoinAccountSvc(KucoinClient kucoinClient, KuCoinDbRepository kuCoinDbRepository)
         {
-            KuCoinSpotClient = kucoinClientSpotApiAccount ??
-                throw new ArgumentNullException(nameof(kucoinClientSpotApiAccount));
-
+            _kucoinClient = kucoinClient ?? throw new ArgumentNullException(nameof(kucoinClient));
             DbRepo = kuCoinDbRepository ?? throw new ArgumentNullException(nameof(kuCoinDbRepository));
         }
 
@@ -36,7 +35,7 @@ namespace TradeMonkey.Trader.Services
         public async Task<KucoinTransferableAccount> GetTransferableAsync(string asset, AccountType accountType, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.GetTransferableAsync(asset, accountType, ct);
+            var result = await _kucoinClient.SpotApi.Account.GetTransferableAsync(asset, accountType, ct);
             return result.Data;
         }
 
@@ -56,7 +55,7 @@ namespace TradeMonkey.Trader.Services
             decimal quantity, string? fromTag = default, string? toTag = default, string? clientOrderId = default, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.InnerTransferAsync(asset, from, to, quantity, fromTag, toTag, clientOrderId, ct);
+            var result = await _kucoinClient.SpotApi.Account.InnerTransferAsync(asset, from, to, quantity, fromTag, toTag, clientOrderId, ct);
             return result.Data;
         }
 
@@ -78,7 +77,7 @@ namespace TradeMonkey.Trader.Services
             feeDeductType = default, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.WithdrawAsync(asset, toAddress, quantity, memo, isInner, remark, chain,
+            var result = await _kucoinClient.SpotApi.Account.WithdrawAsync(asset, toAddress, quantity, memo, isInner, remark, chain,
                 feeDeductType, ct);
             return result.Data;
         }
@@ -93,7 +92,7 @@ namespace TradeMonkey.Trader.Services
             CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.GetIsolatedMarginAccountAsync(symbol, ct);
+            var result = await _kucoinClient.SpotApi.Account.GetIsolatedMarginAccountAsync(symbol, ct);
             return result.Data;
         }
 
@@ -105,14 +104,14 @@ namespace TradeMonkey.Trader.Services
         public async Task<KucoinIsolatedMarginAccountsInfo> GetIsolatedMarginAccountsAsync(CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.GetIsolatedMarginAccountsAsync(ct);
+            var result = await _kucoinClient.SpotApi.Account.GetIsolatedMarginAccountsAsync(ct);
             return result.Data;
         }
 
         public async Task<KucoinMarginAccount> GetMarginAccountAsync(CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.GetMarginAccountAsync(ct);
+            var result = await _kucoinClient.SpotApi.Account.GetMarginAccountAsync(ct);
             return result.Data;
         }
 
@@ -127,9 +126,11 @@ namespace TradeMonkey.Trader.Services
             AccountType? accountType = default, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var accounts = await KuCoinSpotClient.GetAccountsAsync(asset, accountType, ct);
-            await DbRepo.InsertManyAsync(accounts.Data, ct);
-            return accounts.Data;
+            var result = await _kucoinClient.SpotApi.Account.GetAccountsAsync(asset, accountType, ct);
+            var accounts = result.Data.Adapt<IEnumerable<KucoinAccount>>();
+
+            await DbRepo.UpdateManyAsync(accounts, ct);
+            return accounts;
         }
 
         /// <summary>
@@ -138,12 +139,13 @@ namespace TradeMonkey.Trader.Services
         /// <param name="accountId"> </param>
         /// <param name="ct">        </param>
         /// <returns> </returns>
-        public async Task<KucoinAccountSingle> GetAccountAsync(string accountId, CancellationToken ct = default)
+        public async Task<KucoinAccount> GetAccountAsync(string accountId, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var account = await KuCoinSpotClient.GetAccountAsync(accountId, ct);
-            await DbRepo.InsertOneAsync(account.Data, ct);
-            return account.Data;
+            var result = await _kucoinClient.SpotApi.Account.GetAccountAsync(accountId, ct);
+            var account = result.Data.Adapt<KucoinAccount>();
+            await DbRepo.InsertOneAsync(account, ct);
+            return account;
         }
 
         /// <summary>
@@ -154,7 +156,7 @@ namespace TradeMonkey.Trader.Services
         public async Task<KucoinUserFee> GetBasicUserFeeAsync(CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var fee = await KuCoinSpotClient.GetBasicUserFeeAsync(ct);
+            var fee = await _kucoinClient.SpotApi.Account.GetBasicUserFeeAsync(ct);
             return fee.Data;
         }
 
@@ -169,7 +171,7 @@ namespace TradeMonkey.Trader.Services
             CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var address = await KuCoinSpotClient.GetDepositAddressAsync(asset, network, ct);
+            var address = await _kucoinClient.SpotApi.Account.GetDepositAddressAsync(asset, network, ct);
             return address.Data;
         }
 
@@ -182,7 +184,7 @@ namespace TradeMonkey.Trader.Services
         public async Task<IEnumerable<KucoinDepositAddress>> GetDepositAddressesAsync(string asset, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var add = await KuCoinSpotClient.GetDepositAddressesAsync(asset, ct);
+            var add = await _kucoinClient.SpotApi.Account.GetDepositAddressesAsync(asset, ct);
             return add.Data;
         }
 
@@ -202,7 +204,7 @@ namespace TradeMonkey.Trader.Services
             AccountDirection? direction = default, BizType? bizType = default, DateTime? startTime = default, DateTime?
             endTime = default, int? currentPage = default, int? pageSize = default, CancellationToken ct = default)
         {
-            var acct = await KuCoinSpotClient.GetAccountLedgersAsync(asset, direction, bizType, startTime, endTime,
+            var acct = await _kucoinClient.SpotApi.Account.GetAccountLedgersAsync(asset, direction, bizType, startTime, endTime,
                 currentPage, pageSize, ct);
             return acct.Data;
         }
@@ -223,7 +225,7 @@ namespace TradeMonkey.Trader.Services
             int? currentPage = default, int? pageSize = default, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.GetDepositsAsync(asset, startTime, endTime, status, currentPage, pageSize, ct);
+            var result = await _kucoinClient.SpotApi.Account.GetDepositsAsync(asset, startTime, endTime, status, currentPage, pageSize, ct);
             return result.Data;
         }
 
@@ -236,7 +238,7 @@ namespace TradeMonkey.Trader.Services
         public async Task<KucoinNewAccount> CreateAccountAsync(AccountType type, string asset, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.CreateAccountAsync(type, asset, ct);
+            var result = await _kucoinClient.SpotApi.Account.CreateAccountAsync(type, asset, ct);
             return result.Data;
         }
 
@@ -249,7 +251,7 @@ namespace TradeMonkey.Trader.Services
         public async Task<KucoinDepositAddress> CreateDepositAddressAsync(string asset, string? network = default, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.CreateDepositAddressAsync(asset, network, ct);
+            var result = await _kucoinClient.SpotApi.Account.CreateDepositAddressAsync(asset, network, ct);
             return result.Data;
         }
 
@@ -262,7 +264,7 @@ namespace TradeMonkey.Trader.Services
         public async Task<object> CancelWithdrawalAsync(string withdrawalId, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.CancelWithdrawalAsync(withdrawalId, ct);
+            var result = await _kucoinClient.SpotApi.Account.CancelWithdrawalAsync(withdrawalId, ct);
             return result.Data;
         }
 
@@ -274,7 +276,7 @@ namespace TradeMonkey.Trader.Services
         public async Task<IEnumerable<KucoinRiskLimitCrossMargin>> GetRiskLimitCrossMarginAsync(CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.GetRiskLimitCrossMarginAsync(ct);
+            var result = await _kucoinClient.SpotApi.Account.GetRiskLimitCrossMarginAsync(ct);
             return result.Data;
         }
 
@@ -286,7 +288,7 @@ namespace TradeMonkey.Trader.Services
         public async Task<IEnumerable<KucoinRiskLimitIsolatedMargin>> GetRiskLimitIsolatedMarginAsync(CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.GetRiskLimitIsolatedMarginAsync(ct);
+            var result = await _kucoinClient.SpotApi.Account.GetRiskLimitIsolatedMarginAsync(ct);
             return result.Data;
         }
 
@@ -300,7 +302,7 @@ namespace TradeMonkey.Trader.Services
         public async Task<IEnumerable<KucoinTradeFee>> GetSymbolTradingFeesAsync(string symbol, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.GetSymbolTradingFeesAsync(symbol, ct);
+            var result = await _kucoinClient.SpotApi.Account.GetSymbolTradingFeesAsync(symbol, ct);
             return result.Data;
         }
 
@@ -315,7 +317,7 @@ namespace TradeMonkey.Trader.Services
             CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.GetSymbolTradingFeesAsync(symbols, ct);
+            var result = await _kucoinClient.SpotApi.Account.GetSymbolTradingFeesAsync(symbols, ct);
             return result.Data;
         }
 
@@ -335,7 +337,7 @@ namespace TradeMonkey.Trader.Services
             int? currentPage = default, int? pageSize = default, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var result = await KuCoinSpotClient.GetWithdrawalsAsync(asset, startTime, endTime, status, currentPage, pageSize, ct);
+            var result = await _kucoinClient.SpotApi.Account.GetWithdrawalsAsync(asset, startTime, endTime, status, currentPage, pageSize, ct);
             return result.Data;
         }
     }

@@ -2,6 +2,10 @@
 {
     public static class Settings
     {
+        public static string CoinApiUrl { get; set; } = "https://rest.coinapi.io/v1/";
+        public static string CoinApiKeyName { get; set; } = "X-CoinAPI-Key";
+        public static string CoinApiKeyVal { get; set; } = "80BEC3A7-B602-4CB8-BC5C-F11354DC8DAE";
+
         public static string KucoinProdApiUrl { get; set; } = "https://api.kucoin.com/api/v1/";
         public static string KucoinSandboxApiUrl { get; set; } = "https://api.kucoin.com/api/v1/";
 

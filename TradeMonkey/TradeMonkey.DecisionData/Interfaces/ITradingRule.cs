@@ -103,32 +103,10 @@
         }
     }
 
-    public sealed class StochasticOverboughtRule : ITradingRule
-    {
-        private readonly int _kPeriods;
-        private readonly int _dPeriods;
-        private readonly double _overboughtThreshold;
-
-        public TradingSignal Signal => TradingSignal.GoShort;
-
-        public StochasticOverboughtRule(int kPeriods, int dPeriods, double overboughtThreshold)
-        {
-            _kPeriods = kPeriods;
-            _dPeriods = dPeriods;
-            _overboughtThreshold = overboughtThreshold;
-        }
-
-        public async Task<TradingSignal> EvaluateRuleSetAsync(List<QuoteDto> quotes)
-        {
-            return await TAIndicatorManager.IsStochasticOverbought(quotes, _kPeriods, _dPeriods, _overboughtThreshold) ?
-                TradingSignal.GoShort : TradingSignal.None;
-        }
-    }
-
     public interface ITradingRule
     {
         TradingSignal Signal { get; }
 
-        Task<TradingSignal> EvaluateRuleSetAsync(List<QuoteDto> quotes);
+        Task<TradingSignal> EvaluateRuleSetAsync(List<IQuote> quotes);
     }
 }

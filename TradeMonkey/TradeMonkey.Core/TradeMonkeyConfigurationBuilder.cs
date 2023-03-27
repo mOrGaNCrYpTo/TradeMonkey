@@ -1,4 +1,6 @@
-﻿namespace TradeMonkey.Core
+﻿using Kucoin.Net.Objects;
+
+namespace TradeMonkey.Core
 {
     public sealed class TradeMonkeyConfigurationBuilder
     {
@@ -16,13 +18,24 @@
 
             ConfigurationRoot = builder.Build();
 
-            TransientFaultHandlingOptions transientFaultOptions = new();
-            ConfigurationRoot.GetSection(nameof(TransientFaultHandlingOptions))
-                             .Bind(transientFaultOptions);
-
             // Bind DomainConfiguration
             DomainConfiguration = new DomainConfiguration();
             ConfigurationRoot.Bind(DomainConfiguration);
+
+            ConfigurationRoot.GetSection(nameof(TransientFaultHandlingOptions))
+                  .Bind(DomainConfiguration.TransientFaultOptions);
+
+            ConfigurationRoot.GetSection(nameof(KucoinApi))
+                  .Bind(DomainConfiguration.KucoinApi);
+
+            ConfigurationRoot.GetSection(nameof(TokenMetricsApi))
+                  .Bind(DomainConfiguration.TokenMetricsApi);
+
+            ConfigurationRoot.GetSection(nameof(TimerSettings))
+                  .Bind(DomainConfiguration.TimerSettings);
+
+            ConfigurationRoot.GetSection(nameof(DatabaseSettings))
+                  .Bind(DomainConfiguration.DatabaseSettings);
         }
     }
 }

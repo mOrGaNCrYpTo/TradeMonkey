@@ -2,22 +2,42 @@
 {
     public sealed class StochasticOverboughtRule : ITradingRule
     {
+        private readonly int _rsiPeriods;
+        private readonly int _signalPeriods;
         private readonly int _kPeriods;
         private readonly int _dPeriods;
+        private readonly int _smoothPeriods;
         private readonly decimal _overboughtThreshold;
 
         public TradingSignal Signal => TradingSignal.GoShort;
 
-        public StochasticOverboughtRule(int kPeriods, int dPeriods, decimal overboughtThreshold)
+        public StochasticOverboughtRule(int rsiPeriods, int signalPeriods, int kPeriods, int dPeriods,
+            int smoothPeriods, decimal overboughtThreshold)
         {
+            _rsiPeriods = rsiPeriods;
+            _signalPeriods = signalPeriods;
             _kPeriods = kPeriods;
             _dPeriods = dPeriods;
+            _smoothPeriods = smoothPeriods;
             _overboughtThreshold = overboughtThreshold;
         }
 
-        public async Task<TradingSignal> EvaluateRuleSetAsync(List<QuoteDto> quotes)
+        public async Task<TradingSignal> EvaluateRuleSetAsync(List<IQuote> quotes)
         {
-            var stochasticValues = await TAIndicatorManager.GetStochasticRSI(quotes, _kPeriods, _dPeriods);
+            // Define parameters
+            int rsiPeriods = 9;
+            int stochPeriods = 7;
+            int signalPeriods = 3;
+
+            // Calculate StochRSI
+            IEnumerable<StochRsiResult> results = quotes.GetStochRsi(
+                rsiPeriods,
+                stochPeriods,
+                signalPeriods
+            );
+
+            var stochasticValues =
+                await TAIndicatorManager.IsStochasticOverbought(quotes, rsiPeriods, stochPeriods, _signalPeriods, _dPeriods);
             return stochasticValues.Last().PercentK > _overboughtThreshold;
         }
     }

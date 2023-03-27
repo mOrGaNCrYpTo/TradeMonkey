@@ -1,11 +1,4 @@
-﻿using CryptoExchange.Net;
-
-using Kucoin.Net;
-using Kucoin.Net.Clients.SpotApi;
-
-using Mapster;
-
-using Newtonsoft.Json;
+﻿using Mapster;
 
 using KucoinTick = TradeMonkey.Data.Entity.KucoinTick;
 
@@ -14,7 +7,7 @@ namespace TradeMonkey.Trader.Services
     [RegisterService]
     public sealed class KucoinTickerSvc
     {
-        private readonly KucoinClientSpotApi _client;
+        private readonly KucoinClient _kucoinClient;
 
         [InjectService]
         public KuCoinDbRepository Repo { get; private set; }
@@ -23,12 +16,12 @@ namespace TradeMonkey.Trader.Services
         /// </summary>
         /// <param name="repository"> </param>
         /// <exception cref="ArgumentNullException"> </exception>
-        public KucoinTickerSvc(KuCoinDbRepository repository, KucoinClientSpotApi kucoinClient)
+        public KucoinTickerSvc(KuCoinDbRepository repository, KucoinClient kucoinClient)
         {
             Repo = repository ??
                 throw new ArgumentNullException(nameof(repository));
 
-            _client = kucoinClient ??
+            _kucoinClient = kucoinClient ??
                 throw new ArgumentNullException(nameof(kucoinClient));
         }
 
@@ -36,11 +29,11 @@ namespace TradeMonkey.Trader.Services
         {
             ct.ThrowIfCancellationRequested();
 
-            var result = await _client.ExchangeData.GetTickersAsync(ct);
+            var result = await _kucoinClient.SpotApi.ExchangeData.GetTickersAsync(ct);
             var data = result.Data.Data;
             var tickers = result.Data.Data.Adapt<IEnumerable<Kucoin.Net.Objects.Models.Spot.KucoinAllTick>>();
 
-            await Repo.InsertManyAsync(tickers, ct);
+            await Repo.UpdateManyAsync(tickers, ct);
         }
 
         public async Task GetLatestTickerDataAsync(string symbol, CancellationToken ct)
@@ -49,7 +42,7 @@ namespace TradeMonkey.Trader.Services
 
             Console.WriteLine("Getting latest Kucoin ticker data...");
 
-            var result = await _client.ExchangeData.GetTickerAsync(symbol, ct);
+            var result = await _kucoinClient.SpotApi.ExchangeData.GetTickerAsync(symbol, ct);
             var data = result.Data;
 
             var ticker = new KucoinTick
@@ -70,7 +63,7 @@ namespace TradeMonkey.Trader.Services
 
             Console.WriteLine("Getting latest Kucoin ticker data...");
 
-            var result = await _client.ExchangeData.GetTickerAsync(symbol, ct);
+            var result = await _kucoinClient.SpotApi.ExchangeData.GetTickerAsync(symbol, ct);
             var data = result.Data;
 
             var ticker = new KucoinTick
@@ -106,7 +99,8 @@ namespace TradeMonkey.Trader.Services
 
         // Console.WriteLine("Getting latest Kucoin ticker data...");
 
-        // var result = await _client.ExchangeData.GetTickerAsync(symbol, ct); var data = result.Data;
+        // var result = await _kucoinClient.SpotApi.ExchangeData.GetTickerAsync(symbol, ct); var
+        // data = result.Data;
 
         // var klines = new Data.Entity.KucoinKline { ClosePrice = data.c };
 

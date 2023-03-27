@@ -17,8 +17,8 @@
 
             KucoinTopTokens topTokens = new();
 
-            // DAY: Select tokens with high trading volume and significant price movements in the
-            // past 24 hours
+            // DAY: Select tokens with high trading volume and significant price movements in the past
+            // 24 hours
             var tokens24h = from t in _dbContext.KucoinAllTicks
                             where t.Timestamp > DateTime.UtcNow.AddHours(-24)
                             group t by t.Symbol into g
@@ -72,11 +72,28 @@
             return topTokens;
         }
 
+        public async Task<List<string>> GetTradingPairs()
+        {
+            return await
+                _dbContext.KucoinHistories
+                  .Select(h => h.Symbol)
+                  .Distinct()
+                  .ToListAsync();
+        }
+
         public async Task InsertManyAsync<TEntity>(IEnumerable<TEntity> data, CancellationToken ct) where TEntity : class
         {
             ct.ThrowIfCancellationRequested();
 
             await _dbContext.Set<TEntity>().BulkInsertAsync(data, ct);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateManyAsync<TEntity>(IEnumerable<TEntity> data, CancellationToken ct) where TEntity : class
+        {
+            ct.ThrowIfCancellationRequested();
+
+            await _dbContext.Set<TEntity>().BulkMergeAsync(data, ct);
             await _dbContext.SaveChangesAsync();
         }
 
