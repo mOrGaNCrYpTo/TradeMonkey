@@ -1,6 +1,4 @@
-﻿using Kucoin.Net.Objects;
-
-namespace TradeMonkey.Core
+﻿namespace TradeMonkey.Core
 {
     public sealed class TradeMonkeyConfigurationBuilder
     {
@@ -27,6 +25,9 @@ namespace TradeMonkey.Core
 
             ConfigurationRoot.GetSection(nameof(KucoinApi))
                   .Bind(DomainConfiguration.KucoinApi);
+
+            ConfigurationRoot.GetSection(nameof(CoinApi))
+                 .Bind(DomainConfiguration.CoinApi);
 
             ConfigurationRoot.GetSection(nameof(TokenMetricsApi))
                   .Bind(DomainConfiguration.TokenMetricsApi);

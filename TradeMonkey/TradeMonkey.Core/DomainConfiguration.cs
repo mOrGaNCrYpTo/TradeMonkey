@@ -4,6 +4,7 @@
     {
         public DatabaseSettings DatabaseSettings { get; private set; } = new();
         public KucoinApi KucoinApi { get; private set; } = new();
+        public CoinApi CoinApi { get; private set; } = new();
         public LoggingOptions LoggingOptions { get; private set; } = new();
         public TokenMetricsApi TokenMetricsApi { get; private set; } = new();
         public TransientFaultHandlingOptions TransientFaultHandlingOptions { get; private set; } = new();
@@ -22,6 +23,13 @@
         public string ApiKey { get; set; }
         public string ApiSecret { get; set; }
         public string ApiPassphrase { get; set; }
+        public string ApiBaseUrl { get; set; }
+    }
+
+    public class CoinApi
+    {
+        public string ApiKeyName { get; set; }
+        public string ApiKeyValue { get; set; }
         public string ApiBaseUrl { get; set; }
     }
 

@@ -34,7 +34,7 @@ namespace TradeMonkey.Services.Service
                 var asset = pair[0];
                 var quote = pair[1];
 
-                var url = $"https://rest.coinapi.io/v1/exchangerate/{asset}/{quote}/history?period_id={period}&time_start={start}&time_end={end}&limit={limit}";
+                var url = $"{_httpClient.BaseAddress}/ohlcv/{asset}/{quote}/history?period_id={period}&time_start={start}&time_end={end}&limit={limit}";
 
                 var response = await _httpClient.GetAsync(url);
                 if (response.IsSuccessStatusCode)

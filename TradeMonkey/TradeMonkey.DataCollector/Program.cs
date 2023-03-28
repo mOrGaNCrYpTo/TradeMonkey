@@ -1,12 +1,4 @@
-﻿using Kucoin.Net.Interfaces.Clients;
-
-using Microsoft.Extensions.Options;
-
-using Newtonsoft.Json;
-
-using System.Net.Http;
-
-using TradeMonkey.Core.Value.Constant;
+﻿using TradeMonkey.Core.Value.Constant;
 using TradeMonkey.Services.Service;
 
 namespace TradeMonkey.DataCollector
@@ -64,15 +56,6 @@ namespace TradeMonkey.DataCollector
 
             services.AddDbContext<TmDBContext>();
 
-            services.AddHttpClient<CoinApiService>(httpClient =>
-            {
-                httpClient.BaseAddress = new Uri(Settings.CoinApiUrl);
-                httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-                httpClient.DefaultRequestHeaders.Add("User-Agent", "Invoices.Function");
-                httpClient.DefaultRequestHeaders.Add(Settings.CoinApiKeyName, Settings.CoinApiKeyVal);
-            })
-                   .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
             KucoinApiCredentials apiCredentials = new(_config.KucoinApi.ApiKey,
                                                       _config.KucoinApi.ApiSecret,
                                                       _config.KucoinApi.ApiPassphrase);
@@ -93,6 +76,7 @@ namespace TradeMonkey.DataCollector
 
             services.AddScoped<CoinApiService>();
             services.AddScoped<KucoinSocketClient>();
+            services.AddScoped<CoinApiRestClient>();
 
             //services.AddScoped<KucoinAccountSvc>();
             //services.AddScoped<KuCoinDbRepository>();
@@ -110,6 +94,15 @@ namespace TradeMonkey.DataCollector
                 };
                 return uriBuilder;
             });
+
+            services.AddHttpClient<CoinApiService>(httpClient =>
+            {
+                httpClient.BaseAddress = new Uri(_config.CoinApi.ApiBaseUrl);
+                httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "Invoices.Function");
+                httpClient.DefaultRequestHeaders.Add(_config.CoinApi.ApiKeyName, _config.CoinApi.ApiKeyValue);
+            })
+                 .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
             services.AddHttpClient<TokenMetricsApiRepository>(httpClient =>
             {

@@ -2,6 +2,8 @@
 global using System.Text.Json.Serialization;
 global using System.Reflection;
 
+global using CoinAPI.REST.V1;
+
 global using Kucoin.Net.Clients;
 global using Kucoin.Net;
 global using Kucoin.Net.Objects.Models.Spot.Socket;
