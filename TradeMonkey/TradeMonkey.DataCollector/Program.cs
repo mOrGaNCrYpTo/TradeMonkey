@@ -126,22 +126,25 @@ namespace TradeMonkey.DataCollector
         /// <returns> </returns>
         private async Task RunAsync(IServiceProvider serviceProvider, CancellationToken ct)
         {
-            //var kucoinTickerSvc = serviceProvider.GetService<KucoinTickerSvc>();
-            //var socketSvc = serviceProvider.GetService<KucoinSocketSvc>();
-            //var kucoinAccountSvc = serviceProvider.GetService<KucoinAccountSvc>();
-            //var kucoinSocketClient = serviceProvider.GetService<KucoinSocketClient>();
-            //var tokenMetricsSvc = serviceProvider.GetService<TokenMetricsSvc>();
-            //var dbContext = serviceProvider.GetService<TmDBContext>();
+            var kucoinTickerSvc = serviceProvider.GetService<KucoinTickerSvc>();
+            var socketSvc = serviceProvider.GetService<KucoinSocketSvc>();
+            var kucoinAccountSvc = serviceProvider.GetService<KucoinAccountSvc>();
+            var kucoinSocketClient = serviceProvider.GetService<KucoinSocketClient>();
+            var tokenMetricsSvc = serviceProvider.GetService<TokenMetricsSvc>();
+            var dbContext = serviceProvider.GetService<TmDBContext>();
 
             CoinApiService coinApiService = serviceProvider.GetService<CoinApiService>();
 
-            //await BackFillTokenMetricsDataAsync(tokenMetricsSvc, kucoinAccountSvc, ct);
+            // This should only run once unless it fails
+            await BackFillCoinApiDataAsync(coinApiService, kucoinAccountSvc, ct);
 
-            await SetupTasks(coinApiService, ct);
+            // This should run every 5 minutes. It should collect and store updated data from
+            // Kucoin, CoinApi, and TokenMetrics
+            await SetupTasks(coinApiService, coinApiService, ct);
         }
 
-        async Task SetupTasks(CoinApiService coinApiService, CancellationToken ct)
-        //async Task SetupTasks(KucoinSocketClient kucoinSocketClient, TokenMetricsSvc tokenMetricsSvc, TmDBContext dbContext, CancellationToken ct)
+        //async Task SetupTasks(CoinApiService coinApiService, CancellationToken ct)
+        async Task SetupTasks(KucoinSocketClient tokenMetricsSvc, TokenMetricsSvc tokenMetricsSvc, TmDBContext dbContext, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -154,12 +157,11 @@ namespace TradeMonkey.DataCollector
             var formattedEndDateTime = endDateTime.ToString("yyyy-MM-ddTHH:mm:ss");
             var formattedStartDateTime = startDateTime.ToString("yyyy-MM-ddTHH:mm:ss");
 
+            var timerSettings = _config.TimerSettings;
+
             var coinApiTask = GetCryptoData(coinApiService, formattedStartDateTime, formattedEndDateTime, ct);
-
-            //var timerSettings = _config.TimerSettings;
-
-            //var kucoinTask = OnKucoinStreamTaskAsync(dbContext, TimeSpan.FromSeconds(timerSettings.KucoinStreamInterval), ct);
-            //var tokenMetricsTask = OnTokenMetricsPricesTaskAsync(tokenMetricsSvc, TimeSpan.FromMinutes(timerSettings.TokenMetricsPricesInterval), ct);
+            var kucoinTask = OnKucoinStreamTaskAsync(dbContext, TimeSpan.FromSeconds(timerSettings.KucoinStreamInterval), ct);
+            var tokenMetricsTask = OnTokenMetricsPricesTaskAsync(tokenMetricsSvc, TimeSpan.FromMinutes(timerSettings.TokenMetricsPricesInterval), ct);
 
             await Task.WhenAll(coinApiTask);
         }
@@ -238,23 +240,22 @@ namespace TradeMonkey.DataCollector
             }
         }
 
-        async Task BackFillTokenMetricsDataAsync(TokenMetricsSvc tokenMetricsSvc, KucoinAccountSvc kucoinAccountSvc,
-            CancellationToken ct)
+        async Task BackFillDataAsync(CoinApiService coinApiService, TokenMetricsSvc tokenMetricsSvc,
+            KucoinAccountSvc kucoinAccountSvc, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
+            // Get the assets currently held in my Kucoin account
             var accounts = await kucoinAccountSvc.GetAccountsAsync(null, null, ct);
             var assets = accounts
                 .Where(s => s.Holds > 0)
                 .Select(s => s.Asset)
                 .ToList();
 
-            var tokenIds = tokenMetricsSvc.GetTokenIdsByName(assets, ct);
-
-            var batch = new List<int> { 3375, 3306 };
-            var symbols = new List<string> { "ETH", "BTC", "SOL", "FTM" };
-            var limit = 1000000;
-
+            // Get historical OHLCV data for each asset for the past 2 years. This will be used to
+            // backfill the database with historical data that will be used to calculate the
+            // indicators and training a model do this in batches to prevent timeouts This should
+            // also retrieve other useful information from the APIs
             DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
             DateOnly oneYearAgo = currentDate.AddYears(-1);
 
@@ -262,8 +263,9 @@ namespace TradeMonkey.DataCollector
 
             DateOnly startDate = currentDate.AddDays(-5);
             DateOnly endDate = currentDate;
+            int limit = 100000;
 
-            tasks.Add(tokenMetricsSvc.GetResistanceSupportAsync(symbols, startDate, endDate, limit, ct));
+            List<int> tokenIds = await tokenMetricsSvc.GetTokenIdsByName(assets, ct);
 
             while (oneYearAgo <= currentDate)
             {
@@ -272,7 +274,9 @@ namespace TradeMonkey.DataCollector
 
                 Console.WriteLine($"Getting token metrics prices for {startDate} to {endDate}");
 
-                tasks.Add(tokenMetricsSvc.GetPricesAsync(batch, startDate, endDate, limit, ct));
+                tasks.Add(tokenMetricsSvc.GetResistanceSupportAsync(assets, startDate, endDate, limit, ct));
+                tasks.Add(tokenMetricsSvc.GetMarketIndicatorAsync(assets, startDate, endDate, limit, ct));
+                tasks.Add(tokenMetricsSvc.GetPricesAsync(tokenIds, startDate, endDate, limit, ct));
 
                 // Move to the next month
                 oneYearAgo = endDate;

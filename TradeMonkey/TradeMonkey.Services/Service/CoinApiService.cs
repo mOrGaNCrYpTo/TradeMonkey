@@ -1,19 +1,21 @@
-﻿using Newtonsoft.Json;
+﻿using CoinAPI.REST.V1;
+
+using Newtonsoft.Json;
 
 namespace TradeMonkey.Services.Service
 {
     [RegisterService]
     public class CoinApiService
     {
-        private readonly HttpClient _httpClient;
+        private readonly CoinApiRestClient _coinApiRestClient;
 
         [InjectService]
         public KuCoinDbRepository Repo { get; private set; }
 
-        public CoinApiService(HttpClient httpClient, KuCoinDbRepository kuCoinDbRepository)
+        public CoinApiService(CoinApiRestClient coinApiRestClient, KuCoinDbRepository kuCoinDbRepository)
         {
             //Set the HttpClient property to the passed in HttpClient
-            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _coinApiRestClient = coinApiRestClient ?? throw new ArgumentNullException(nameof(coinApiRestClient));
             Repo = kuCoinDbRepository ?? throw new ArgumentNullException(nameof(kuCoinDbRepository));
         }
 
@@ -31,12 +33,12 @@ namespace TradeMonkey.Services.Service
                 List<CryptoData> cryptoDatas = new List<CryptoData>();
 
                 var pair = tradingPair.Split('/');
-                var asset = pair[0];
-                var quote = pair[1];
+                var baseId = pair[0];
+                var quoteId = pair[1];
 
-                var url = $"{_httpClient.BaseAddress}/ohlcv/{asset}/{quote}/history?period_id={period}&time_start={start}&time_end={end}&limit={limit}";
+                var response =
+                    await _coinApiRestClient.Exchange_rates_get_specific_rateAsync(baseId, quoteId, DateTime.Parse(end));
 
-                var response = await _httpClient.GetAsync(url);
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
