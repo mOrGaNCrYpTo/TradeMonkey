@@ -98,7 +98,8 @@
 
         public async Task<TradingSignal> EvaluateRuleSetAsync(List<QuoteDto> quotes)
         {
-            return await TAIndicatorManager.IsOversold(quotes, _rsiPeriods, _oversoldThreshold) ?
+            // may be incorrect. Need to evaluate
+            return await TAIndicatorManager.IsOversold(quotes) ?
                 TradingSignal.GoLong : TradingSignal.None;
         }
     }
@@ -107,6 +108,6 @@
     {
         TradingSignal Signal { get; }
 
-        Task<TradingSignal> EvaluateRuleSetAsync(List<IQuote> quotes);
+        Task<TradingSignal> EvaluateRuleSetAsync(List<QuoteDto> quotes);
     }
 }

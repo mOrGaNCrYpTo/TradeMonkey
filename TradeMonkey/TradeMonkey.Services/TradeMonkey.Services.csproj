@@ -6,7 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup>   
+    <PackageReference Include="CryptoCompare" Version="1.4.0" />
     <PackageReference Include="Kucoin.Net" Version="4.3.2" />
     <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.4" />

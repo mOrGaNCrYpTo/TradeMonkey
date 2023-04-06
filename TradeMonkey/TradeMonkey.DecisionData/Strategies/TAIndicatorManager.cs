@@ -224,7 +224,7 @@
             return (decimal)stochRsi.StochRsi;
         }
 
-        public static decimal IsStochasticOverbought(List<IQuote> quotes,
+        public static decimal IsStochasticOverbought(List<QuoteDto> quotes,
            int rsiPeriods, int stochPeriods, int signalPeriods, int smoothPeriods)
         {
             // Convert quotes to Candle format
@@ -269,6 +269,12 @@
             var smaLong = await Task.Run(() => Indicator.GetSma(quotes, smaPeriodLong).Last().Sma);
 
             return smaShort > smaLong;
+        }
+
+        public static async Task<bool> IsOversold(List<QuoteDto> quotes)
+        {
+            //var rsi = Indicator.GetRsi(quotes);
+            throw new NotImplementedException();
         }
 
         public static bool IsEngulfingCandle(IQuote prevQuote, IQuote lastQuote)

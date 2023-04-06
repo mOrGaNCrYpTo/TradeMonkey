@@ -46,7 +46,7 @@ namespace TradeMonkey.Trader
             services.AddScoped<KucoinTickerSvc>();
             services.AddScoped<TokenMetricsSvc>();
 
-            var apiCredentials = (KucoinApiCredentials)_config.KucoinApiCredentials.Adapt<CryptoExchange.Net.Authentication.ApiCredentials>();
+            var apiCredentials = (KucoinApiCredentials)_config.KucoinApi.Adapt<CryptoExchange.Net.Authentication.ApiCredentials>();
 
             services.AddKucoin((restClientOptions, socketClientOptions) =>
             {

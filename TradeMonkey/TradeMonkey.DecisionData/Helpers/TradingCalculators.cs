@@ -18,7 +18,7 @@ namespace TradeMonkey.Trader.Helpers
         {
             // Get the available balance of the trading account
             List<KucoinAccount> accounts =
-                await KucoinAccountSvc.GetAccountsAsync(symbol, AccountType.Trade, ct);
+                (List<KucoinAccount>)await KucoinAccountSvc.GetAccountsAsync(symbol, AccountType.Trade, ct);
 
             KucoinAccount? account = accounts.Any() ? accounts.First() : null;
 

@@ -1,5 +1,4 @@
-﻿using Kucoin.Net.Enums;
-using Kucoin.Net.Objects.Models;
+﻿using Kucoin.Net.Objects.Models;
 
 using Mapster;
 

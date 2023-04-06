@@ -22,7 +22,7 @@
             _overboughtThreshold = overboughtThreshold;
         }
 
-        public async Task<TradingSignal> EvaluateRuleSetAsync(List<IQuote> quotes)
+        public async Task<TradingSignal> EvaluateRuleSetAsync(List<QuoteDto> quotes)
         {
             // Define parameters
             int rsiPeriods = 9;
@@ -36,9 +36,9 @@
                 signalPeriods
             );
 
-            var stochasticValues =
-                await TAIndicatorManager.IsStochasticOverbought(quotes, rsiPeriods, stochPeriods, _signalPeriods, _dPeriods);
-            return stochasticValues.Last().PercentK > _overboughtThreshold;
+            var stochasticValue =
+                TAIndicatorManager.IsStochasticOverbought(quotes, rsiPeriods, stochPeriods, _signalPeriods, _dPeriods);
+            return stochasticValue > _overboughtThreshold ? TradingSignal.GoShort : TradingSignal.GoLong;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using TradeMonkey.Core.Value.Constant;
+﻿using Skender.Stock.Indicators;
+
 using TradeMonkey.Services.Service;
 
 namespace TradeMonkey.DataCollector
@@ -74,7 +75,7 @@ namespace TradeMonkey.DataCollector
                 LogLevel = LogLevel.Trace
             });
 
-            services.AddScoped<CoinApiService>();
+            services.AddScoped<CryptoCompareApiSvc>();
             services.AddScoped<KucoinSocketClient>();
             services.AddScoped<CoinApiRestClient>();
 
@@ -95,7 +96,7 @@ namespace TradeMonkey.DataCollector
                 return uriBuilder;
             });
 
-            services.AddHttpClient<CoinApiService>(httpClient =>
+            services.AddHttpClient<CryptoCompareApiSvc>(httpClient =>
             {
                 httpClient.BaseAddress = new Uri(_config.CoinApi.ApiBaseUrl);
                 httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -133,18 +134,19 @@ namespace TradeMonkey.DataCollector
             var tokenMetricsSvc = serviceProvider.GetService<TokenMetricsSvc>();
             var dbContext = serviceProvider.GetService<TmDBContext>();
 
-            CoinApiService coinApiService = serviceProvider.GetService<CoinApiService>();
+            CryptoCompareApiSvc cryptoCompareApiSvc = serviceProvider.GetService<CryptoCompareApiSvc>();
 
             // This should only run once unless it fails
-            await BackFillCoinApiDataAsync(coinApiService, kucoinAccountSvc, ct);
+            await BackFillDataAsync(cryptoCompareApiSvc, tokenMetricsSvc, kucoinAccountSvc, ct);
 
             // This should run every 5 minutes. It should collect and store updated data from
             // Kucoin, CoinApi, and TokenMetrics
-            await SetupTasks(coinApiService, coinApiService, ct);
+            await SetupTasks(tokenMetricsSvc, cryptoCompareApiSvc, dbContext, ct);
         }
 
         //async Task SetupTasks(CoinApiService coinApiService, CancellationToken ct)
-        async Task SetupTasks(KucoinSocketClient tokenMetricsSvc, TokenMetricsSvc tokenMetricsSvc, TmDBContext dbContext, CancellationToken ct)
+        async Task SetupTasks(TokenMetricsSvc tokenMetricsSvc, CryptoCompareApiSvc cryptoCompareApiSvc,
+            TmDBContext dbContext, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -159,17 +161,18 @@ namespace TradeMonkey.DataCollector
 
             var timerSettings = _config.TimerSettings;
 
-            var coinApiTask = GetCryptoData(coinApiService, formattedStartDateTime, formattedEndDateTime, ct);
+            var cryptoCompareTask = GetCurrentHourlyOhlcv(cryptoCompareApiSvc, ct);
             var kucoinTask = OnKucoinStreamTaskAsync(dbContext, TimeSpan.FromSeconds(timerSettings.KucoinStreamInterval), ct);
             var tokenMetricsTask = OnTokenMetricsPricesTaskAsync(tokenMetricsSvc, TimeSpan.FromMinutes(timerSettings.TokenMetricsPricesInterval), ct);
 
-            await Task.WhenAll(coinApiTask);
-        }
+            List<Task> tasks = new List<Task>
+            {
+                cryptoCompareTask,
+                kucoinTask,
+                tokenMetricsTask
+            };
 
-        async Task GetCryptoData(CoinApiService coinApiService, string start, string end, CancellationToken ct)
-        {
-            int limit = 100000;
-            await coinApiService.GetCryptoData("5MIN", start, end, limit, ct);
+            await Task.WhenAll(tasks);
         }
 
         async Task OnKucoinStreamTaskAsync(TmDBContext dbContext, TimeSpan interval, CancellationToken ct)
@@ -240,7 +243,7 @@ namespace TradeMonkey.DataCollector
             }
         }
 
-        async Task BackFillDataAsync(CoinApiService coinApiService, TokenMetricsSvc tokenMetricsSvc,
+        async Task BackFillDataAsync(CryptoCompareApiSvc cryptoCompareApiSvc, TokenMetricsSvc tokenMetricsSvc,
             KucoinAccountSvc kucoinAccountSvc, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
@@ -277,12 +280,18 @@ namespace TradeMonkey.DataCollector
                 tasks.Add(tokenMetricsSvc.GetResistanceSupportAsync(assets, startDate, endDate, limit, ct));
                 tasks.Add(tokenMetricsSvc.GetMarketIndicatorAsync(assets, startDate, endDate, limit, ct));
                 tasks.Add(tokenMetricsSvc.GetPricesAsync(tokenIds, startDate, endDate, limit, ct));
+                tasks.Add(cryptoCompareApiSvc.GetHistoricalHourlyOhlcv(ct));
 
                 // Move to the next month
                 oneYearAgo = endDate;
             }
 
             await Task.WhenAll(tasks);
+        }
+
+        async Task GetCurrentHourlyOhlcv(CryptoCompareApiSvc cryptoCompareApiSvc, CancellationToken ct)
+        {
+            await cryptoCompareApiSvc.GetCurrentHourlyOhlcv(ct);
         }
 
         record TimerState
