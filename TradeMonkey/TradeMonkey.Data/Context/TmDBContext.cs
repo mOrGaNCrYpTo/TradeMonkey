@@ -21,8 +21,6 @@ public partial class TmDBContext : DbContext
 
     public virtual DbSet<CorrelationDatum> CorrelationDatums { get; set; }
 
-    public virtual DbSet<CryptoData> CryptoDatas { get; set; }
-
     public virtual DbSet<IndicatorDatum> IndicatorDatums { get; set; }
 
     public virtual DbSet<IndiciesDatum> IndiciesDatums { get; set; }
@@ -64,13 +62,12 @@ public partial class TmDBContext : DbContext
     public virtual DbSet<TradingIndicatorDatum> TradingIndicatorDatums { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=HP\\MFSQL;Initial Catalog=TradeMonkey;Integrated Security=True;Encrypt=false;;TrustServerCertificate=true",
-            x => x.UseDateOnlyTimeOnly());
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=HP\\MFSQL;Initial Catalog=TradeMonkey;Integrated Security=True", x => x.UseDateOnlyTimeOnly());
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
             modelBuilder.ApplyConfiguration(new Configurations.CorrelationDatumConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.CryptoDataConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.IndicatorDatumConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.IndiciesDatumConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.Kucoin24hourStatsConfiguration());

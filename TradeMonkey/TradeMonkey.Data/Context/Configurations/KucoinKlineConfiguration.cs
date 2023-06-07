@@ -21,7 +21,6 @@ namespace TradeMonkey.Data.Context.Configurations
             entity.Property(e => e.LowPrice).HasColumnType("decimal(18, 8)");
             entity.Property(e => e.OpenPrice).HasColumnType("decimal(18, 8)");
             entity.Property(e => e.OpenTime).HasColumnType("datetime");
-            entity.Property(e => e.QuoteVolume).HasColumnType("decimal(18, 8)");
             entity.Property(e => e.Volume).HasColumnType("decimal(18, 8)");
 
             OnConfigurePartial(entity);

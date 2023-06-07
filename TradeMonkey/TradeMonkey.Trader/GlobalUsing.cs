@@ -20,8 +20,8 @@ global using Quickwire.Attributes;
 global using Quickwire;
 
 global using TradeMonkey.Data.Context;
-global using TradeMonkey.DataCollector.Helpers;
-global using TradeMonkey.DataCollector.Repositories;
-global using TradeMonkey.DataCollector.Value.Response;
+global using TradeMonkey.Trader.Helpers;
+global using TradeMonkey.Trader.Repositories;
+global using TradeMonkey.Trader.Value.Response;
 
 global using JsonSerializer = System.Text.Json.JsonSerializer;

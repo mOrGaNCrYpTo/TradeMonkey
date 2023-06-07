@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace TradeMonkey.DataCollector.Value.Response
+namespace TradeMonkey.Trader.Value.Response
 {
     public sealed class KucoinUpdateMessage<T>
     {

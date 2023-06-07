@@ -1,6 +1,6 @@
 ﻿using Skender.Stock.Indicators;
 
-namespace TradeMonkey.Trader.Value.Aggregate
+namespace TradeMonkey.Core.Value.Aggregate
 {
     public class Candle : IQuote
     {

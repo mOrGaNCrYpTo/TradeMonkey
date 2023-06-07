@@ -16,7 +16,6 @@ global using TradeMonkey.Core.Value.Aggregate;
 global using TradeMonkey.Data.Context;
 global using TradeMonkey.Data.Entity;
 global using TradeMonkey.Services.Repositories;
-global using TradeMonkey.Data.Value;
 global using TradeMonkey.Core.Value.Response;
 
 global using JsonSerializer = System.Text.Json.JsonSerializer;

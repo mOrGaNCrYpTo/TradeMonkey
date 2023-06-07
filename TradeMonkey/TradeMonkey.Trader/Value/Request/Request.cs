@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace TradeMonkey.DataCollector.Value.Request
+namespace TradeMonkey.Trader.Value.Request
 {
     public sealed class KucoinRequest
     {

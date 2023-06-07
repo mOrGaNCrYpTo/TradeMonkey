@@ -1,43 +1,55 @@
 ﻿using CryptoExchange.Net.CommonObjects;
 
-using TradeMonkey.Data.Entity;
+using Skender.Stock.Indicators;
 
-namespace TradeMonkey.DataCollector.Strategies
+using TradeMonkey.Core;
+using TradeMonkey.Data.Entity;
+using TradeMonkey.Services.Repositories;
+using TradeMonkey.Services.Service;
+using TradeMonkey.Trader.Utils;
+using TradeMonkey.Trader.Value.Constant;
+
+using KucoinAllTick = TradeMonkey.Data.Entity.KucoinAllTick;
+
+namespace TradeMonkey.Trader.Strategies
 {
     public sealed class Scalping5min : BaseStrategy
     {
         // create a profit calculator
-        //Calculators profitCalculator = new Calculators();
+        //Calculators profitCalculator;
 
-        //Timeframe = TradingInterval.FiveMinutes;
+        private readonly TmDBContext tmDBContext = new();
+
+        //SupportResistanceLevels = new List<decimal> { 1.00, 0.90, 0.80, 0.70, 0.60, 0.50 };
+        private readonly KuCoinDbRepository _kucoinDbRepository;
+
+        //Indicators.Add(new StochasticOscillator(14));
+        private readonly KucoinTickerSvc _kuCoinTickerSvc;
+
+        TradingInterval Timeframe = TradingInterval.FiveMinutes;
 
         //Indicators.Add(new MovingAverage(8, 14));
 
         //Indicators.Add(new RelativeStrengthIndex(14));
-
-        //Indicators.Add(new StochasticOscillator(14));
-
-        //SupportResistanceLevels = new List<decimal> { 1.00, 0.90, 0.80, 0.70, 0.60, 0.50 };
-
-        public Scalping5min()
+        public Scalping5min(KucoinTickerSvc kuCoinTickerSvc)
         {
         }
 
         public async Task RunAsync(KucoinAllTick tick)
         {
-            var topCoins = await db.TraderGrades_Datums
+            var topCoins = await tmDBContext.TraderGradesDatums
                 .OrderByDescending(x => x.QuantGrade)
                 .Take(10)
                 .Select(x => x.Symbol)
                 .ToListAsync();
 
             // Retrieve ticker data from Kucoin API
-            var ticks = await KucoinApi.GetTicks("ETH-USDT", 5); // get 5-minute ticks for ETH-USDT
+            var ticks = await kucoinApi.GetTicks("ETH-USDT", 5); // get 5-minute ticks for ETH-USDT
 
             // Retrieve Token Metrics data for ETH
-            var token = await DbContext.TokenMetrics_Tokens.FirstOrDefaultAsync(t => t.Symbol == "ETH");
-            var sentiments = await DbContext.Sentiments_Datums.Where(s => s.Token_Id == token.Id).ToListAsync();
-            var resistanceSupport = await DbContext.ResistanceSupport_Datums.Where(r => r.Token_Id == token.Id).ToListAsync();
+            var token = await DbContext.TokenMetricsTokens.FirstOrDefaultAsync(t => t.Symbol == "ETH");
+            var sentiments = await DbContext.SentimentsDatums.Where(s => s.Token_Id == token.Id).ToListAsync();
+            var resistanceSupport = await DbContext.ResistanceSupportDatums.Where(r => r.Token_Id == token.Id).ToListAsync();
 
             // Calculate resistance and support levels
             var resistance = resistanceSupport.Max(r => r.Level);
@@ -50,13 +62,13 @@ namespace TradeMonkey.DataCollector.Strategies
             var tradeDirection = ticks.Last().Close > resistance ? "Short" : ticks.Last().Close < support ? "Long" : "None";
 
             // Determine trade size
-            var account = await DbContext.Kucoin_Accounts.FirstOrDefaultAsync(a => a.currency == "USDT" && a.type == "trade");
+            var account = await DbContext.KucoinAccounts.FirstOrDefaultAsync(a => a.currency == "USDT" && a.type == "trade");
             var tradeSize = account.available * 0.1;
 
             // Place trade if conditions are met
             if (sentimentTrend == "Bullish" && tradeDirection == "Long")
             {
-                var order = new Kucoin_Order()
+                var order = new KucoinOrder()
                 {
                     Symbol = "ETH-USDT",
                     Type = OrderType.Limit,
@@ -68,7 +80,7 @@ namespace TradeMonkey.DataCollector.Strategies
             }
             else if (sentimentTrend == "Bearish" && tradeDirection == "Short")
             {
-                var order = new Kucoin_Order()
+                var order = new KucoinOrder()
                 {
                     Symbol = "ETH-USDT",
                     Type = OrderType.Limit,
@@ -83,25 +95,24 @@ namespace TradeMonkey.DataCollector.Strategies
         // execute the trade
         private async Task ExecuteTrade(Ticker ticker)
         {
-            //// open trade
-            //Trade trade = OpenTrade(ticker);
+            // open trade
+            Trade trade = OpenTrade(ticker);
 
-            //// monitor trade
-            //while (trade.Status == TradeStatus.Open)
-            //{
-            //    // check conditions
-            //    if (strategy.CheckConditions(ticker))
-            //    {
-            //        // calculate profit
-            //        decimal currentProfit = profitCalculator.CalculateProfit(ticker);
+            // monitor trade
+            while (trade.Status == TradeStatus.Open)
+            {
+                // check conditions
+                if (strategy.CheckConditions(ticker))
+                {
+                    // calculate profit
+                    decimal currentProfit = profitCalculator.CalculateProfit(ticker);
 
-            //        // if profit has reached the target, close the trade
-            //        if (currentProfit >= 0.1)
-            //        {
-            //            CloseTrade(trade);
-            //        }
-            //    }
-            //}
+                    // if profit has reached the target, close the trade
+                    if (currentProfit >= 0.1)
+                    {
+                        CloseTrade(trade);
+                    }
+                }
+            }
         }
     }
-}

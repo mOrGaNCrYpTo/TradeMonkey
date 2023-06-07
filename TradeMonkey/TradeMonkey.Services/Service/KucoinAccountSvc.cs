@@ -4,7 +4,7 @@ using Mapster;
 
 using KucoinAccount = TradeMonkey.Data.Entity.KucoinAccount;
 
-namespace TradeMonkey.Services
+namespace TradeMonkey.Services.Service
 {
     [RegisterService]
     public sealed class KucoinAccountSvc
@@ -121,12 +121,17 @@ namespace TradeMonkey.Services
         /// <param name="accountType"> Optional: Filter on type of account </param>
         /// <param name="ct">          Optional: Cancellation token </param>
         /// <returns> </returns>
-        public async Task<IEnumerable<KucoinAccount>> GetAccountsAsync(string? asset = default,
-            AccountType? accountType = default, CancellationToken ct = default)
+        public async Task<IEnumerable<KucoinAccount>> GetAccountsAsync(string? asset = null,
+            AccountType? accountType = null, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
             var result = await _kucoinClient.SpotApi.Account.GetAccountsAsync(asset, accountType, ct);
             var accounts = result.Data.Adapt<IEnumerable<KucoinAccount>>();
+
+            foreach (var account in accounts)
+            {
+                account.Updated = DateTime.Now;
+            }
 
             await DbRepo.UpdateManyAsync(accounts, ct);
             return accounts;
@@ -152,10 +157,10 @@ namespace TradeMonkey.Services
         /// </summary>
         /// <param name="ct"> </param>
         /// <returns> </returns>
-        public async Task<KucoinUserFee> GetBasicUserFeeAsync(CancellationToken ct = default)
+        public async Task<KucoinUserFee> GetBasicUserFeeAsync(AssetType assetType, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            var fee = await _kucoinClient.SpotApi.Account.GetBasicUserFeeAsync(ct);
+            var fee = await _kucoinClient.SpotApi.Account.GetBasicUserFeeAsync(assetType, ct);
             return fee.Data;
         }
 
@@ -225,19 +230,6 @@ namespace TradeMonkey.Services
         {
             ct.ThrowIfCancellationRequested();
             var result = await _kucoinClient.SpotApi.Account.GetDepositsAsync(asset, startTime, endTime, status, currentPage, pageSize, ct);
-            return result.Data;
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="type">  </param>
-        /// <param name="asset"> </param>
-        /// <param name="ct">    </param>
-        /// <returns> </returns>
-        public async Task<KucoinNewAccount> CreateAccountAsync(AccountType type, string asset, CancellationToken ct = default)
-        {
-            ct.ThrowIfCancellationRequested();
-            var result = await _kucoinClient.SpotApi.Account.CreateAccountAsync(type, asset, ct);
             return result.Data;
         }
 

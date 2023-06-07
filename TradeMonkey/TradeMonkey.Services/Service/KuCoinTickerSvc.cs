@@ -1,8 +1,9 @@
 ﻿using Mapster;
 
+using KucoinKline = TradeMonkey.Data.Entity.KucoinKline;
 using KucoinTick = TradeMonkey.Data.Entity.KucoinTick;
 
-namespace TradeMonkey.Trader.Services
+namespace TradeMonkey.Services.Service
 {
     [RegisterService]
     public sealed class KucoinTickerSvc
@@ -92,19 +93,32 @@ namespace TradeMonkey.Trader.Services
             return symbols;
         }
 
-        /// <inheritdoc/>
-        //public async Task<WebCallResult<IEnumerable<KucoinKline>>> GetKlinesAsync(string symbol, KlineInterval interval, DateTime? startTime = null, DateTime? endTime = null, CancellationToken ct = default)
+        //public async Task BackfillKucoinDataAsync(string symbols, DateTime start, DateTime end, CancellationToken ct)
         //{
         //    ct.ThrowIfCancellationRequested();
+        //    List<string> assets = symbols.Split(',').ToList();
+        //    List<KucoinKline> kucoinKlines = new List<KucoinKline>();
+        //    //Kucoin.Net.Objects.Models.Spot.KucoinKline
+        //    try
+        //    {
+        //        TimeSpan oneHour = new(0, 1, 0, 0, 0);
 
-        // Console.WriteLine("Getting latest Kucoin ticker data...");
+        // foreach (var asset in assets) { // Get historical OHLCV data from Kucoin for the
+        // specified symbol var response = await _kucoinClient.SpotApi.CommonSpotClient
+        // .GetKlinesAsync(asset, oneHour, start, end);
 
-        // var result = await _kucoinClient.SpotApi.ExchangeData.GetTickerAsync(symbol, ct); var
-        // data = result.Data;
+        // if (response.Success) { foreach (var k in response.Data) { // Create a new entity
+        // KucoinKline kline = new() { OpenTime = k.OpenTime, OpenPrice = k.OpenPrice, ClosePrice =
+        // k.ClosePrice, HighPrice = k.HighPrice, LowPrice = k.LowPrice, Volume = k.Volume };
 
-        // var klines = new Data.Entity.KucoinKline { ClosePrice = data.c };
+        // // Add entity to the database context kucoinKlines.Add(kline); } } }
 
-        //    await Repo.InsertManyAsync(klines, ct);
+        //        await Repo.InsertManyAsync(kucoinKlines, ct);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine($"Exception when calling Kucoin API: {e.Message}");
+        //    }
         //}
     }
 }

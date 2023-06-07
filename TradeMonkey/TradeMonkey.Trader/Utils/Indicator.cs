@@ -1,31 +1,26 @@
-﻿using TradeMonkey.Data.Entity;
-using TradeMonkey.DataCollector.Extensions;
-
-namespace TradeMonkey.DataCollector.Utils
+﻿namespace TradeMonkey.Trader.Utils
 {
+    using TradeMonkey.Trader.Extensions;
+
+    using KucoinAllTick = TradeMonkey.Data.Entity.KucoinAllTick;
+
     public abstract class Indicator
     {
-        public abstract bool CheckCondition(KucoinAllTick ticker);
+        public abstract bool CheckCondition(KucoinAllTick ticker, List<decimal> prices, int period);
     }
 
     public class MovingAverage : Indicator
     {
-        private int _period1;
-        private int _period2;
-
         public MovingAverage(int period1, int period2)
         {
-            _period1 = period1;
-            _period2 = period2;
+            period1 = period1;
+            period2 = period2;
         }
 
-        public override bool CheckCondition(KucoinAllTick ticker)
+        // todo
+        public override bool CheckCondition(KucoinAllTick ticker, List<decimal> prices, int period)
         {
-            decimal ma1 = ticker.CalculateMovingAverage(_period1);
-            decimal ma2 = ticker.CalculateMovingAverage(_period2);
-
-            return ma1 > ma2;
-            return false;
+            return true;
         }
     }
 
@@ -38,11 +33,11 @@ namespace TradeMonkey.DataCollector.Utils
             _period = period;
         }
 
-        public override bool CheckCondition(KucoinAllTick ticker)
+        // todo
+        public override bool CheckCondition(KucoinAllTick ticker, List<decimal> prices, int period)
         {
-            decimal rsi = ticker.CalculateRelativeStrengthIndex(_period);
+            decimal rsi = ticker.CalculateRelativeStrengthIndex(period, prices);
             return rsi > 70;
-            return false;
         }
     }
 
@@ -55,10 +50,9 @@ namespace TradeMonkey.DataCollector.Utils
             _period = period;
         }
 
-        public override bool CheckCondition(KucoinAllTick ticker)
+        public override bool CheckCondition(KucoinAllTick ticker, List<decimal> prices, int period)
         {
-            decimal stochastic = ticker.CalculateStochasticOscillator(_period);
-
+            decimal stochastic = ticker.CalculateStochasticOscillator(prices, period);
             return stochastic > 70;
         }
     }

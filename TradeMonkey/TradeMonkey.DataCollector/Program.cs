@@ -1,6 +1,4 @@
-﻿using Skender.Stock.Indicators;
-
-using TradeMonkey.Services.Service;
+﻿using TradeMonkey.Services.Service;
 
 namespace TradeMonkey.DataCollector
 {
@@ -79,11 +77,12 @@ namespace TradeMonkey.DataCollector
             services.AddScoped<KucoinSocketClient>();
             services.AddScoped<CoinApiRestClient>();
 
-            //services.AddScoped<KucoinAccountSvc>();
-            //services.AddScoped<KuCoinDbRepository>();
-            //services.AddScoped<KucoinSocketSvc>();
+            services.AddScoped<KuCoinDbRepository>();
+            services.AddScoped<KuCoinKlineSvc>();
             services.AddScoped<KucoinTickerSvc>();
 
+            //services.AddScoped<KucoinSocketSvc>();
+            //services.AddScoped<KucoinAccountSvc>();
             //services.AddScoped<TokenMetricsSvc>();
 
             services.AddSingleton(provider =>
@@ -100,7 +99,7 @@ namespace TradeMonkey.DataCollector
             {
                 httpClient.BaseAddress = new Uri(_config.CoinApi.ApiBaseUrl);
                 httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-                httpClient.DefaultRequestHeaders.Add("User-Agent", "Invoices.Function");
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "Trade.Monkey");
                 httpClient.DefaultRequestHeaders.Add(_config.CoinApi.ApiKeyName, _config.CoinApi.ApiKeyValue);
             })
                  .SetHandlerLifetime(TimeSpan.FromMinutes(5));
@@ -128,6 +127,7 @@ namespace TradeMonkey.DataCollector
         private async Task RunAsync(IServiceProvider serviceProvider, CancellationToken ct)
         {
             var kucoinTickerSvc = serviceProvider.GetService<KucoinTickerSvc>();
+            var kuCoinKlineSvc = serviceProvider.GetService<KuCoinKlineSvc>();
             var socketSvc = serviceProvider.GetService<KucoinSocketSvc>();
             var kucoinAccountSvc = serviceProvider.GetService<KucoinAccountSvc>();
             var kucoinSocketClient = serviceProvider.GetService<KucoinSocketClient>();
@@ -137,7 +137,7 @@ namespace TradeMonkey.DataCollector
             CryptoCompareApiSvc cryptoCompareApiSvc = serviceProvider.GetService<CryptoCompareApiSvc>();
 
             // This should only run once unless it fails
-            await BackFillDataAsync(cryptoCompareApiSvc, tokenMetricsSvc, kucoinAccountSvc, ct);
+            await BackFillDataAsync(cryptoCompareApiSvc, tokenMetricsSvc, kucoinAccountSvc, kuCoinKlineSvc, ct);
 
             // This should run every 5 minutes. It should collect and store updated data from
             // Kucoin, CoinApi, and TokenMetrics
@@ -244,7 +244,7 @@ namespace TradeMonkey.DataCollector
         }
 
         async Task BackFillDataAsync(CryptoCompareApiSvc cryptoCompareApiSvc, TokenMetricsSvc tokenMetricsSvc,
-            KucoinAccountSvc kucoinAccountSvc, CancellationToken ct)
+            KucoinAccountSvc kucoinAccountSvc, KuCoinKlineSvc kuCoinKlineSvc, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -259,31 +259,26 @@ namespace TradeMonkey.DataCollector
             // backfill the database with historical data that will be used to calculate the
             // indicators and training a model do this in batches to prevent timeouts This should
             // also retrieve other useful information from the APIs
-            DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
-            DateOnly oneYearAgo = currentDate.AddYears(-1);
+            DateTime currentDate = DateTime.Now;
+            DateTime backfillStartDate = DateTime.Now.AddYears(-3);
 
             List<Task> tasks = new();
 
-            DateOnly startDate = currentDate.AddDays(-5);
-            DateOnly endDate = currentDate;
-            int limit = 100000;
-
-            List<int> tokenIds = await tokenMetricsSvc.GetTokenIdsByName(assets, ct);
-
-            while (oneYearAgo <= currentDate)
+            while (backfillStartDate <= currentDate)
             {
-                startDate = oneYearAgo;
-                endDate = oneYearAgo.AddMonths(1);
+                DateTime startDate = backfillStartDate;
+                DateTime endDate = startDate.AddMonths(1);
 
                 Console.WriteLine($"Getting token metrics prices for {startDate} to {endDate}");
 
-                tasks.Add(tokenMetricsSvc.GetResistanceSupportAsync(assets, startDate, endDate, limit, ct));
-                tasks.Add(tokenMetricsSvc.GetMarketIndicatorAsync(assets, startDate, endDate, limit, ct));
-                tasks.Add(tokenMetricsSvc.GetPricesAsync(tokenIds, startDate, endDate, limit, ct));
-                tasks.Add(cryptoCompareApiSvc.GetHistoricalHourlyOhlcv(ct));
+                tasks.Add(kuCoinKlineSvc.BackfillKucoinKlineData(assets, startDate, endDate, ct));
+                //tasks.Add(tokenMetricsSvc.GetResistanceSupportAsync(assets, startDate, endDate, limit, ct));
+                //tasks.Add(tokenMetricsSvc.GetMarketIndicatorAsync(assets, startDate, endDate, limit, ct));
+                //tasks.Add(tokenMetricsSvc.GetPricesAsync(tokenIds, startDate, endDate, limit, ct));
+                //tasks.Add(cryptoCompareApiSvc.GetHistoricalHourlyOhlcv(ct));
 
                 // Move to the next month
-                oneYearAgo = endDate;
+                backfillStartDate = endDate;
             }
 
             await Task.WhenAll(tasks);

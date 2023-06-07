@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.DataCollector.Utils
+﻿namespace TradeMonkey.Trader.Utils
 {
     public static class Calculators
     {

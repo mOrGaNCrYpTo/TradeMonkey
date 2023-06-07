@@ -39,6 +39,16 @@ namespace TradeMonkey.Services.Service
             });
         }
 
+        public async Task<PriceMultiResponse> GetPriceMulti(IEnumerable<string> fsyms, IEnumerable<string> tsyms, string exchange,
+            CancellationToken ct = default)
+        {
+            ct.ThrowIfCancellationRequested();
+            List<CandleData> currentPrices = new List<CandleData>();
+
+            return await _cryptoCompareClient.Prices
+                .MultipleSymbolsPriceAsync(fromSymbols: fsyms, toSymbols: tsyms, tryConversion: true, exchangeName: exchange);
+        }
+
         public async Task GetHistoricalHourlyOhlcv(CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();

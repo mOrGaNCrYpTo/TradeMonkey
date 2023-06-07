@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.DataCollector.Value.Constant
+﻿namespace TradeMonkey.Trader.Value.Constant
 {
     public enum TradingInterval
     {

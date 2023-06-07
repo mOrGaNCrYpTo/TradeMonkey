@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.Data.Value
+﻿namespace TradeMonkey.Core.Value.Response
 {
     public class TokenMetricsTokenResponse : BaseTokenMetricsResponse
     {

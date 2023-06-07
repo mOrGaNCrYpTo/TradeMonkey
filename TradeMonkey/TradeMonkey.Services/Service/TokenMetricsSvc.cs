@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.Trader.Services
+﻿namespace TradeMonkey.Services.Service
 {
     [RegisterService]
     public sealed class TokenMetricsSvc
@@ -51,7 +51,7 @@
             };
 
             _uriBuilder.Path = "v1/trader-grades";
-            _uriBuilder.Query = $"tokens={String.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
+            _uriBuilder.Query = $"tokens={string.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
 
             ApiRepo.ActionUrl = _uriBuilder.Uri;
 
@@ -76,7 +76,7 @@
             Console.WriteLine("");
 
             _uriBuilder.Path = "v1/Price";
-            _uriBuilder.Query = $"tokens={String.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
+            _uriBuilder.Query = $"tokens={string.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
 
             ApiRepo.ActionUrl = _uriBuilder.Uri;
 
@@ -101,7 +101,7 @@
             Console.WriteLine("");
 
             _uriBuilder.Path = "v1/market-indicator";
-            _uriBuilder.Query = $"tokens={String.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
+            _uriBuilder.Query = $"tokens={string.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
 
             ApiRepo.ActionUrl = _uriBuilder.Uri;
 
@@ -126,7 +126,7 @@
             Console.WriteLine("");
 
             _uriBuilder.Path = "v1/resistance-support";
-            _uriBuilder.Query = $"tokens={String.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
+            _uriBuilder.Query = $"tokens={string.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
 
             ApiRepo.ActionUrl = _uriBuilder.Uri;
 
@@ -151,7 +151,7 @@
             Console.WriteLine("");
 
             _uriBuilder.Path = "v1/resistance-support";
-            _uriBuilder.Query = $"tokens={String.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
+            _uriBuilder.Query = $"tokens={string.Join(',', symbols)}&startDate={startDate}&endDate={endDate}&limit={limit}";
 
             ApiRepo.ActionUrl = _uriBuilder.Uri;
 

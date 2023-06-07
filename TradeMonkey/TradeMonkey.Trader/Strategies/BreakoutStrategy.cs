@@ -1,9 +1,9 @@
 ﻿using Kucoin.Net.Clients;
 
 using TradeMonkey.Data.Entity;
-using TradeMonkey.DataCollector.Services;
+using TradeMonkey.Trader.Services;
 
-namespace TradeMonkey.DataCollector.Strategies
+namespace TradeMonkey.Trader.Strategies
 {
     [RegisterService]
     public class BreakoutStrategy

@@ -6,3 +6,4 @@ global using Microsoft.Extensions.Hosting;
 
 global using TradeMonkey.Data.Entity;
 global using TradeMonkey.Core.Value.Response;
+global using TradeMonkey.Core.Extensions;

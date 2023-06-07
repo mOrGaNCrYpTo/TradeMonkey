@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.Trader.Value.Constant
+﻿namespace TradeMonkey.Core.Value.Constant
 {
     public static class SymbolLotSizes
     {

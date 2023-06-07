@@ -1,4 +1,4 @@
-﻿namespace TradeMonkey.Trader.Value.Aggregate
+﻿namespace TradeMonkey.Core.Value.Aggregate
 {
     public sealed class PeakPoint
     {

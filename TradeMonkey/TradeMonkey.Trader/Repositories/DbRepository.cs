@@ -2,7 +2,7 @@
 
 using TradeMonkey.Data.Entity;
 
-namespace TradeMonkey.DataCollector.Repositories
+namespace TradeMonkey.Trader.Repositories
 {
     public sealed class DbRepository
     {
@@ -13,13 +13,13 @@ namespace TradeMonkey.DataCollector.Repositories
             DbContext = tmDBContext ?? throw new ArgumentNullException(nameof(tmDBContext));
         }
 
-        public async Task<IEnumerable<Kucoin_AllTick>> GetTickerDataAsync(string symbol, int periodLength,
+        public async Task<IEnumerable<Data.Entity.KucoinAllTick>> GetTickerDataAsync(string symbol, int periodLength,
             CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
             return
-                await DbContext.Kucoin_AllTicks
+                await DbContext.KucoinAllTicks
                     .OrderByDescending(kt => kt.Timestamp)
                     .Where(t => t.Symbol == symbol)
                     .Take(periodLength)

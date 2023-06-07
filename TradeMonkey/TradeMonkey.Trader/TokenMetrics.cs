@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using TradeMonkey.Data.Context;
 using TradeMonkey.Data.Entity;
 
-namespace TradeMonkey.DataCollector
+namespace TradeMonkey.Trader
 {
     internal class TokenMetrics
     {

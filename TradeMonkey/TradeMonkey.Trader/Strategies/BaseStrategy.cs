@@ -1,8 +1,8 @@
 ﻿using TradeMonkey.Data.Entity;
-using TradeMonkey.DataCollector.Utils;
-using TradeMonkey.DataCollector.Value.Constant;
+using TradeMonkey.Trader.Utils;
+using TradeMonkey.Trader.Value.Constant;
 
-namespace TradeMonkey.DataCollector.Strategies
+namespace TradeMonkey.Trader.Strategies
 {
     public class BaseStrategy
     {
@@ -10,7 +10,7 @@ namespace TradeMonkey.DataCollector.Strategies
         public List<Indicator> Indicators { get; set; }
         public List<decimal> SupportResistanceLevels { get; set; }
 
-        public bool CheckConditions(KucoinAllTick ticker)
+        public bool CheckConditions(Data.Entity.KucoinAllTick ticker)
         {
             foreach (Indicator indicator in Indicators)
             {
